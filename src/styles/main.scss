@@ -1,0 +1,257 @@
+@import 'typefaces';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: $primaryFont, system-ui, sans-serif;
+  }
+}
+
+.main-body {
+  --tw-bg-opacity: 1;
+  position: relative;
+  // background-color: rgb(243 244 245 / var(--tw-bg-opacity));
+}
+
+.lottery-body {
+  background-color: rgb(17, 9, 41);
+
+  &:after {
+    position: absolute;
+    z-index: 0;
+    top: 5%;
+    left: -5%;
+
+    // z-index: -99;
+    background-image: url('../../public/home-bg.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+    /* Add the blur effect */
+
+    display: block;
+    content: '';
+  }
+}
+
+.skyline-dex--input {
+  border-radius: 12px;
+}
+
+.skyline--input-hide-arrows {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+}
+
+.skyline--input-box-shadow {
+  box-shadow: inset 4px -4px 3px #ffffff, inset 8px -8px 60px -5px #f1e9ec,
+    inset -7px 7px 5px -4px rgba(174, 174, 192, 0.4);
+  box-sizing: border-box;
+  transition: all 0.15s ease-out;
+}
+
+.skyline--account-box-shadow {
+  box-shadow: inset 4px -4px 3px #716e70, inset 8px -8px 60px -5px #ee26ac,
+    inset -7px 7px 5px -4px rgba(174, 174, 192, 0.4);
+  box-sizing: border-box;
+  transition: all 0.15s ease-out;
+}
+
+.popup-background {
+  background: rgba(255, 227, 227, 0.1) !important;
+  backdrop-filter: blur(3px) !important;
+}
+
+// card
+
+.nft-body {
+  height: 250px;
+  overflow: hidden;
+  width: 180px;
+  //   background: linear-gradient(45deg, #061de3, #e306ca);
+  //   font-family: Helvetica, sans-serif;
+  color: rgb(211, 211, 211);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nft-container {
+  width: 150px;
+  height: 200px;
+  perspective: 500px;
+}
+
+.nft-container:hover > .card {
+  cursor: pointer;
+  transform: rotateY(180deg);
+}
+
+.card {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  transition: transform 500ms;
+  transform-style: preserve-3d;
+}
+
+.nft-front,
+.nft-back {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 5px 2px rgba(50, 50, 50, 0.25);
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+// .nft-front {
+//   background-image: url(https://source.unsplash.com/random/350x500);
+// }
+
+.nft-back {
+  background-color: #3a3a3a;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 80px;
+}
+
+.transca--input {
+  border-radius: 12px;
+}
+
+.color-light {
+  color: #09090a;
+}
+
+.color-light-input {
+  background-color: #ffffff;
+}
+
+.color-light-placeholder {
+  &::placeholder {
+    color: #d2d6d9;
+  }
+}
+
+.color-light-border {
+  border-color: #d8dcdf;
+}
+
+.color-light-input-error {
+  border: 1px solid #ff3a46;
+}
+
+.transca--input-hide-arrows {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+}
+
+//*,*:before,*:after {
+//  box-sizing:border-box;
+//}
+//body {
+//  font-family:'Open Sans';
+//  background:#27272b;
+//  margin:auto;
+//  color: #fff;
+//}
+//header {
+//  padding: 40px;
+//}
+.brackets-canvas {
+  flex-grow: 1;
+  display: flex;
+  .column {
+    flex: 1;
+    padding: 0 20px 10px 10px;
+    grid-template-columns: min-content auto;
+    display: grid;
+    .number {
+      font-size: 0.7em;
+      justify-content: flex-end;
+      align-items: center;
+      display: flex;
+      opacity: 0.5;
+    }
+    .item {
+      position: relative;
+      font-size: 0.8em;
+      align-items: center;
+      display: flex;
+      &.show-brackets {
+        .bracket {
+          position: absolute;
+          margin: -1px 8px;
+          top: 50%;
+          left: 100%;
+          width: 10px;
+          height: calc(100% + 2px);
+          border-radius: 0 4px 4px 0;
+          border: 2px solid #fff;
+          border-left: 0;
+          align-items: center;
+          display: flex;
+          z-index: 1;
+          span {
+            width: 10px;
+            height: 2px;
+            transform: translate3d(100%, 0, 0);
+            background: #fff;
+            display: block;
+          }
+        }
+      }
+      .box {
+        margin: 6px 0 6px 10px;
+        background: #444444;
+        border-radius: 4px;
+        width: 100%;
+        overflow: hidden;
+      }
+      .part {
+        display: flex;
+        opacity: 0.8;
+        .value {
+          padding: 6px 10px;
+          flex-grow: 1;
+        }
+        .score {
+          width: 30px;
+          padding: 6px 10px;
+          background: #d66f00;
+        }
+        &.partOne {
+          .value {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          .score {
+            border-bottom: 1px solid #c35824;
+          }
+        }
+      }
+      .winner {
+        background: #777777;
+        opacity: 1;
+        font-weight: bold;
+      }
+      .looser {
+        background: #333333;
+        opacity: 0.2;
+      }
+    }
+  }
+}
