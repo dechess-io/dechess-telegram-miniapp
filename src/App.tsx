@@ -10,6 +10,7 @@ import { apiHeader } from './utils/utils'
 import restApi from './services/api'
 import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
+import Progress from './components/ProgressChart/Progress'
 
 function App() {
   const navigate = useNavigate()
@@ -139,10 +140,8 @@ function App() {
         <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             <div className="flex flex-row bg-black-gradient w-398 h-227 rounded-lg">
-              <div className="flex-auto p-4">
-                <div className="w-100 h-100 justify-center items-center">
-                  <CircularProgressbar value={60} />
-                </div>
+              <div className="flex-auto ">
+                <Progress losses={3} totalGames={10} wins={7} />
               </div>
               <div className="flex-auto  rounded-lg">
                 <div>
