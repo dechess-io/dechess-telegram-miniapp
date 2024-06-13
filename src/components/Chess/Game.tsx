@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Chess, Square } from 'chess.js'
 import { useNavigate, useLocation } from 'react-router-dom'
 import restApi from '../../services/api'
@@ -37,6 +37,7 @@ const Game: React.FC<{}> = () => {
   const [turnPlay, setTurnPlay] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const [moveLists, setMoveLists] = useState<string[]>([])
 
   useEffect(() => {
     restApi
@@ -67,6 +68,9 @@ const Game: React.FC<{}> = () => {
     }
 
     function onNewMove(room: any) {
+      console.log(room)
+      setMoveLists((newMoves: any) => [...newMoves, `${room.from} ${room.to}`])
+      console.log(moveLists)
       if (room.fen) {
         setGame(new Chess(room.fen))
         setTurnPlay(room.turn)
@@ -80,11 +84,8 @@ const Game: React.FC<{}> = () => {
     }
 
     socket.connect()
-
     socket.on('connection', onConnect)
-
-    socket.on('newMove', onNewMove)
-
+    socket.on('newmove', onNewMove)
     socket.on('start', onStart)
 
     socket.emit('joinGame', { game_id: location.pathname.split('/')[2] })
@@ -353,95 +354,105 @@ const Game: React.FC<{}> = () => {
     setActiveButton(buttonId)
   }
 
-  const onShowGame = () => {
-    return (
-      <div className="relative" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-        <div className="flex flex-col space-y-4">
-          {onShowPlayerTop()}
-          <div className="relative border-8 border-white rounded-lg">
-            <Board
-              boardOrientation={isOrientation()}
-              position={game.fen()}
-              id="ClickToMove"
-              animationDuration={200}
-              arePiecesDraggable={false}
-              onSquareClick={onSquareClick}
-              onSquareRightClick={onSquareRightClick}
-              onPromotionPieceSelect={onPromotionPieceSelect}
-              customBoardStyle={{
-                // borderRadius: '8px',
-                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
-              }}
-              customLightSquareStyle={{
-                backgroundColor: '#E8EDF9',
-              }}
-              customDarkSquareStyle={{
-                backgroundColor: '#B7C0D8',
-              }}
-              customSquareStyles={{
-                ...moveSquares,
-                ...optionSquares,
-                ...rightClickedSquares,
-              }}
-              promotionToSquare={moveTo}
-              showPromotionDialog={showPromotionDialog}
-            />
-            {(game.isGameOver() || game.isDraw()) && (
-              <div
-                className={`absolute top-1/4 left-[50px] w-[400px] ${
-                  isHiddenGameStatus && 'hidden'
-                }`}
-                onClick={() => setIsHiddenGameStatus(true)}
-              >
-                <Popup className="bg-grey-100 w-[400px] h-238">
-                  <h1 className="mb-4 text-center font-bold text-[20px]">
-                    {game.isGameOver() && (
-                      <div>
-                        <h2 className="text-white ">Game Over</h2>
+  const moveListRef = useRef<HTMLDivElement>(null)
 
-                        <div className="flex flex-row pt-5">
-                          <div className="flex-auto p-2">
-                            <button
-                              className={`bg-gray-900 font-bold  rounded-lg h-54 w-127 hover:bg-blue-gradient`}
-                            >
-                              <span className="text-white text-sm">New Game</span>
-                            </button>
-                          </div>
-                          <div className="flex-auto p-2">
-                            <button
-                              className={`bg-gray-900 font-bold rounded-lg h-54 w-127 hover:bg-blue-gradient`}
-                              onClick={() => handleButtonClick('rapid-2')}
-                            >
-                              <span className="text-white text-sm">Game Overview</span>
-                            </button>
+  useEffect(() => {
+    console.log(moveLists)
+    if (moveListRef.current) {
+      moveListRef.current.scrollLeft = moveListRef.current.scrollWidth
+    }
+  }, [moveLists])
+
+  const onShowGame: any = () => {
+    return (
+      <>
+        <div className="relative" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+          <div className="flex flex-col space-y-4">
+            <div
+              ref={moveListRef}
+              className="pb-4 bg-grey-100 h-[30px] text-white border rounded-lg overflow-hidden whitespace-nowrap"
+              style={{ width: '100%' }}
+            >
+              <div className="flex space-x-2">
+                {' '}
+                {/* Ensure the container allows scrolling */}
+                {moveLists.map((move, index) => (
+                  <span key={index} className="inline-block">{`${index + 1}: ${move}`}</span>
+                ))}
+              </div>
+            </div>
+            {onShowPlayerTop()}
+            <div className="relative border-8 border-white rounded-lg">
+              <Board
+                boardOrientation={isOrientation()}
+                position={game.fen()}
+                id="ClickToMove"
+                animationDuration={200}
+                arePiecesDraggable={false}
+                onSquareClick={onSquareClick}
+                onSquareRightClick={onSquareRightClick}
+                onPromotionPieceSelect={onPromotionPieceSelect}
+                customBoardStyle={{
+                  // borderRadius: '8px',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                }}
+                customLightSquareStyle={{
+                  backgroundColor: '#E8EDF9',
+                }}
+                customDarkSquareStyle={{
+                  backgroundColor: '#B7C0D8',
+                }}
+                customSquareStyles={{
+                  ...moveSquares,
+                  ...optionSquares,
+                  ...rightClickedSquares,
+                }}
+                promotionToSquare={moveTo}
+                showPromotionDialog={showPromotionDialog}
+              />
+              {(game.isGameOver() || game.isDraw()) && (
+                <div
+                  className={`absolute top-1/4 left-[50px] w-[400px] ${
+                    isHiddenGameStatus && 'hidden'
+                  }`}
+                  onClick={() => setIsHiddenGameStatus(true)}
+                >
+                  <Popup className="bg-grey-100 w-[400px] h-238">
+                    <h1 className="mb-4 text-center font-bold text-[20px]">
+                      {game.isGameOver() && (
+                        <div>
+                          <h2 className="text-white ">Game Over</h2>
+
+                          <div className="flex flex-row pt-5">
+                            <div className="flex-auto p-2">
+                              <button
+                                className={`bg-gray-900 font-bold  rounded-lg h-54 w-127 hover:bg-blue-gradient`}
+                              >
+                                <span className="text-white text-sm">New Game</span>
+                              </button>
+                            </div>
+                            <div className="flex-auto p-2">
+                              <button
+                                className={`bg-gray-900 font-bold rounded-lg h-54 w-127 hover:bg-blue-gradient`}
+                                onClick={() => handleButtonClick('rapid-2')}
+                              >
+                                <span className="text-white text-sm">Game Overview</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                    {game.isDraw() && <div>Draw</div>}
-                    {/* {(raw as any).isPaymentMatch &&
-                            game.isGameOver() &&
-                            (((raw as any).turn_player === "b" && activeAccount?.address! === raw.player_1) ||
-                              ((raw as any).turn_player === "w" && activeAccount?.address! === raw.player_2)) && (
-                              <Button
-                                className="mx-auto bg-gradient-to-r from-cyan-500 to-blue-500 !rounded-xl font-bold text-white leading-[21px]"
-                                onClick={() => onClaim()}
-                                disabled={raw.isClaimed}
-                                loading={isClaim}
-                              >
-                                {raw.isClaimed ? "Claimed" : "Claim"}
-                              </Button>
-                            )} */}
-                  </h1>
-                </Popup>
-              </div>
-            )}
-            {onShowWaitingStartGame()}
-            {/* {onShowDepositPopup()} */}
+                      )}
+                      {game.isDraw() && <div>Draw</div>}
+                    </h1>
+                  </Popup>
+                </div>
+              )}
+              {onShowWaitingStartGame()}
+            </div>
+            {onShowPlayerBottom()}
           </div>
-          {onShowPlayerBottom()}
         </div>
-      </div>
+      </>
     )
   }
 
@@ -451,7 +462,9 @@ const Game: React.FC<{}> = () => {
     return (
       <>
         <Header />
-        <div className="flex justify-center items-center bg-gray-1000 h-screen">{onShowGame()}</div>
+        <div className="flex flex-col justify-start bg-gray-1000 h-screen">
+          <div className="flex justify-center items-center flex-grow">{onShowGame()}</div>
+        </div>
       </>
     )
   }
