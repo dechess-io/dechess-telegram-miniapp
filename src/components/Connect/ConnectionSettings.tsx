@@ -127,14 +127,14 @@ export function ConnectionSettings() {
             })
         }
         return (
-          <Popup className="bg-gray-50 min-w-[500px] max-w-[600px]">
+          <Popup className="bg-gray-50 min-w-[500px] max-w-[600px] min-h-[300px]">
             <form
               onSubmit={handleSubmit(submit)}
               className="flex flex-col justify-center items-center space-y-2"
             >
               <div className="py-2 w-1/2">
                 <div className="text-[16px] font-bold">Account</div>
-                <div className="max-w-[500px] flex justify-between items-center border rounded-md my-2">
+                <div className="max-w-[500px] max-h-[300px] flex justify-between items-center border rounded-md my-2">
                   <Input
                     className={cn(
                       '!text-center border-none !rounded-md border-transparent focus:border-transparent focus:!ring-0 !text-[14px] !pl-0 !pt-1 !pb-1 !leading-[30px]'
@@ -152,7 +152,7 @@ export function ConnectionSettings() {
                 <div className="text-[16px] font-bold">Password</div>
                 <div className="text-[13px]">Enter Password</div>
 
-                <div className="max-w-[500px] flex justify-between items-center border rounded-md my-2">
+                <div className="max-w-[500px] max-h-[300px] flex justify-between items-center border rounded-md my-2">
                   <Input
                     className={cn(
                       '!text-center border-none !rounded-md border-transparent focus:border-transparent focus:!ring-0 !text-[14px] !pl-0 !pt-1 !pb-1 !leading-[30px]'
