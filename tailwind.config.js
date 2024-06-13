@@ -122,6 +122,7 @@ module.exports = {
           'linear-gradient(270deg, #000000 0%, #5116CE 35.42%, #8021DF 68.75%, #000000 100%)',
         'blue-gradient': 'linear-gradient(to right, #67E4FF, #009ED0)',
         'black-gradient': 'linear-gradient(to right, #303030, #000000)',
+        'blue-gradient-1': 'linear-gradient(45deg, #67E4FF 0%,#009ED0 100%)',
       },
       boxShadow: {
         form: '87px 79px 47px rgba(0, 0, 0, 0.01), 49px 45px 40px rgba(0, 0, 0, 0.05), 22px 20px 29px rgba(0, 0, 0, 0.09), 5px 5px 16px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);',
@@ -129,6 +130,7 @@ module.exports = {
     },
     fontFamily: {
       larken: 'Larken, sans-serif',
+      ibm: 'IBM Plex Mono',
     },
   },
   plugins: [],

@@ -41,10 +41,13 @@ const Header: React.FC<{}> = () => {
           <div className="flex items-center justify-between">
             {/* Empty div to balance the space */}
             <div className="flex-1"></div>
-            <div className="flex justify-center flex-1" onClick={() => {
-                    navigate('/')
-                  }}>
-              <img src="/Logo.png" alt="Transca Vault Logo" />
+            <div
+              className="flex justify-center flex-1"
+              onClick={() => {
+                navigate('/')
+              }}
+            >
+              <img src="/Logo.svg" alt="Transca Vault Logo" />
             </div>
             <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end">
               <ConnectionSettings />

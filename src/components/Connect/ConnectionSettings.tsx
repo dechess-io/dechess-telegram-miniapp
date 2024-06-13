@@ -26,7 +26,7 @@ export const resolverError = (key: string, type: string, message: string) => {
   return { [key]: { type, message } }
 }
 
-export function ConnectionSettings(){
+export function ConnectionSettings() {
   const [isLoading, setIsLoading] = useState(false)
 
   const { addPopup } = usePopups()

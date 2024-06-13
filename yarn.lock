@@ -3093,6 +3093,14 @@ react-router@6.23.1:
   dependencies:
     "@remix-run/router" "1.16.1"
 
+react-semicircle-progressbar@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-semicircle-progressbar/-/react-semicircle-progressbar-1.1.0.tgz#495a28cc9687e9ab6fda34b99a714b0f976d2789"
+  integrity sha512-OJ7XXkQrEL+q3Ja7zIOCP0CuOQyZMq/JTAaHcSFtJWJPtqkfU8mFos8PO5f+ZChWMNI5xomAE5LTcom6n52umg==
+  dependencies:
+    react "^18.2.0"
+    react-dom "^18.2.0"
+
 react-style-singleton@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-style-singleton/-/react-style-singleton-2.2.1.tgz#f99e420492b2d8f34d38308ff660b60d0b1205b4"
