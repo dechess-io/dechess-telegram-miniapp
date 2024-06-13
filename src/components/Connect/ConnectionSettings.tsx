@@ -93,14 +93,14 @@ export function ConnectionSettings() {
   if (connectionStatus === 'disconnected' && !currentAccount) {
     return (
       <ConnectButton
-        className="!text-white bg-gradient-to-r from-green-500 via-blue-500 to-green-500 !rounded-lg font-bold  text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer"
-        connectText={'connect wallet'}
+        className="!text-black bg-blue-gradient !rounded-lg font-bold  text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer"
+        connectText={'Connect'}
       />
     )
   }
   if (hasJWT() && currentAccount && currentAccount.publicKey) {
     return (
-      <div className="!text-white bg-gradient-to-r from-green-500 via-blue-500 to-green-500 !rounded-lg font-bold  text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer">
+      <div className="!text-black bg-blue-gradient !rounded-lg font-bold  text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer">
         <div>{truncateSuiTx(currentAccount.address)}</div>
       </div>
     )

@@ -122,7 +122,7 @@ const Game: React.FC<{}> = () => {
     })
 
     newSquares[square] = newSquares[square] = {
-      background: 'rgba(255, 255, 0, 0.4)',
+      background: 'rgba(123, 97, 255, 1)',
     }
 
     setOptionSquares(newSquares)
@@ -247,7 +247,7 @@ const Game: React.FC<{}> = () => {
   }
 
   function onSquareRightClick(square: any) {
-    const colour = 'rgba(0, 0, 255, 0.4)'
+    const colour = 'rgba(123, 97, 255, 1)'
     setRightClickedSquares({
       ...rightClickedSquares,
       [square]:
@@ -347,12 +347,18 @@ const Game: React.FC<{}> = () => {
     }
   }
 
+  const [activeButton, setActiveButton] = useState(null)
+
+  const handleButtonClick = (buttonId: any) => {
+    setActiveButton(buttonId)
+  }
+
   const onShowGame = () => {
     return (
-      <div className="relative" style={{ height: '500px', width: '500px', cursor: 'pointer' }}>
+      <div className="relative" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
         <div className="flex flex-col space-y-4">
           {onShowPlayerTop()}
-          <div className="relative">
+          <div className="relative border-8 border-white rounded-lg">
             <Board
               boardOrientation={isOrientation()}
               position={game.fen()}
@@ -363,8 +369,14 @@ const Game: React.FC<{}> = () => {
               onSquareRightClick={onSquareRightClick}
               onPromotionPieceSelect={onPromotionPieceSelect}
               customBoardStyle={{
-                borderRadius: '4px',
+                // borderRadius: '8px',
                 boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+              }}
+              customLightSquareStyle={{
+                backgroundColor: '#E8EDF9',
+              }}
+              customDarkSquareStyle={{
+                backgroundColor: '#B7C0D8',
               }}
               customSquareStyles={{
                 ...moveSquares,
@@ -376,16 +388,34 @@ const Game: React.FC<{}> = () => {
             />
             {(game.isGameOver() || game.isDraw()) && (
               <div
-                className={`absolute top-1/3 left-[50px] w-[400px] ${
+                className={`absolute top-1/4 left-[50px] w-[400px] ${
                   isHiddenGameStatus && 'hidden'
                 }`}
                 onClick={() => setIsHiddenGameStatus(true)}
               >
-                <Popup className="bg-gray-50 w-[400px]">
+                <Popup className="bg-grey-100 w-[400px] h-238">
                   <h1 className="mb-4 text-center font-bold text-[20px]">
                     {game.isGameOver() && (
                       <div>
-                        {game.turn() === 'b' ? truncateSuiTx(player1) : truncateSuiTx(player2)}
+                        <h2 className="text-white ">Game Over</h2>
+
+                        <div className="flex flex-row pt-5">
+                          <div className="flex-auto p-2">
+                            <button
+                              className={`bg-gray-900 font-bold  rounded-lg h-54 w-127 hover:bg-blue-gradient`}
+                            >
+                              <span className="text-white text-sm">New Game</span>
+                            </button>
+                          </div>
+                          <div className="flex-auto p-2">
+                            <button
+                              className={`bg-gray-900 font-bold rounded-lg h-54 w-127 hover:bg-blue-gradient`}
+                              onClick={() => handleButtonClick('rapid-2')}
+                            >
+                              <span className="text-white text-sm">Game Overview</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
                     {game.isDraw() && <div>Draw</div>}
@@ -421,7 +451,7 @@ const Game: React.FC<{}> = () => {
     return (
       <>
         <Header />
-        <div className="flex p-8 md:ml-64 mt-14 bg-gray-100 h-screen">{onShowGame()}</div>
+        <div className="flex justify-center items-center bg-gray-1000 h-screen">{onShowGame()}</div>
       </>
     )
   }

@@ -5,7 +5,7 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import App from './App'
 import Game from './components/Chess/Game'
 import PopupProvider from './components/Popup/PopupProvider'
-
+import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
 import './styles/main.scss'
 
@@ -13,6 +13,9 @@ import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/
 import { getFullnodeUrl } from '@mysten/sui/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@mysten/dapp-kit/dist/index.css'
+import Mode from './mode'
+
+WebApp.ready()
 
 const networkConfig = {
   testnet: {
@@ -37,6 +40,7 @@ const router = createBrowserRouter([
         element: <App />,
       },
       { path: '/game/:id', element: <Game /> },
+      { path: '/mode', element: <Mode /> },
       // { path: '/tournament', element: <TournamentBoard /> },
       // { path: "/tournament", element: <Tournament2 /> },
     ],

@@ -100,115 +100,129 @@ function App() {
     navigate(`/game/${game_id}`)
   }
 
+  const handlePlayClick = () => {
+    navigate('/mode')
+  }
+
   const onCreateGame = async () => {
-    return addPopup({
-      Component: () => {
-        return <PopupCreateGame />
-      },
+    // return addPopup({
+    //   Component: () => {
+    //     return <PopupCreateGame />
+    //   },
+    // })
+    socket.emit('createGame', (response: any) => {
+      if (response.status === 200) {
+        navigate(`/game/${response.board.game_id}`)
+        // setIsLoadingCreateGame(false)
+        // removeAll()
+      } else if (response.status === 202) {
+        console.log('Waiting for an opponent...')
+      } else {
+        console.error('Failed to create game')
+        // setIsLoadingCreateGame(false)
+      }
+    })
+
+    socket.on('createGame', async function (data) {
+      if (data.status === 200) {
+        navigate(`/game/${data.board.game_id}`)
+        // setIsLoadingCreateGame(false)
+        // removeAll()
+      }
     })
   }
 
   return (
     <>
       <Header />
-      <div className="flex flex-col pt-4 bg-black h-screen">
+      <div className="flex flex-col pt-4 bg-gray-1000">
         <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            <div>
-              <h1>Nguyen Le</h1>
-            </div>
-
-            <div className="flex flex-row">
+            <div className="flex flex-row bg-black-gradient w-398 h-227 rounded-lg">
               <div className="flex-auto p-4">
                 <div className="w-100 h-100 justify-center items-center">
                   <CircularProgressbar value={60} />
                 </div>
               </div>
-              <div className="flex-auto p-4">
+              <div className="flex-auto  rounded-lg">
                 <div>
                   <div>
-                    <h3>ELO RATING</h3>
+                    <h3>Elo Rating</h3>
                   </div>
-                  <div className="space-x-4 p-1">
-                    <button
-                      className="bg-gray-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
-                      onClick={() => onCreateGame()}
-                    >
-                      Elo 1500
-                    </button>
+                  <div className="space-x-2 p-1">
+                    <div className="bg-grey-100 flex flex-col items-center justify-center rounded-lg h-54 w-137">
+                      <span className="text-white">Rabit</span>
+                      <div className="flex flex-row items-center">
+                        <img src="/QuickLock.png" alt="Leaderboard" className="h-24 w-24" />
+                        <span className="text-white">500</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-x-4 p-1">
-                    <button
-                      className="bg-gray-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
-                      onClick={() => onCreateGame()}
-                    >
-                      Elo 1500
-                    </button>
+                  <div className="space-x-2 p-1">
+                    <div className="bg-grey-100 flex flex-col items-center justify-center rounded-lg h-54 w-137">
+                      <span className="text-white">Bullet</span>
+                      <div className="flex flex-row items-center">
+                        <img src="/bullet.png" alt="Leaderboard" className="h-24 w-24" />
+                        <span className="text-white">500</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-x-4 p-1">
-                    <button
-                      className="bg-gray-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
-                      onClick={() => onCreateGame()}
-                    >
-                      Elo 1500
-                    </button>
+                  <div className="space-x-2 p-1">
+                    <div className="bg-grey-100 flex flex-col items-center justify-center rounded-lg h-54 w-137">
+                      <span className="text-white">Blitz</span>
+                      <div className="flex flex-row items-center">
+                        <img src="/Thunder.png" alt="Leaderboard" className="h-24 w-24" />
+                        <span className="text-white">500</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="flex flex-row">
-              <div className="flex-auto p-4">
-                <div className="space-x-4">
-                  <button
-                    className="bg-vanilla-100 text-black font-bold py-2 px-6 rounded-lg h-55 w-155"
-                    onClick={() => onCreateGame()}
-                  >
-                    Leaderboard
-                  </button>
-                </div>
+              <div className="flex-auto p-2">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                  <span className="text-white">Leaderboard</span>
+                  <div className="flex items-center justify-center space-x-2">
+                    <img src="/Group.png" alt="Leaderboard" className="h-80 w-80" />
+                  </div>
+                </button>
               </div>
-              <div className="flex-auto p-4">
-                <div className="space-x-4">
-                  <button
-                    className="bg-vanilla-100 text-black font-bold py-2 px-6 rounded-lg h-55 w-155"
-                    onClick={() => onCreateGame()}
-                  >
-                    Quest
-                  </button>
-                </div>
+              <div className="flex-auto p-2">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                  <span className="text-white">Calendar</span>
+                  <div className="flex items-center justify-center space-x-2">
+                    <img src="/Calendar.png" alt="Calendar" className="h-80 w-80" />
+                  </div>
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-row p-2">
+              <div className="flex-auto p-2">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                  <span className="text-white">Robot</span>
+                  <div className="flex items-center justify-center space-x-2">
+                    <img src="/Robot.png" alt="Robot" className="h-80 w-80" />
+                  </div>
+                </button>
+              </div>
+              <div className="flex-auto p-2">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                  <span className="text-white">Puzzle</span>
+                  <div className="flex items-center justify-center space-x-2">
+                    <img src="/Puzzle.png" alt="Puzzle" className="h-80 w-80" />
+                  </div>
+                </button>
               </div>
             </div>
 
-            <div>
-              <h1 className="font-semibold text-3xl leading-6 mt-5">Chess Mode</h1>
-            </div>
-
-            <div>
-              <div className="space-x-4">
-                <button
-                  className="bg-gray-900 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg m-5 h-100 w-342"
-                  onClick={() => onCreateGame()}
-                >
-                  Play
-                </button>
-              </div>
-              <div className="space-x-4">
-                <button
-                  className="bg-gray-900 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg m-5 h-100 w-342"
-                  onClick={() => onCreateGame()}
-                >
-                  Play versus bot
-                </button>
-              </div>
-              <div className="space-x-4">
-                <button
-                  className="bg-gray-900 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg m-5 h-100 w-342"
-                  onClick={() => onCreateGame()}
-                >
-                  Puzzles
-                </button>
-              </div>
+            <div className="flex-auto p-4">
+              <button
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-398"
+                onClick={() => handlePlayClick()}
+              >
+                <span>Play</span>
+              </button>
             </div>
           </div>
         </div>
