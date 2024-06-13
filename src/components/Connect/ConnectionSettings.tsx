@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { truncateSuiTx } from '../../services/address'
 import cn from '../../services/cn'
@@ -8,6 +8,7 @@ import Input from '../Input/Input'
 import Popup from '../Popup/Popup'
 import { usePopups } from '../Popup/PopupProvider'
 import restApi from '../../services/api'
+import { WalletContractV4, TonClient, fromNano } from '@ton/ton'
 
 import {
   ConnectButton,
@@ -21,35 +22,81 @@ import { verifyPersonalMessageSignature } from '@mysten/sui/verify'
 import { useAppDispatch } from '../../redux/store'
 import { getLoginMessage } from '../../redux/account/account.reducer'
 import { Avatar, Badge } from '@material-tailwind/react'
+import {
+  THEME,
+  TonConnectButton,
+  TonConnectUIProvider,
+  useTonConnectUI,
+  useTonWallet,
+} from '@tonconnect/ui-react'
+import { TonProofDemoApi } from '../../services/ton'
+import useInterval from '../../hooks/useInterval'
 
 export const resolverError = (key: string, type: string, message: string) => {
   return { [key]: { type, message } }
 }
 
-export function ConnectionSettings(){
-  const [isLoading, setIsLoading] = useState(false)
+export function ConnectionSettings() {
+  const firstProofLoading = useRef<boolean>(true)
 
-  const { addPopup } = usePopups()
+  const [data, setData] = useState({})
+  const wallet = useTonWallet()
+  const [authorized, setAuthorized] = useState(false)
+  const [tonConnectUI] = useTonConnectUI()
+  const recreateProofPayload = useCallback(async () => {
+    if (firstProofLoading.current) {
+      tonConnectUI.setConnectRequestParameters({ state: 'loading' })
+      firstProofLoading.current = false
+    }
+    const payload = await TonProofDemoApi.generatePayload()
 
-  // useEffect(() => {
-  //   setIsLoading(true);
+    if (payload) {
+      tonConnectUI.setConnectRequestParameters({ state: 'ready', value: payload })
+    } else {
+      tonConnectUI.setConnectRequestParameters(null)
+    }
+  }, [tonConnectUI, firstProofLoading])
 
-  //   const substrateChain = getSubstrateChain(ChainWallet.network);
-  //   const substrateWallet = getSubstrateWallet(ChainWallet.wallet);
+  if (firstProofLoading.current) {
+    recreateProofPayload()
+  }
 
-  //   connect?.(substrateChain, substrateWallet);
-  //   setIsLoading(false);
-  // }, []);
+  useInterval(recreateProofPayload, TonProofDemoApi.refreshIntervalMs)
 
-  // const handleConnect = async () => {
-  //   setIsLoading(true);
+  useEffect(
+    () =>
+      tonConnectUI.onStatusChange(async (w) => {
+        console.log('7s200:levien', w?.connectItems?.tonProof)
 
-  //   const substrateChain = getSubstrateChain(ChainWallet.network);
-  //   const substrateWallet = getSubstrateWallet(ChainWallet.wallet);
+        if (!w) {
+          TonProofDemoApi.reset()
+          setAuthorized(false)
+          return
+        }
 
-  //   await connect?.(substrateChain, substrateWallet);
-  //   setIsLoading(false);
-  // };
+        if (w.connectItems?.tonProof) {
+          await TonProofDemoApi.checkProof((w.connectItems.tonProof as any).proof, w.account)
+        }
+
+        if (!TonProofDemoApi.accessToken) {
+          tonConnectUI.disconnect()
+          setAuthorized(false)
+          return
+        }
+
+        setAuthorized(true)
+      }),
+    [tonConnectUI]
+  )
+
+  const handleClick = useCallback(async () => {
+    if (!wallet) {
+      return
+    }
+    const response = await TonProofDemoApi.getAccountInfo(wallet.account)
+
+    setData(response)
+  }, [wallet])
 
   function hasJWT() {
     let flag = false
@@ -59,147 +106,156 @@ export function ConnectionSettings(){
 
   // useEffect(() => {}, [connect, isConnected, activeAccount]);
 
-  const onHandleLogin = () => {
-    addPopup({
-      Component: () => {
-        const [isLoadingLogin, setIsLoadingLogin] = useState(false)
-        const {
-          register,
-          handleSubmit,
-          setValue,
-          watch,
-          formState: { errors },
-        } = useForm<{ address: string; password: string }>({
-          mode: 'onChange',
-          reValidateMode: 'onChange',
-          shouldFocusError: true,
-          shouldUnregister: false,
-          resolver: async (values) => {
-            let errors = {}
+  // const onHandleLogin = () => {
+  //   addPopup({
+  //     Component: () => {
+  //       const [isLoadingLogin, setIsLoadingLogin] = useState(false)
+  //       const {
+  //         register,
+  //         handleSubmit,
+  //         setValue,
+  //         watch,
+  //         formState: { errors },
+  //       } = useForm<{ address: string; password: string }>({
+  //         mode: 'onChange',
+  //         reValidateMode: 'onChange',
+  //         shouldFocusError: true,
+  //         shouldUnregister: false,
+  //         resolver: async (values) => {
+  //           let errors = {}
 
-            if (!values.password) {
-              errors = {
-                ...errors,
-                ...resolverError('password', 'required', 'password is required'),
-              }
+  //           if (!values.password) {
+  //             errors = {
+  //               ...errors,
+  //               ...resolverError('password', 'required', 'password is required'),
+  //             }
 
-              return { values, errors }
-            }
+  //             return { values, errors }
+  //           }
 
-            if (values.password.length < 5) {
-              errors = {
-                ...errors,
-                ...resolverError('password', 'required', 'password must be better than 5 chars'),
-              }
-              return { values, errors }
-            }
+  //           if (values.password.length < 5) {
+  //             errors = {
+  //               ...errors,
+  //               ...resolverError('password', 'required', 'password must be better than 5 chars'),
+  //             }
+  //             return { values, errors }
+  //           }
 
-            return { values, errors }
-          },
-        })
-        const fields = watch()
+  //           return { values, errors }
+  //         },
+  //       })
+  //       const fields = watch()
 
-        const submit = async () => {
-          //reqres registered sample user
-          setIsLoadingLogin(true)
+  //       const submit = async () => {
+  //         //reqres registered sample user
+  //         setIsLoadingLogin(true)
 
-          const loginPayload = {
-            address: fields.address,
-            password: fields.password,
-          }
+  //         const loginPayload = {
+  //           address: fields.address,
+  //           password: fields.password,
+  //         }
 
-          restApi
-            .post('/create-user', loginPayload)
-            .then((response) => {
-              if (response.data.status === 200) {
-                const token = response.data.data
-                localStorage.setItem('token', token)
-                setAuthToken(token)
-                window.location.href = '/'
-              }
-              setIsLoadingLogin(false)
-              return
-            })
-            .catch((err) => {
-              console.log(err)
-              setIsLoadingLogin(false)
-              return
-            })
-        }
-        return (
-          <Popup className="bg-gray-50 min-w-[500px] max-w-[600px]">
-            <form
-              onSubmit={handleSubmit(submit)}
-              className="flex flex-col justify-center items-center space-y-2"
-            >
-              <div className="py-2 w-1/2">
-                <div className="text-[16px] font-bold">Account</div>
-                <div className="max-w-[500px] flex justify-between items-center border rounded-md my-2">
-                  <Input
-                    className={cn(
-                      '!text-center border-none !rounded-md border-transparent focus:border-transparent focus:!ring-0 !text-[14px] !pl-0 !pt-1 !pb-1 !leading-[30px]'
-                    )}
-                    placeholder="address"
-                    autoComplete="off"
-                    type="text"
-                    {...register('address', {
-                      required: { value: true, message: 'Please fill duration' },
-                    })}
-                  />
-                </div>
-              </div>
-              <div className="py-2 w-1/2">
-                <div className="text-[16px] font-bold">Password</div>
-                <div className="text-[13px]">Enter Password</div>
+  //         restApi
+  //           .post('/create-user', loginPayload)
+  //           .then((response) => {
+  //             if (response.data.status === 200) {
+  //               const token = response.data.data
+  //               localStorage.setItem('token', token)
+  //               setAuthToken(token)
+  //               window.location.href = '/'
+  //             }
+  //             setIsLoadingLogin(false)
+  //             return
+  //           })
+  //           .catch((err) => {
+  //             console.log(err)
+  //             setIsLoadingLogin(false)
+  //             return
+  //           })
+  //       }
+  //       return (
+  //         <Popup className="bg-gray-50 min-w-[500px] max-w-[600px]">
+  //           <form
+  //             onSubmit={handleSubmit(submit)}
+  //             className="flex flex-col justify-center items-center space-y-2"
+  //           >
+  //             <div className="py-2 w-1/2">
+  //               <div className="text-[16px] font-bold">Account</div>
+  //               <div className="max-w-[500px] flex justify-between items-center border rounded-md my-2">
+  //                 <Input
+  //                   className={cn(
+  //                     '!text-center border-none !rounded-md border-transparent focus:border-transparent focus:!ring-0 !text-[14px] !pl-0 !pt-1 !pb-1 !leading-[30px]'
+  //                   )}
+  //                   placeholder="address"
+  //                   autoComplete="off"
+  //                   type="text"
+  //                   {...register('address', {
+  //                     required: { value: true, message: 'Please fill duration' },
+  //                   })}
+  //                 />
+  //               </div>
+  //             </div>
+  //             <div className="py-2 w-1/2">
+  //               <div className="text-[16px] font-bold">Password</div>
+  //               <div className="text-[13px]">Enter Password</div>
 
-                <div className="max-w-[500px] flex justify-between items-center border rounded-md my-2">
-                  <Input
-                    className={cn(
-                      '!text-center border-none !rounded-md border-transparent focus:border-transparent focus:!ring-0 !text-[14px] !pl-0 !pt-1 !pb-1 !leading-[30px]'
-                    )}
-                    placeholder="password"
-                    autoComplete="off"
-                    type="password"
-                    {...register('password', {
-                      required: { value: true, message: 'Please fill duration' },
-                    })}
-                  />
-                </div>
-                <div className="text-red-500">{errors.password?.message}</div>
-              </div>
-              <Button
-                className="cursor-pointer bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 !rounded-3xl font-bold text-white min-w-[200px] leading-[21px]"
-                size="small"
-                type="submit"
-                loading={isLoading}
-              >
-                Login
-              </Button>
-            </form>
-          </Popup>
-        )
-      },
-    })
-  }
+  //               <div className="max-w-[500px] flex justify-between items-center border rounded-md my-2">
+  //                 <Input
+  //                   className={cn(
+  //                     '!text-center border-none !rounded-md border-transparent focus:border-transparent focus:!ring-0 !text-[14px] !pl-0 !pt-1 !pb-1 !leading-[30px]'
+  //                   )}
+  //                   placeholder="password"
+  //                   autoComplete="off"
+  //                   type="password"
+  //                   {...register('password', {
+  //                     required: { value: true, message: 'Please fill duration' },
+  //                   })}
+  //                 />
+  //               </div>
+  //               <div className="text-red-500">{errors.password?.message}</div>
+  //             </div>
+  //             <Button
+  //               className="cursor-pointer bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 !rounded-3xl font-bold text-white min-w-[200px] leading-[21px]"
+  //               size="small"
+  //               type="submit"
+  //               loading={isLoading}
+  //             >
+  //               Login
+  //             </Button>
+  //           </form>
+  //         </Popup>
+  //       )
+  //     },
+  //   })
+  // }
 
-  if (!hasJWT()) {
+  if (authorized) {
     return (
-      <div
-        className="bg-gradient-to-r from-green-500 via-blue-500 to-green-500 !rounded-lg font-bold text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer"
-        onClick={() => onHandleLogin()}
-      >
-        <div className="font-bold">Login</div>
+      <div className="text-white">
+        <TonConnectButton />
       </div>
     )
   }
+  return <TonConnectButton />
 
-  if (hasJWT()) {
-    return (
-      <div className="bg-gradient-to-r from-green-500 via-blue-500 to-green-500 !rounded-lg font-bold text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer">
-        <div className="font-bold">{}</div>
-      </div>
-    )
-  }
+  // if (!hasJWT()) {
+  //   return (
+  //     <div
+  //       className="bg-gradient-to-r from-green-500 via-blue-500 to-green-500 !rounded-lg font-bold text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer"
+  //       onClick={() => onHandleLogin()}
+  //     >
+  //       <div className="font-bold">Login</div>
+  //     </div>
+  //   )
+  // }
+
+  // if (hasJWT()) {
+  //   return (
+  //     <div className="bg-gradient-to-r from-green-500 via-blue-500 to-green-500 !rounded-lg font-bold text-center text-white min-w-[150px] leading-[21px] py-1 cursor-pointer">
+  //       <div className="font-bold">{}</div>
+  //     </div>
+  //   )
+  // }
 }
 
 // export function ConnectionSettings() {

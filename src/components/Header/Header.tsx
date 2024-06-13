@@ -36,14 +36,16 @@ const Header: React.FC<{}> = () => {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-gray-1000">
-        <div className="px-3 py-3 lg:px-5 lg:pl-3">
+      <nav className="fixed top-0 z-50 w-full mx-auto bg-gray-1000">
+        <div className="mx-auto max-w-[398px] px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             {/* Empty div to balance the space */}
-            <div className="flex-1"></div>
-            <div className="flex justify-center flex-1" onClick={() => {
-                    navigate('/')
-                  }}>
+            <div
+              className="flex justify-center flex-1"
+              onClick={() => {
+                navigate('/')
+              }}
+            >
               <img src="/Logo.png" alt="Transca Vault Logo" />
             </div>
             <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end">

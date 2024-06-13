@@ -8,7 +8,6 @@ type Props = {
 }
 const Progress = ({ totalGames, wins, losses }: Props) => {
   const lossPercentage = (losses / totalGames) * 100
-  console.log(lossPercentage)
   return (
     <div className="vertical-semi-circle-progress-chart">
       <div className="chart-and-labels">

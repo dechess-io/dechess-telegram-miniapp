@@ -11,6 +11,7 @@ import restApi from './services/api'
 import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import Progress from './components/ProgressChart/Progress'
+import { THEME, TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react'
 
 function App() {
   const navigate = useNavigate()
@@ -137,7 +138,7 @@ function App() {
     <>
       <Header />
       <div className="flex flex-col pt-4 bg-gray-1000">
-        <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
+        <div className="border-none rounded-xl max-w-[398px] mx-auto min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             <div className="flex flex-row bg-black-gradient w-398 h-227 rounded-lg">
               <div className="flex-auto ">
@@ -178,8 +179,8 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-row">
-              <div className="flex-auto p-2">
+            <div className="flex flex-row space-x-2">
+              <div className="flex-auto py-2">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Leaderboard</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -187,7 +188,7 @@ function App() {
                   </div>
                 </button>
               </div>
-              <div className="flex-auto p-2">
+              <div className="flex-auto py-2">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Calendar</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -196,8 +197,8 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="flex flex-row p-2">
-              <div className="flex-auto p-2">
+            <div className="flex flex-row space-x-2 p-2">
+              <div className="flex-auto">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Robot</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -205,7 +206,7 @@ function App() {
                   </div>
                 </button>
               </div>
-              <div className="flex-auto p-2">
+              <div className="flex-auto">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Puzzle</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -217,7 +218,7 @@ function App() {
 
             <div className="flex-auto p-4">
               <button
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-398"
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[380px]"
                 onClick={() => handlePlayClick()}
               >
                 <span>Play</span>
