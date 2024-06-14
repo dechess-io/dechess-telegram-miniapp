@@ -10,11 +10,12 @@ import { truncateSuiTx } from '../../services/address'
 import LoadingGame from '../Loading/Loading'
 import Popup from '../Popup/Popup'
 import Header from '../Header/Header'
+import { useTonWallet } from '@tonconnect/ui-react'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
   const [isStartGame, setIsStartGame] = useState(true)
-
+  const wallet = useTonWallet()
   const [game, setGame] = useState<Chess | any>()
   const [raw, setRaw] = useState<any>(null)
 
@@ -96,6 +97,7 @@ const Game: React.FC<{}> = () => {
       socket.off('start', onStart)
     }
   }, [])
+  console.log('wallet', wallet?.account.address)
 
   function getMoveOptions(square: Square) {
     const moves = game.moves({
@@ -129,16 +131,16 @@ const Game: React.FC<{}> = () => {
     setOptionSquares(newSquares)
     return true
   }
-
+  console.log('game', game)
   function onSquareClick(square: Square) {
     // if currentAccount
     if (true) {
-      // if (player1 !== currentAccount.address && turnPlay === 'w') {
-      //     return
-      // }
-      // if (player2 !== currentAccount.address && turnPlay === 'b') {
-      //     return
-      // }
+      if (player1 !== wallet?.account.address && game._turn === 'w') {
+        return
+      }
+      if (player2 !== wallet?.account.address && game._turn === 'b') {
+        return
+      }
 
       setRightClickedSquares({})
 
@@ -259,73 +261,73 @@ const Game: React.FC<{}> = () => {
     // console.log("7s200:onSquareRightClick", rightClickedSquares);
   }
 
-  // const onShowPlayerTop = () => {
-  //   if (currentAccount?.address !== player1 && currentAccount?.address !== player2) {
-  //     return (
-  //       <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
-  //         <div className="flex justify-center items-center space-x-2">
-  //           <ChessBishop color="white" size={26} />
-  //           <p className="font-bold text-[14px] text-white">
-  //             {raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
-  //           </p>
-  //         </div>
-  //       </div>
-  //     )
-  //   } else {
-  //     if (currentAccount?.address === player2) {
-  //       return (
-  //         <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
-  //           <div className="flex justify-center items-center space-x-2">
-  //             <ChessBishop color="white" size={26} />
-  //             <p className="font-bold  text-white">{truncateSuiTx(player1)}</p>
-  //           </div>
-  //         </div>
-  //       )
-  //     } else {
-  //       return (
-  //         <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
-  //           <div className="flex justify-center items-center space-x-2">
-  //             <ChessBishop color="white" size={26} />
-  //             <p className="font-bold text-[14px] text-white">{truncateSuiTx(player2)}</p>
-  //           </div>
-  //         </div>
-  //       )
-  //     }
-  //   }
-  // }
+  const onShowPlayerTop = () => {
+    if (wallet?.account.address !== player1 && wallet?.account.address !== player2) {
+      return (
+        <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
+          <div className="flex justify-center items-center space-x-2">
+            <ChessBishop color="white" size={26} />
+            <p className="font-bold text-[14px] text-white">
+              {raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
+            </p>
+          </div>
+        </div>
+      )
+    } else {
+      if (wallet?.account.address === player2) {
+        return (
+          <div className="px-4 py-2  w-2/3 bg-blue-400 border border-none rounded-xl shadow-xl">
+            <div className="flex justify-center items-center space-x-2">
+              <ChessBishop color="white" size={26} />
+              <p className="font-bold  text-white">{truncateSuiTx(player1)}</p>
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
+            <div className="flex justify-center items-center space-x-2">
+              <ChessBishop color="white" size={26} />
+              <p className="font-bold text-[14px] text-white">{truncateSuiTx(player2)}</p>
+            </div>
+          </div>
+        )
+      }
+    }
+  }
 
-  // const onShowPlayerBottom = () => {
-  //   if (currentAccount?.address !== player1 && currentAccount?.address !== player2) {
-  //     return (
-  //       <div className="px-4 py-2 hel w-2/3 border border-none rounded-xl shadow-xl">
-  //         <div className="flex justify-center items-center space-x-2">
-  //           <ChessBishop color="white" size={26} />
-  //           <p className="font-bold text-[14px] text-white">{truncateSuiTx(raw.player_1)}</p>
-  //         </div>
-  //       </div>
-  //     )
-  //   } else {
-  //     if (currentAccount?.address === player1) {
-  //       return (
-  //         <div className="px-4 py-2 w-2/3 border border-none rounded-xl shadow-xl">
-  //           <div className="flex justify-center items-center space-x-2">
-  //             <ChessBishop color="white" size={26} />
-  //             <p className="font-bold text-[14px]">{truncateSuiTx(player1)}</p>
-  //           </div>
-  //         </div>
-  //       )
-  //     } else {
-  //       return (
-  //         <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
-  //           <div className="flex justify-center items-center space-x-2">
-  //             <ChessBishop color="white" size={26} />
-  //             <p className="font-bold text-[14px]">{truncateSuiTx(player2)}</p>
-  //           </div>
-  //         </div>
-  //       )
-  //     }
-  //   }
-  // }
+  const onShowPlayerBottom = () => {
+    if (wallet?.account.address !== player1 && wallet?.account.address !== player2) {
+      return (
+        <div className="px-4 py-2 hel w-2/3 border border-none rounded-xl shadow-xl">
+          <div className="flex justify-center items-center space-x-2">
+            <ChessBishop color="white" size={26} />
+            <p className="font-bold text-[14px] text-white">{truncateSuiTx(raw.player_1)}</p>
+          </div>
+        </div>
+      )
+    } else {
+      if (wallet?.account.address === player1) {
+        return (
+          <div className="px-4 py-2 w-2/3 bg-blue-400 border border-none rounded-xl shadow-xl">
+            <div className="flex justify-center items-center space-x-2">
+              <ChessBishop color="white" size={26} />
+              <p className="font-bold text-[14px]">{truncateSuiTx(player1)}</p>
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
+            <div className="flex justify-center items-center space-x-2">
+              <ChessBishop color="white" size={26} />
+              <p className="font-bold text-[14px]">{truncateSuiTx(player2)}</p>
+            </div>
+          </div>
+        )
+      }
+    }
+  }
 
   const onShowWaitingStartGame = () => {
     if (!isStartGame) {
@@ -341,11 +343,11 @@ const Game: React.FC<{}> = () => {
   }
 
   const isOrientation = () => {
-    // if (currentAccount?.address === player1) {
-    //   return 'white'
-    // } else {
-    //   return 'black'
-    // }
+    if (wallet?.account.address === player1) {
+      return 'white'
+    } else {
+      return 'black'
+    }
   }
 
   const [activeButton, setActiveButton] = useState(null)
@@ -364,21 +366,7 @@ const Game: React.FC<{}> = () => {
   }, [moveLists])
 
   const onCreateGame = async () => {
-    socket.emit('createGame', (response: any) => {
-      if (response.status === 200) {
-        navigate(`/game/${response.board.game_id}`)
-      } else if (response.status === 202) {
-        console.log('Waiting for an opponent...')
-      } else {
-        console.error('Failed to create game')
-      }
-    })
-
-    socket.on('createGame', async function (data) {
-      if (data.status === 200) {
-        navigate(`/game/${data.board.game_id}`)
-      }
-    })
+    navigate(`/mode`)
   }
 
   const onShowGame: any = () => {
@@ -399,10 +387,10 @@ const Game: React.FC<{}> = () => {
                 ))}
               </div>
             </div>
-            {/* {onShowPlayerTop()} */}
+            {onShowPlayerTop()}
             <div className="relative border-8 border-white rounded-lg">
               <Board
-                // boardOrientation={isOrientation()}
+                boardOrientation={isOrientation()}
                 position={game.fen()}
                 id="ClickToMove"
                 animationDuration={200}
@@ -466,7 +454,7 @@ const Game: React.FC<{}> = () => {
               )}
               {onShowWaitingStartGame()}
             </div>
-            {/* {onShowPlayerBottom()} */}
+            {onShowPlayerBottom()}
           </div>
         </div>
       </>
@@ -479,7 +467,7 @@ const Game: React.FC<{}> = () => {
     return (
       <>
         <Header />
-        <div className="flex flex-col justify-start bg-gray-1000 h-screen">
+        <div className="flex flex-col pt-6 justify-start bg-gray-1000 h-screen">
           <div className="flex justify-center items-center pt-5 mt-10">{onShowGame()}</div>
         </div>
       </>
