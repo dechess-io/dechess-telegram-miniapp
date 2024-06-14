@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Disable scrolling */
-body,
-html {
-  @apply m-0 p-0 w-full h-full overflow-hidden;
+/* Hide scrollbar but still allow scrolling */
+body, html {
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

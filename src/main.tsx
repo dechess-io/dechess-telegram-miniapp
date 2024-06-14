@@ -8,9 +8,6 @@ import PopupProvider from './components/Popup/PopupProvider'
 import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
 import './styles/main.scss'
-
-import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
-import { getFullnodeUrl } from '@mysten/sui/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 import Mode from './mode'
@@ -55,15 +52,12 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig}>
-          <WalletProvider>
+
             <PopupProvider>
               <TonConnectUIProvider manifestUrl="https://localhost:5173/tonconnect-manifest.json">
                 <RouterProvider router={router}></RouterProvider>
               </TonConnectUIProvider>
             </PopupProvider>
-          </WalletProvider>
-        </SuiClientProvider>
       </QueryClientProvider>
     </Provider>
   </React.StrictMode>
