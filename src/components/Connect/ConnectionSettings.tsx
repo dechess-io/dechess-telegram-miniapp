@@ -43,23 +43,23 @@ export function ConnectionSettings() {
   const [authorized, setAuthorized] = useState(false)
   const [tonConnectUI] = useTonConnectUI()
   const recreateProofPayload = useCallback(async () => {
-    if (hasJWT()) {
-      console.log('7s200:has')
-      return
-    } else {
-      console.log('7s200:not')
-      if (firstProofLoading.current) {
-        tonConnectUI.setConnectRequestParameters({ state: 'loading' })
-        firstProofLoading.current = false
-      }
-      const payload = await TonProofDemoApi.generatePayload()
-
-      if (payload) {
-        tonConnectUI.setConnectRequestParameters({ state: 'ready', value: payload })
-      } else {
-        tonConnectUI.setConnectRequestParameters(null)
-      }
+    // if (hasJWT()) {
+    //   console.log('7s200:has')
+    //   return
+    // } else {
+    //   console.log('7s200:not')
+    if (firstProofLoading.current) {
+      tonConnectUI.setConnectRequestParameters({ state: 'loading' })
+      firstProofLoading.current = false
     }
+    const payload = await TonProofDemoApi.generatePayload()
+
+    if (payload) {
+      tonConnectUI.setConnectRequestParameters({ state: 'ready', value: payload })
+    } else {
+      tonConnectUI.setConnectRequestParameters(null)
+    }
+    // }
   }, [tonConnectUI, firstProofLoading])
 
   if (firstProofLoading.current) {
