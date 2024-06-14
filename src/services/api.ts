@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const restApi = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'http://api.dechess.io',
 })
 
 export default restApi
