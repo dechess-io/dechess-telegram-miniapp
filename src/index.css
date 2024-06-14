@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 /* Hide scrollbar but still allow scrolling */
-body, html {
+body,
+html {
   scrollbar-width: none;
 }
 
@@ -12,6 +13,6 @@ body::-webkit-scrollbar {
 }
 
 body {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
