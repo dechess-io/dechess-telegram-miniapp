@@ -56,9 +56,7 @@ root.render(
         <SuiClientProvider networks={networkConfig}>
           <WalletProvider>
             <PopupProvider>
-              <TonConnectUIProvider manifestUrl="https://miniapp.dechess.io/tonconnect-manifest.json" actionsConfiguration={
-                {twaReturnUrl: 'https://t.me/dechess_bot'}
-              }>
+              <TonConnectUIProvider manifestUrl="https://localhost:5173/tonconnect-manifest.json">
                 <RouterProvider router={router}></RouterProvider>
               </TonConnectUIProvider>
             </PopupProvider>
