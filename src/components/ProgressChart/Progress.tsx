@@ -18,19 +18,19 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
         >
           <div className="semi-circle-overlay">
             <div className="text">
-              <span className='font-ibm pr-2'>Game</span>
-              <span className='font-ibm pr-2'>{totalGames}</span>
+              <span className="font-ibm pr-2">Game</span>
+              <span className="font-ibm pr-2">{totalGames}</span>
             </div>
           </div>
         </div>
         <div className="labels">
           <div className="label win text-white">
             <div className="count win font-ibm">{wins}</div>
-            <div className=''>Win</div>
+            <div className="">Win</div>
           </div>
           <div className="label lose ">
             <div className="count lose font-ibm">{losses}</div>
-            <div className='font-ibm'>Lose</div>
+            <div className="font-ibm">Lose</div>
           </div>
         </div>
       </div>

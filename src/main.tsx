@@ -14,6 +14,7 @@ import { getFullnodeUrl } from '@mysten/sui/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@mysten/dapp-kit/dist/index.css'
 import Mode from './mode'
+import { TonConnectUIProvider } from '@tonconnect/ui-react'
 
 WebApp.ready()
 
@@ -56,7 +57,9 @@ root.render(
         <SuiClientProvider networks={networkConfig}>
           <WalletProvider>
             <PopupProvider>
-              <RouterProvider router={router}></RouterProvider>
+              <TonConnectUIProvider manifestUrl="https://localhost:5173/tonconnect-manifest.json">
+                <RouterProvider router={router}></RouterProvider>
+              </TonConnectUIProvider>
             </PopupProvider>
           </WalletProvider>
         </SuiClientProvider>
