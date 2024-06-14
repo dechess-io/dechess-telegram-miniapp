@@ -265,7 +265,7 @@ const Game: React.FC<{}> = () => {
         <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
           <div className="flex justify-center items-center space-x-2">
             <ChessBishop color="white" size={26} />
-            <p className="font-bold text-[14px]">
+            <p className="font-bold text-[14px] text-white">
               {raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
             </p>
           </div>
@@ -277,7 +277,7 @@ const Game: React.FC<{}> = () => {
           <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
             <div className="flex justify-center items-center space-x-2">
               <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px]">{truncateSuiTx(player1)}</p>
+              <p className="font-bold  text-white">{truncateSuiTx(player1)}</p>
             </div>
           </div>
         )
@@ -286,7 +286,7 @@ const Game: React.FC<{}> = () => {
           <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
             <div className="flex justify-center items-center space-x-2">
               <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px]">{truncateSuiTx(player2)}</p>
+              <p className="font-bold text-[14px] text-white">{truncateSuiTx(player2)}</p>
             </div>
           </div>
         )
@@ -300,7 +300,7 @@ const Game: React.FC<{}> = () => {
         <div className="px-4 py-2 hel w-2/3 border border-none rounded-xl shadow-xl">
           <div className="flex justify-center items-center space-x-2">
             <ChessBishop color="white" size={26} />
-            <p className="font-bold text-[14px]">{truncateSuiTx(raw.player_1)}</p>
+            <p className="font-bold text-[14px] text-white">{truncateSuiTx(raw.player_1)}</p>
           </div>
         </div>
       )
@@ -384,8 +384,8 @@ const Game: React.FC<{}> = () => {
   const onShowGame: any = () => {
     return (
       <>
-        <div className="relative" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-          <div className="flex flex-col space-y-4">
+        <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+          <div className="flex flex-col space-y-1">
             <div
               ref={moveListRef}
               className="pb-4 bg-blue-gradient-1 h-[30px] text-white overflow-hidden whitespace-nowrap"
@@ -480,7 +480,7 @@ const Game: React.FC<{}> = () => {
       <>
         <Header />
         <div className="flex flex-col justify-start bg-gray-1000 h-screen">
-          <div className="flex justify-center items-center flex-grow">{onShowGame()}</div>
+          <div className="flex justify-center items-center pt-5 mt-10">{onShowGame()}</div>
         </div>
       </>
     )

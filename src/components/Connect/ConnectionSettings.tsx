@@ -8,7 +8,12 @@ import Input from '../Input/Input'
 import Popup from '../Popup/Popup'
 import { usePopups } from '../Popup/PopupProvider'
 import restApi from '../../services/api'
-import { TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react'
+import {
+  TonConnectButton,
+  TonConnectUIProvider,
+  useTonAddress,
+  useTonWallet,
+} from '@tonconnect/ui-react'
 
 import {
   ConnectButton,
@@ -31,26 +36,6 @@ export const resolverError = (key: string, type: string, message: string) => {
 //   const [isLoading, setIsLoading] = useState(false)
 
 //   const { addPopup } = usePopups()
-
-//   // useEffect(() => {
-//   //   setIsLoading(true);
-
-//   //   const substrateChain = getSubstrateChain(ChainWallet.network);
-//   //   const substrateWallet = getSubstrateWallet(ChainWallet.wallet);
-
-//   //   connect?.(substrateChain, substrateWallet);
-//   //   setIsLoading(false);
-//   // }, []);
-
-//   // const handleConnect = async () => {
-//   //   setIsLoading(true);
-
-//   //   const substrateChain = getSubstrateChain(ChainWallet.network);
-//   //   const substrateWallet = getSubstrateWallet(ChainWallet.wallet);
-
-//   //   await connect?.(substrateChain, substrateWallet);
-//   //   setIsLoading(false);
-//   // };
 
 //   function hasJWT() {
 //     let flag = false
@@ -209,57 +194,20 @@ export function ConnectionSettings() {
   const currentAccount = useCurrentAccount()
   const { mutate: signPersonalMessage } = useSignPersonalMessage()
 
+  const address = useTonAddress()
+  const wallet = useTonWallet()
+
   const [isLoading, setIsLoading] = useState(false)
 
   const { addPopup } = usePopups()
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (
-      !localStorage.getItem('token') ||
-      localStorage.getItem('token')!.length <= 0 ||
-      !currentAccount
-    ) {
-      const tempMessage = `login::${currentAccount?.address}::${new Date().getTime()}`
-      signPersonalMessage(
-        {
-          message: new TextEncoder().encode(tempMessage),
-        },
-        {
-          onSuccess: async (result: any) => {
-            const loginPayload = {
-              address: currentAccount?.address,
-              message: tempMessage,
-              signature: result.signature,
-            }
-
-            await restApi
-              .post('/login-verify-account', loginPayload)
-              .then((response) => {
-                if (response.data.status === 200) {
-                  const token = response.data.token
-                  localStorage.setItem('token', token)
-                  setAuthToken(token)
-                  window.location.href = '/'
-                }
-                // // setIsLoadingLogin(false)
-                return
-              })
-              .catch((err) => {
-                console.log(err)
-                // setIsLoadingLogin(false)
-                return
-              })
-            // const publicKey = await verifyPersonalMessageSignature(
-            //   new TextEncoder().encode(tempMessage),
-            //   result.signature
-            // )
-            // console.log('7s200:pub', publicKey, currentAccount?.publicKey)
-          },
-        }
-      )
+    if (address !== null) {
+      localStorage.setItem('token', address)
+      setAuthToken(address)
     }
-  }, [wallets, currentAccount, connectionStatus])
+  }, [address])
 
   function hasJWT() {
     let flag = false

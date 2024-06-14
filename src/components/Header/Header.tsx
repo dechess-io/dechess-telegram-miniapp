@@ -37,7 +37,7 @@ const Header: React.FC<{}> = () => {
   return (
     <>
       <nav className="fixed top-0 z-50 w-full bg-gray-1000">
-        <div className="px-3 py-3 lg:px-5 lg:pl-3">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
             {/* Empty div to balance the space */}
             <div className="flex-1"></div>
@@ -49,7 +49,7 @@ const Header: React.FC<{}> = () => {
             >
               <img src="/Logo.svg" alt="Transca Vault Logo" />
             </div>
-            <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end">
+            <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end pr-3">
               <ConnectionSettings />
             </div>
           </div>
