@@ -48,7 +48,7 @@ const Header: React.FC<{}> = () => {
             >
               <img src="/Logo.png" alt="Transca Vault Logo" />
             </div>
-            <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end">
+            <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end pr-3">
               <ConnectionSettings />
             </div>
           </div>

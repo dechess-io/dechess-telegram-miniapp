@@ -100,16 +100,11 @@ const Mode: React.FC<{}> = () => {
   }
 
   const onCreateGame = async () => {
-    // return addPopup({
-    //   Component: () => {
-    //     return <PopupCreateGame />
-    //   },
-    // })
+    console.log('hello')
     socket.emit('createGame', (response: any) => {
+      console.log(response)
       if (response.status === 200) {
         navigate(`/game/${response.board.game_id}`)
-        // setIsLoadingCreateGame(false)
-        // removeAll()
       } else if (response.status === 202) {
         console.log('Waiting for an opponent...')
       } else {
@@ -140,172 +135,172 @@ const Mode: React.FC<{}> = () => {
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             <div>
               <div className="pt-2">
-                <div className="flex flex-row items-center">
-                  <img src="/bullet.png" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2">Bullet</span>
+                <div className="flex flex-row items-center pl-4">
+                  <img src="/bullet.svg" alt="Leaderboard" className="h-24 w-24" />
+                  <span className="text-white pl-2 font-ibm">Bullet</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'bullet-1' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('bullet-1')}
                     >
-                      <span className="text-white">1 min</span>
+                      <span className="text-white font-ibm">1 min</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'bullet-2' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('bullet-2')}
                     >
-                      <span className="text-white">1|1</span>
+                      <span className="text-white font-ibm">1|1</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'bullet-3' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('bullet-3')}
                     >
-                      <span className="text-white">2|1</span>
+                      <span className="text-white font-ibm">2|1</span>
                     </button>
                   </div>
                 </div>
               </div>
               <div className="pt-2">
-                <div className="flex flex-row items-center">
-                  <img src="/Thunder.png" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2">Blitz</span>
+                <div className="flex flex-row items-center pl-4">
+                  <img src="/Thunder.svg" alt="Leaderboard" className="h-24 w-24" />
+                  <span className="text-white pl-2 font-ibm">Blitz</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'blitz-1' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('blitz-1')}
                     >
-                      <span className="text-white">3 min</span>
+                      <span className="text-white font-ibm">3 min</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'blitz-2' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('blitz-2')}
                     >
-                      <span className="text-white">3|2</span>
+                      <span className="text-white font-ibm">3|2</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'blitz-3' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('blitz-3')}
                     >
-                      <span className="text-white">5 min</span>
+                      <span className="text-white font-ibm">5 min</span>
                     </button>
                   </div>
                 </div>
               </div>
               <div className="pt-2">
-                <div className="flex flex-row items-center">
-                  <img src="/QuickLock.png" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2">Rapid</span>
+                <div className="flex flex-row items-center pl-4">
+                  <img src="/QuickLock.svg" alt="Leaderboard" className="h-24 w-24" />
+                  <span className="text-white pl-2 font-ibm">Rapid</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'rapid-1' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('rapid-1')}
                     >
-                      <span className="text-white">10 min</span>
+                      <span className="text-white font-ibm">10 min</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'rapid-2' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('rapid-2')}
                     >
-                      <span className="text-white">15|10</span>
+                      <span className="text-white font-ibm">15|10</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'rapid-3' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('rapid-3')}
                     >
-                      <span className="text-white">30 min</span>
+                      <span className="text-white font-ibm">30 min</span>
                     </button>
                   </div>
                 </div>
               </div>
               <div className="pt-2">
-                <div className="flex flex-row items-center">
-                  <img src="/Sun.png" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2">Daily</span>
+                <div className="flex flex-row items-center pl-4">
+                  <img src="/Sun.svg" alt="Leaderboard" className="h-24 w-24" />
+                  <span className="text-white pl-2 font-ibm">Daily</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'daily-1' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('daily-1')}
                     >
-                      <span className="text-white">10 min</span>
+                      <span className="text-white font-ibm">24 hours</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'daily-2' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('daily-2')}
                     >
-                      <span className="text-white">15|10</span>
+                      <span className="text-white font-ibm">3 days</span>
                     </button>
                   </div>
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'daily-3' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('daily-3')}
                     >
-                      <span className="text-white">30 min</span>
+                      <span className="text-white font-ibm">7 days</span>
                     </button>
                   </div>
                 </div>
               </div>
 
               <div className="pt-2">
-                <div className="flex flex-row items-center">
-                  <img src="/QuickLock.png" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2">Unlimited</span>
+                <div className="flex flex-row items-center pl-4">
+                  <img src="/QuickLock.svg" alt="Leaderboard" className="h-24 w-24" />
+                  <span className="text-white pl-2 font-ibm">Unlimited</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-2">
+                  <div className="flex-auto p-1">
                     <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-127 ${
+                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'unlimited' ? 'bg-blue-gradient' : 'bg-grey-100'
                       }`}
                       onClick={() => handleButtonClick('unlimited')}
                     >
-                      <span className="text-white">♾️</span>
+                      <span className="text-white font-ibm">♾️</span>
                     </button>
                   </div>
                 </div>
@@ -314,10 +309,10 @@ const Mode: React.FC<{}> = () => {
 
             <div className="flex-auto p-4">
               <button
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-398"
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px]"
                 onClick={() => onCreateGame()}
               >
-                <span>Start game</span>
+                <span className="text-black font-ibm">Start game</span>
               </button>
             </div>
           </div>

@@ -262,10 +262,10 @@ const Game: React.FC<{}> = () => {
   const onShowPlayerTop = () => {
     if (currentAccount?.address !== player1 && currentAccount?.address !== player2) {
       return (
-        <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
+        <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
           <div className="flex justify-center items-center space-x-2">
             <ChessBishop color="white" size={26} />
-            <p className="font-bold text-[14px]">
+            <p className="font-bold text-[14px] text-white">
               {raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
             </p>
           </div>
@@ -274,10 +274,10 @@ const Game: React.FC<{}> = () => {
     } else {
       if (currentAccount?.address === player2) {
         return (
-          <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
+          <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
             <div className="flex justify-center items-center space-x-2">
               <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px]">{truncateSuiTx(player1)}</p>
+              <p className="font-bold  text-white">{truncateSuiTx(player1)}</p>
             </div>
           </div>
         )
@@ -286,7 +286,7 @@ const Game: React.FC<{}> = () => {
           <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
             <div className="flex justify-center items-center space-x-2">
               <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px]">{truncateSuiTx(player2)}</p>
+              <p className="font-bold text-[14px] text-white">{truncateSuiTx(player2)}</p>
             </div>
           </div>
         )
@@ -297,17 +297,17 @@ const Game: React.FC<{}> = () => {
   const onShowPlayerBottom = () => {
     if (currentAccount?.address !== player1 && currentAccount?.address !== player2) {
       return (
-        <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
+        <div className="px-4 py-2 hel w-2/3 border border-none rounded-xl shadow-xl">
           <div className="flex justify-center items-center space-x-2">
             <ChessBishop color="white" size={26} />
-            <p className="font-bold text-[14px]">{truncateSuiTx(raw.player_1)}</p>
+            <p className="font-bold text-[14px] text-white">{truncateSuiTx(raw.player_1)}</p>
           </div>
         </div>
       )
     } else {
       if (currentAccount?.address === player1) {
         return (
-          <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
+          <div className="px-4 py-2 w-2/3 border border-none rounded-xl shadow-xl">
             <div className="flex justify-center items-center space-x-2">
               <ChessBishop color="white" size={26} />
               <p className="font-bold text-[14px]">{truncateSuiTx(player1)}</p>
@@ -363,14 +363,32 @@ const Game: React.FC<{}> = () => {
     }
   }, [moveLists])
 
+  const onCreateGame = async () => {
+    socket.emit('createGame', (response: any) => {
+      if (response.status === 200) {
+        navigate(`/game/${response.board.game_id}`)
+      } else if (response.status === 202) {
+        console.log('Waiting for an opponent...')
+      } else {
+        console.error('Failed to create game')
+      }
+    })
+
+    socket.on('createGame', async function (data) {
+      if (data.status === 200) {
+        navigate(`/game/${data.board.game_id}`)
+      }
+    })
+  }
+
   const onShowGame: any = () => {
     return (
       <>
-        <div className="relative" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-          <div className="flex flex-col space-y-4">
+        <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+          <div className="flex flex-col space-y-1">
             <div
               ref={moveListRef}
-              className="pb-4 bg-grey-100 h-[30px] text-white border rounded-lg overflow-hidden whitespace-nowrap"
+              className="pb-4 bg-blue-gradient-1 h-[30px] text-white overflow-hidden whitespace-nowrap"
               style={{ width: '100%' }}
             >
               <div className="flex space-x-2">
@@ -412,12 +430,10 @@ const Game: React.FC<{}> = () => {
               />
               {(game.isGameOver() || game.isDraw()) && (
                 <div
-                  className={`absolute top-1/4 left-[50px] w-[400px] ${
-                    isHiddenGameStatus && 'hidden'
-                  }`}
+                  className={`absolute top-1/4 w-[388px] ${isHiddenGameStatus && 'hidden'}`}
                   onClick={() => setIsHiddenGameStatus(true)}
                 >
-                  <Popup className="bg-grey-100 w-[400px] h-238">
+                  <Popup className="bg-grey-100 w-[380px] h-238">
                     <h1 className="mb-4 text-center font-bold text-[20px]">
                       {game.isGameOver() && (
                         <div>
@@ -427,6 +443,7 @@ const Game: React.FC<{}> = () => {
                             <div className="flex-auto p-2">
                               <button
                                 className={`bg-gray-900 font-bold  rounded-lg h-54 w-127 hover:bg-blue-gradient`}
+                                onClick={() => onCreateGame()}
                               >
                                 <span className="text-white text-sm">New Game</span>
                               </button>
@@ -434,7 +451,7 @@ const Game: React.FC<{}> = () => {
                             <div className="flex-auto p-2">
                               <button
                                 className={`bg-gray-900 font-bold rounded-lg h-54 w-127 hover:bg-blue-gradient`}
-                                onClick={() => handleButtonClick('rapid-2')}
+                                onClick={() => navigate('/')}
                               >
                                 <span className="text-white text-sm">Game Overview</span>
                               </button>
@@ -463,7 +480,7 @@ const Game: React.FC<{}> = () => {
       <>
         <Header />
         <div className="flex flex-col justify-start bg-gray-1000 h-screen">
-          <div className="flex justify-center items-center flex-grow">{onShowGame()}</div>
+          <div className="flex justify-center items-center pt-5 mt-10">{onShowGame()}</div>
         </div>
       </>
     )

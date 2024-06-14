@@ -5,13 +5,12 @@ const Popup: React.FC<PropsWithChildren<{ className?: string }>> = ({ children, 
   return (
     <div
       className={cn(
-        `inline-block align-bottom  overflow-hidden`,
+        `inline-block align-bottom  overflow-hidden font-ibm`,
         'shadow-xl transform transition-all sm:my-8 sm:align-middle',
         'rounded-2xl',
-        'w-[1200px] sm:max-w-lg',
-        'px-6 py-4',
+        'w-[398px]',
+        'h-[238px]',
         'text-left',
-        'z-50',
         className
       )}
       role="dialog"

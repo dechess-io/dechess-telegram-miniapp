@@ -1,0 +1,7 @@
+{
+  "name": "My TON MiniApp",
+  "description": "A mini-app for connecting to the TON blockchain",
+  "url": "https://miniapp.dechess.io",
+  "iconUrl": "https://miniapp.dechess.io/Logo.png",
+  "permissions": ["ton_account", "ton_send"]
+}

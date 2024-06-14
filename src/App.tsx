@@ -8,7 +8,7 @@ import { truncateSuiTx } from './services/address'
 import { socket } from './services/socket'
 import { apiHeader } from './utils/utils'
 import restApi from './services/api'
-import { CircularProgressbar } from 'react-circular-progressbar'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import Progress from './components/ProgressChart/Progress'
 import { THEME, TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react'
@@ -140,39 +140,40 @@ function App() {
       <div className="flex flex-col pt-4 bg-gray-1000">
         <div className="border-none rounded-xl max-w-[398px] mx-auto min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            <div className="flex flex-row bg-black-gradient w-398 h-227 rounded-lg">
+            <div className="flex flex-row bg-black-gradient w-[365px] h-227 rounded-lg pl-1">
               <div className="flex-auto ">
-                <Progress losses={3} totalGames={10} wins={7} />
+                <Progress losses={5} totalGames={10} wins={5} />
               </div>
+              <div className="flex-auto  flex items-center justify-center"></div>
               <div className="flex-auto  rounded-lg">
                 <div>
                   <div>
-                    <h3>Elo Rating</h3>
+                    <h3 className="font-ibm">Elo Rating</h3>
                   </div>
-                  <div className="space-x-2 p-1">
+                  <div className="p-1 flex flex-col items-center">
                     <div className="bg-grey-100 flex flex-col items-center justify-center rounded-lg h-54 w-137">
-                      <span className="text-white">Rabit</span>
+                      <span className="text-white font-ibm ">Rabit</span>
                       <div className="flex flex-row items-center">
-                        <img src="/QuickLock.png" alt="Leaderboard" className="h-24 w-24" />
-                        <span className="text-white">500</span>
+                        <img src="/QuickLock.svg" alt="Leaderboard" className="h-24 w-24" />
+                        <span className="text-white font-ibm">500</span>
                       </div>
                     </div>
                   </div>
-                  <div className="space-x-2 p-1">
+                  <div className="p-1 flex flex-col items-center">
                     <div className="bg-grey-100 flex flex-col items-center justify-center rounded-lg h-54 w-137">
-                      <span className="text-white">Bullet</span>
+                      <span className="text-white font-ibm">Bullet</span>
                       <div className="flex flex-row items-center">
-                        <img src="/bullet.png" alt="Leaderboard" className="h-24 w-24" />
-                        <span className="text-white">500</span>
+                        <img src="/bullet.svg" alt="Leaderboard" className="h-24 w-24" />
+                        <span className="text-white font-ibm">500</span>
                       </div>
                     </div>
                   </div>
-                  <div className="space-x-2 p-1">
+                  <div className="p-1 flex flex-col items-center">
                     <div className="bg-grey-100 flex flex-col items-center justify-center rounded-lg h-54 w-137">
-                      <span className="text-white">Blitz</span>
+                      <span className="text-white font-ibm">Blitz</span>
                       <div className="flex flex-row items-center">
-                        <img src="/Thunder.png" alt="Leaderboard" className="h-24 w-24" />
-                        <span className="text-white">500</span>
+                        <img src="/Thunder.svg" alt="Leaderboard" className="h-24 w-24" />
+                        <span className="text-white font-ibm">500</span>
                       </div>
                     </div>
                   </div>
@@ -184,7 +185,7 @@ function App() {
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Leaderboard</span>
                   <div className="flex items-center justify-center space-x-2">
-                    <img src="/Group.png" alt="Leaderboard" className="h-80 w-80" />
+                    <img src="/Rank.svg" alt="Leaderboard" className="h-80 w-80" />
                   </div>
                 </button>
               </div>
@@ -192,7 +193,7 @@ function App() {
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Calendar</span>
                   <div className="flex items-center justify-center space-x-2">
-                    <img src="/Calendar.png" alt="Calendar" className="h-80 w-80" />
+                    <img src="/Calendar.svg" alt="Calendar" className="h-80 w-80" />
                   </div>
                 </button>
               </div>
@@ -202,7 +203,7 @@ function App() {
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Robot</span>
                   <div className="flex items-center justify-center space-x-2">
-                    <img src="/Robot.png" alt="Robot" className="h-80 w-80" />
+                    <img src="/Robot.svg" alt="Robot" className="h-80 w-80" />
                   </div>
                 </button>
               </div>
@@ -210,7 +211,7 @@ function App() {
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
                   <span className="text-white">Puzzle</span>
                   <div className="flex items-center justify-center space-x-2">
-                    <img src="/Puzzle.png" alt="Puzzle" className="h-80 w-80" />
+                    <img src="/Puzzle.svg" alt="Puzzle" className="h-80 w-80" />
                   </div>
                 </button>
               </div>
@@ -221,7 +222,7 @@ function App() {
                 className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[380px]"
                 onClick={() => handlePlayClick()}
               >
-                <span>Play</span>
+                <span className="font-ibm">Play</span>
               </button>
             </div>
           </div>
