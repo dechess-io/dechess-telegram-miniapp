@@ -261,7 +261,7 @@ const Mode: React.FC<{}> = () => {
                       }`}
                       onClick={() => handleButtonClick('daily-1')}
                     >
-                      <span className="text-white font-ibm">10 min</span>
+                      <span className="text-white font-ibm">24 hours</span>
                     </button>
                   </div>
                   <div className="flex-auto p-1">
@@ -271,7 +271,7 @@ const Mode: React.FC<{}> = () => {
                       }`}
                       onClick={() => handleButtonClick('daily-2')}
                     >
-                      <span className="text-white font-ibm">15|10</span>
+                      <span className="text-white font-ibm">3 days</span>
                     </button>
                   </div>
                   <div className="flex-auto p-1">
@@ -281,7 +281,7 @@ const Mode: React.FC<{}> = () => {
                       }`}
                       onClick={() => handleButtonClick('daily-3')}
                     >
-                      <span className="text-white font-ibm">30 min</span>
+                      <span className="text-white font-ibm">7 days</span>
                     </button>
                   </div>
                 </div>
