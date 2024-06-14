@@ -37,7 +37,7 @@ function App() {
         })
         .catch((error) => {
           if (error.response.status === 403) {
-            localStorage.removeItem('token')
+            // localStorage.removeItem('token')
           }
         })
   }, [])
@@ -137,7 +137,7 @@ function App() {
   return (
     <>
       <Header />
-      <div className="flex flex-col pt-4 bg-gray-1000">
+      <div className="flex flex-col pt-6 bg-gray-1000">
         <div className="border-none rounded-xl max-w-[398px] mx-auto min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             <div className="flex flex-row bg-black-gradient w-[365px] h-227 rounded-lg pl-1">

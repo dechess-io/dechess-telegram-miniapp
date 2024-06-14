@@ -34,7 +34,7 @@ const Mode: React.FC<{}> = () => {
         })
         .catch((error) => {
           if (error.response.status === 403) {
-            localStorage.removeItem('token')
+            // localStorage.removeItem('token')
           }
         })
   }, [])
