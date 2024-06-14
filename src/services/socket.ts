@@ -4,7 +4,7 @@ const token = localStorage.getItem('token')
 
 export const socket = io('http://localhost:3001', {
   extraHeaders: {
-    Authorization: token !== null ? token : '',
+    Authorization: token !== null ? token : 'asds',
   },
   autoConnect: true,
 })

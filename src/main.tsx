@@ -17,6 +17,8 @@ import Mode from './mode'
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
 
 WebApp.ready()
+WebApp.expand()
+
 
 const networkConfig = {
   testnet: {

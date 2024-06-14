@@ -60,7 +60,7 @@ const Game: React.FC<{}> = () => {
         }
       })
       .catch((err) => {})
-  }, [])
+  },)
 
   useEffect(() => {
     function onConnect() {
