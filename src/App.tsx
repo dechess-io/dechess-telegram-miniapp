@@ -139,7 +139,7 @@ function App() {
       <div className="flex flex-col pt-4 bg-gray-1000">
         <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            <div className="flex flex-row bg-black-gradient w-[370px] h-227 rounded-lg pl-1">
+            <div className="flex flex-row bg-black-gradient w-[365px] h-227 rounded-lg pl-1">
               <div className="flex-auto ">
                 <Progress losses={5} totalGames={10} wins={5} />
               </div>
@@ -179,8 +179,8 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-row">
-              <div className="flex-auto p-2">
+            <div className="flex flex-row p-1">
+              <div className="flex-auto p-1">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white font-ibm">Leaderboard</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -188,7 +188,7 @@ function App() {
                   </div>
                 </button>
               </div>
-              <div className="flex-auto p-2">
+              <div className="flex-auto p-1">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white font-ibm">Calendar</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -197,8 +197,8 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="flex flex-row p-2">
-              <div className="flex-auto p-2">
+            <div className="flex flex-row p-1">
+              <div className="flex-auto p-1">
                 <button className="bg-grey-100 text-black font-bold rounded-lg h-160 w-[180px]">
                   <span className="text-white font-ibm">Robot</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -206,7 +206,7 @@ function App() {
                   </div>
                 </button>
               </div>
-              <div className="flex-auto p-2">
+              <div className="flex-auto p-1">
                 <button className="bg-grey-100 text-black font-bold rounded-lg h-160 w-[180px]">
                   <span className="text-white font-ibm">Puzzle</span>
                   <div className="flex items-center justify-center space-x-2">
@@ -218,7 +218,7 @@ function App() {
 
             <div className="flex-auto p-4">
               <button
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[380px]"
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px]"
                 onClick={() => handlePlayClick()}
               >
                 <span className="font-ibm">Play</span>

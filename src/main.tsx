@@ -12,13 +12,12 @@ import './styles/main.scss'
 import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
 import { getFullnodeUrl } from '@mysten/sui/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import '@mysten/dapp-kit/dist/index.css'
+import './index.css'
 import Mode from './mode'
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
 
 WebApp.ready()
 WebApp.expand()
-
 
 const networkConfig = {
   testnet: {

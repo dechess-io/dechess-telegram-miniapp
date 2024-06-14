@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Disable scrolling */
+body,
+html {
+  @apply m-0 p-0 w-full h-full overflow-hidden;
+}
