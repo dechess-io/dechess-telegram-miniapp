@@ -52,7 +52,7 @@ const Header: React.FC<{}> = () => {
               </button>
             )}
             <div
-              className="flex-1 md:flex md:justify-end lg:flex lg:justify-end"
+              className="flex-1 flex justify-end"
               onClick={() => {
                 navigate('/')
               }}
@@ -63,7 +63,7 @@ const Header: React.FC<{}> = () => {
                 alt="Transca Vault Logo"
               />
             </div>
-            <div className="flex-1 md:flex md:justify-end lg:flex lg:justify-end pr-3">
+            <div className="flex-1 flex justify-end">
               <ConnectionSettings />
             </div>
           </div>

@@ -138,7 +138,7 @@ function App() {
     <>
       <Header />
       <div className="flex flex-col pt-6 bg-gray-1000">
-        <div className="border-none rounded-xl max-w-[398px] mx-auto min-h-screen">
+        <div className="border-none rounded-xl max-w-[380px] mx-auto min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             <div className="flex flex-row bg-black-gradient w-[370px] h-227 rounded-lg pl-2">
               <div className="flex-auto ">
@@ -184,7 +184,7 @@ function App() {
               <div className="flex-auto py-2">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Leaderboard</span>
-                  <div className="flex items-center justify-center space-x-2">
+                  <div className="flex items-center justify-center">
                     <img src="/Rank.svg" alt="Leaderboard" className="h-80 w-80" />
                   </div>
                 </button>
@@ -192,7 +192,7 @@ function App() {
               <div className="flex-auto py-2">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Calendar</span>
-                  <div className="flex items-center justify-center space-x-2">
+                  <div className="flex items-center justify-center">
                     <img src="/Calendar.svg" alt="Calendar" className="h-80 w-80" />
                   </div>
                 </button>
@@ -202,7 +202,7 @@ function App() {
               <div className="flex-auto">
                 <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Robot</span>
-                  <div className="flex items-center justify-center space-x-2">
+                  <div className="flex items-center justify-center">
                     <img src="/Robot.svg" alt="Robot" className="h-80 w-80" />
                   </div>
                 </button>
