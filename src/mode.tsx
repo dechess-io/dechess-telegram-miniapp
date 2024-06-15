@@ -13,31 +13,9 @@ import 'react-circular-progressbar/dist/styles.css'
 const Mode: React.FC<{}> = () => {
   const navigate = useNavigate()
   const { addPopup } = usePopups()
-
-  function hasJWT() {
-    let flag = false
-    localStorage.getItem('token') ? (flag = true) : (flag = false)
-    return flag
-  }
-
   const [games, setGames] = useState([])
-
-  useEffect(() => {
-    hasJWT() &&
-      restApi
-        .get(`/get-game-v2`, { headers: apiHeader })
-        .then((res) => {
-          console.log('7s200:games', games)
-          if (res.data.status === 200) {
-            setGames(res.data.games)
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 403) {
-            // localStorage.removeItem('token')
-          }
-        })
-  }, [])
+  const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     function onConnect() {}
@@ -55,69 +33,39 @@ const Mode: React.FC<{}> = () => {
     return <>Loading...</>
   }
 
-  const onShowGames = () => {
-    let temp = null
-    if (games.length > 0) {
-      temp = games.map((e, i) => {
-        return (
-          <div key={i} className="cursor-pointer relative">
-            {(e as any).game_id && (
-              <div className=" top-4	 bg-blue-400 text-center font-bold w-[200px] mx-auto border border-none rounded-xl">
-                Match ID: {truncateSuiTx((e as any).game_id)}
-              </div>
-            )}
-
-            <div
-              className="mx-auto bg-red-100"
-              key={i}
-              style={{ height: '250px', width: '250px', cursor: 'pointer', padding: '10px' }}
-              onClick={() => onHandleJoinGame((e as any).game_id)}
-            >
-              <GameItem fen={(e as any).fen} />
-            </div>
-            <div className="flex justify-between max-w-[250px] mx-auto">
-              {(e as any).isPaymentMatch && (
-                <div className=" bg-green-500 text-center font-bold w-[150px] mx-auto border border-none rounded-xl text-white">
-                  Stake:{' '}
-                </div>
-              )}
-            </div>
-            {!(e as any).isPaymentMatch && (
-              <div className="bg-blue-400 text-center font-bold w-[150px] mx-auto border border-none rounded-xl">
-                Free match
-              </div>
-            )}
-          </div>
-        )
-      })
-    }
-    return temp
-  }
-
-  const onHandleJoinGame = async (game_id: string) => {
-    socket.emit('joinGame', { game_id: game_id })
-    navigate(`/game/${game_id}`)
-  }
-
   const onCreateGame = async () => {
-    console.log('hello')
+    setLoading(true)
+    setProgress(0)
+
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(interval)
+          return 100
+        }
+        return prevProgress + 1
+      })
+    }, 100)
+
     socket.emit('createGame', (response: any) => {
-      console.log(response)
       if (response.status === 200) {
+        setLoading(false)
+        clearInterval(interval)
         navigate(`/game/${response.board.game_id}`)
       } else if (response.status === 202) {
         console.log('Waiting for an opponent...')
       } else {
+        setLoading(false)
+        clearInterval(interval)
         console.error('Failed to create game')
-        // setIsLoadingCreateGame(false)
       }
     })
 
     socket.on('createGame', async function (data) {
       if (data.status === 200) {
+        setLoading(false)
+        clearInterval(interval)
         navigate(`/game/${data.board.game_id}`)
-        // setIsLoadingCreateGame(false)
-        // removeAll()
       }
     })
   }
@@ -133,6 +81,19 @@ const Mode: React.FC<{}> = () => {
       <div className="flex flex-col pt-4 bg-gray-1000">
         <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
+            {loading && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[250px]">
+                <div className="absolute top-[33.33%] transform -translate-y-1/2 w-[300px]  bg-black rounded-full h-6  ">
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full mb-2 text-white font-ibm">
+                    Queuing...
+                  </span>
+                  <div
+                    className="bg-blue-gradient h-6 rounded-full border-2 border-white"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
             <div>
               <div className="pt-2">
                 <div className="flex flex-row items-center pl-4">
@@ -157,7 +118,7 @@ const Mode: React.FC<{}> = () => {
                       }`}
                       onClick={() => handleButtonClick('bullet-2')}
                     >
-                      <span className="text-white font-ibm">1|1</span>
+                      <span className="text-white font-ibm text-[20px]">1|1</span>
                     </button>
                   </div>
                   <div className="flex-auto p-1">
@@ -261,7 +222,7 @@ const Mode: React.FC<{}> = () => {
                       }`}
                       onClick={() => handleButtonClick('daily-1')}
                     >
-                      <span className="text-white font-ibm">24 hours</span>
+                      <span className="text-white font-ibm">1 day</span>
                     </button>
                   </div>
                   <div className="flex-auto p-1">

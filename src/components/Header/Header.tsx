@@ -1,11 +1,6 @@
-import { Shop } from '@styled-icons/bootstrap'
-import { Newspaper } from '@styled-icons/fa-solid'
-import { LearningApp } from '@styled-icons/fluentui-system-regular'
-import { AdminPanelSettings } from '@styled-icons/material-outlined'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ConnectionSettings } from '../Connect/ConnectionSettings'
-import img from '../../../public/Logo.png'
 
 const Header: React.FC<{}> = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
@@ -39,9 +34,25 @@ const Header: React.FC<{}> = () => {
       <nav className="fixed top-0 z-50 w-full mx-auto bg-gray-1000">
         <div className="mx-auto max-w-[398px] px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
-            {/* Empty div to balance the space */}
+            {data.pathname === '/mode' ? (
+              <button onClick={() => navigate('/')}>
+                <img
+                  className="max-w-[45px] max-h-[45px] border-none rounded-xl justify-start flex-1"
+                  src="/arrow-right.svg"
+                  alt="Transca Vault Logo"
+                />
+              </button>
+            ) : (
+              <button onClick={() => navigate('/')}>
+                <img
+                  className="max-w-[45px] max-h-[45px] border-none rounded-xl opacity-0 pointer-events-none"
+                  src="/arrow-right.svg"
+                  alt="Arrow Icon"
+                />
+              </button>
+            )}
             <div
-              className="flex justify-start flex-1"
+              className="flex-1 md:flex md:justify-end lg:flex lg:justify-end"
               onClick={() => {
                 navigate('/')
               }}

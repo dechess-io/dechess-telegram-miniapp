@@ -418,27 +418,32 @@ const Game: React.FC<{}> = () => {
               />
               {(game.isGameOver() || game.isDraw()) && (
                 <div
-                  className={`absolute top-1/4 w-[388px] ${isHiddenGameStatus && 'hidden'}`}
+                  className={`absolute top-1/4  ${isHiddenGameStatus && 'hidden'}`}
                   onClick={() => setIsHiddenGameStatus(true)}
                 >
-                  <Popup className="bg-grey-100 w-[380px] h-238">
-                    <h1 className="mb-4 text-center font-bold text-[20px]">
+                  <Popup className="bg-grey-100 w-[364px] h-[200px]">
+                    <h1 className="mb-4 text-center font-bold text-[20px] font-ibm">
                       {game.isGameOver() && (
                         <div>
-                          <h2 className="text-white ">Game Over</h2>
-
-                          <div className="flex flex-row pt-5">
-                            <div className="flex-auto p-2">
+                          <h2 className="text-white font-ibm pb-5">Game Over</h2>
+                          <span className="text-white font-ibm">
+                            {(player1 === wallet?.account.address && game._turn === 'b') ||
+                            (player2 === wallet?.account.address && game._turn === 'w')
+                              ? 'You Win'
+                              : 'You Lose'}
+                          </span>
+                          <div className="flex flex-row pt-2">
+                            <div className="flex-auto p-1">
                               <button
-                                className={`bg-gray-900 font-bold  rounded-lg h-54 w-127 hover:bg-blue-gradient`}
-                                onClick={() => onCreateGame()}
+                                className={`bg-gray-900 font-bold  rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                                onClick={() => navigate('/mode')}
                               >
                                 <span className="text-white text-sm">New Game</span>
                               </button>
                             </div>
-                            <div className="flex-auto p-2">
+                            <div className="flex-auto p-1">
                               <button
-                                className={`bg-gray-900 font-bold rounded-lg h-54 w-127 hover:bg-blue-gradient`}
+                                className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
                                 onClick={() => navigate('/')}
                               >
                                 <span className="text-white text-sm">Game Overview</span>
@@ -447,7 +452,30 @@ const Game: React.FC<{}> = () => {
                           </div>
                         </div>
                       )}
-                      {game.isDraw() && <div>Draw</div>}
+                      {game.isDraw() && (
+                        <div>
+                          <h2 className="text-white font-ibm pb-5">Game Over</h2>
+                          <span className="text-white font-ibm">Draw !</span>
+                          <div className="flex flex-row pt-2">
+                            <div className="flex-auto p-1">
+                              <button
+                                className={`bg-gray-900 font-bold  rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                                onClick={() => navigate('/mode')}
+                              >
+                                <span className="text-white text-sm">New Game</span>
+                              </button>
+                            </div>
+                            <div className="flex-auto p-1">
+                              <button
+                                className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                                onClick={() => navigate('/')}
+                              >
+                                <span className="text-white text-sm">Game Overview</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </h1>
                   </Popup>
                 </div>

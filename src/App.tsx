@@ -140,7 +140,7 @@ function App() {
       <div className="flex flex-col pt-6 bg-gray-1000">
         <div className="border-none rounded-xl max-w-[398px] mx-auto min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            <div className="flex flex-row bg-black-gradient w-[365px] h-227 rounded-lg pl-1">
+            <div className="flex flex-row bg-black-gradient w-[370px] h-227 rounded-lg pl-2">
               <div className="flex-auto ">
                 <Progress losses={5} totalGames={10} wins={5} />
               </div>
@@ -182,7 +182,7 @@ function App() {
             </div>
             <div className="flex flex-row space-x-2">
               <div className="flex-auto py-2">
-                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Leaderboard</span>
                   <div className="flex items-center justify-center space-x-2">
                     <img src="/Rank.svg" alt="Leaderboard" className="h-80 w-80" />
@@ -190,7 +190,7 @@ function App() {
                 </button>
               </div>
               <div className="flex-auto py-2">
-                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Calendar</span>
                   <div className="flex items-center justify-center space-x-2">
                     <img src="/Calendar.svg" alt="Calendar" className="h-80 w-80" />
@@ -200,7 +200,7 @@ function App() {
             </div>
             <div className="flex flex-row space-x-2 p-2">
               <div className="flex-auto">
-                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Robot</span>
                   <div className="flex items-center justify-center space-x-2">
                     <img src="/Robot.svg" alt="Robot" className="h-80 w-80" />
@@ -208,7 +208,7 @@ function App() {
                 </button>
               </div>
               <div className="flex-auto">
-                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-192">
+                <button className="bg-grey-100 text-black font-bold py-2 px-6 rounded-lg h-160 w-[180px]">
                   <span className="text-white">Puzzle</span>
                   <div className="flex items-center justify-center space-x-2">
                     <img src="/Puzzle.svg" alt="Puzzle" className="h-80 w-80" />
@@ -219,7 +219,7 @@ function App() {
 
             <div className="flex-auto p-4">
               <button
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[380px]"
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px]"
                 onClick={() => handlePlayClick()}
               >
                 <span className="font-ibm">Play</span>
