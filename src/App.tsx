@@ -14,7 +14,6 @@ import Progress from './components/ProgressChart/Progress'
 import { THEME, TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react'
 import './index.css'
 
-
 function App() {
   const navigate = useNavigate()
   const { addPopup } = usePopups()
