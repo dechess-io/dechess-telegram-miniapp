@@ -15,6 +15,7 @@ import './styles/main.scss'
 import '@mysten/dapp-kit/dist/index.css'
 import Mode from './mode'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
+import './index.css'
 
 WebApp.ready()
 WebApp.expand()

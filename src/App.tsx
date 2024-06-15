@@ -12,6 +12,8 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import Progress from './components/ProgressChart/Progress'
 import { THEME, TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react'
+import './index.css'
+
 
 function App() {
   const navigate = useNavigate()
