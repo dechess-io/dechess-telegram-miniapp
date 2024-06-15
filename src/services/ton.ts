@@ -11,7 +11,7 @@ import { setAuthToken } from '../utils/utils'
 class TonProofDemoApiService {
   private localStorageKey = 'token'
 
-  private host = 'http://localhost:3001'
+  private host = 'https://api.dechess.io'
   public accessToken: string | null = null
 
   public readonly refreshIntervalMs = 9 * 60 * 1000

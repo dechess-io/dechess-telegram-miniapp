@@ -59,6 +59,7 @@ module.exports = {
         },
         grey: {
           100: '#3F3F3F',
+          200: '#303030',
         },
         normal: {
           100: '#545a65',
@@ -104,6 +105,10 @@ module.exports = {
         darkgreen: {
           100: '#1E2126',
         },
+        blue: {
+          100: '#1F2428',
+          200: '#009ED0',
+        },
       },
       backgroundImage: {
         top1: 'linear-gradient(116.86deg, rgba(13, 13, 14, 0.77) 12.8%, rgba(23, 23, 23, 0.77) 86.03%)',
@@ -123,6 +128,8 @@ module.exports = {
         'blue-gradient': 'linear-gradient(to right, #67E4FF, #009ED0)',
         'black-gradient': 'linear-gradient(to right, #303030, #000000)',
         'blue-gradient-1': 'linear-gradient(45deg, #67E4FF 0%,#009ED0 100%)',
+        'darkblue-gradient': 'linear-gradient(to bottom right, #1F2428, #2E3E5E)',
+        'green-gradient': 'linear-gradient(to right, #98FF32, #EFFF38)',
       },
       boxShadow: {
         form: '87px 79px 47px rgba(0, 0, 0, 0.01), 49px 45px 40px rgba(0, 0, 0, 0.05), 22px 20px 29px rgba(0, 0, 0, 0.09), 5px 5px 16px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);',

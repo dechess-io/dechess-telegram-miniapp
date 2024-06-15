@@ -1,26 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { truncateSuiTx } from '../../services/address'
-import cn from '../../services/cn'
-import Button from '../Button/Button'
-import Input from '../Input/Input'
-import Popup from '../Popup/Popup'
-import { usePopups } from '../Popup/PopupProvider'
-import restApi from '../../services/api'
-import { WalletContractV4, TonClient, fromNano } from '@ton/ton'
-
-import {
-  ConnectButton,
-  ConnectModal,
-  useCurrentAccount,
-  useCurrentWallet,
-  useSignPersonalMessage,
-  useWallets,
-} from '@mysten/dapp-kit'
-import { verifyPersonalMessageSignature } from '@mysten/sui/verify'
-import { useAppDispatch } from '../../redux/store'
-import { getLoginMessage } from '../../redux/account/account.reducer'
-import { Avatar, Badge } from '@material-tailwind/react'
 import {
   THEME,
   TonConnectButton,

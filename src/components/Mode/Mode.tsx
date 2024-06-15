@@ -1,14 +1,8 @@
-import Header from './components/Header/Header'
+import Header from '../Header/Header'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import GameItem from './components/Chess/GameItem'
-import PopupCreateGame from './components/Popup/PopupCreateGame'
-import { usePopups } from './components/Popup/PopupProvider'
-import { truncateSuiTx } from './services/address'
-import { socket } from './services/socket'
-import { apiHeader } from './utils/utils'
-import restApi from './services/api'
-import { CircularProgressbar } from 'react-circular-progressbar'
+import { usePopups } from '../Popup/PopupProvider'
+import { socket } from '../../services/socket'
 import 'react-circular-progressbar/dist/styles.css'
 const Mode: React.FC<{}> = () => {
   const navigate = useNavigate()
@@ -104,7 +98,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'bullet-1' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'bullet-1'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('bullet-1')}
                     >
@@ -114,7 +110,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'bullet-2' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'bullet-2'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('bullet-2')}
                     >
@@ -124,7 +122,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'bullet-3' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'bullet-3'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('bullet-3')}
                     >
@@ -142,7 +142,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'blitz-1' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'blitz-1'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('blitz-1')}
                     >
@@ -152,7 +154,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'blitz-2' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'blitz-2'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('blitz-2')}
                     >
@@ -162,7 +166,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'blitz-3' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'blitz-3'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('blitz-3')}
                     >
@@ -180,7 +186,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'rapid-1' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'rapid-1'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('rapid-1')}
                     >
@@ -190,7 +198,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'rapid-2' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'rapid-2'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('rapid-2')}
                     >
@@ -200,7 +210,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'rapid-3' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'rapid-3'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('rapid-3')}
                     >
@@ -218,7 +230,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'daily-1' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'daily-1'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('daily-1')}
                     >
@@ -228,7 +242,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'daily-2' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'daily-2'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('daily-2')}
                     >
@@ -238,7 +254,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'daily-3' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'daily-3'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('daily-3')}
                     >
@@ -257,7 +275,9 @@ const Mode: React.FC<{}> = () => {
                   <div className="flex-auto p-1">
                     <button
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'unlimited' ? 'bg-blue-gradient' : 'bg-grey-100'
+                        activeButton === 'unlimited'
+                          ? 'bg-blue-gradient border-b-4 border-blue-200'
+                          : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
                       onClick={() => handleButtonClick('unlimited')}
                     >
@@ -270,7 +290,7 @@ const Mode: React.FC<{}> = () => {
 
             <div className="flex-auto p-4">
               <button
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px]"
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200"
                 onClick={() => onCreateGame()}
               >
                 <span className="text-black font-ibm">Start game</span>
