@@ -21,11 +21,6 @@ export function ConnectionSettings() {
   const [authorized, setAuthorized] = useState(false)
   const [tonConnectUI] = useTonConnectUI()
   const recreateProofPayload = useCallback(async () => {
-    // if (hasJWT()) {
-    //   console.log('7s200:has')
-    //   return
-    // } else {
-    //   console.log('7s200:not')
     if (firstProofLoading.current) {
       tonConnectUI.setConnectRequestParameters({ state: 'loading' })
       firstProofLoading.current = false
@@ -78,12 +73,6 @@ export function ConnectionSettings() {
 
     setData(response)
   }, [wallet])
-
-  function hasJWT() {
-    let flag = false
-    localStorage.getItem('token') ? (flag = true) : (flag = false)
-    return flag
-  }
 
   if (authorized) {
     return (

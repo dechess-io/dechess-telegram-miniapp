@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { usePopups } from '../Popup/PopupProvider'
 import { socket } from '../../services/socket'
 import 'react-circular-progressbar/dist/styles.css'
+import { hasJWT } from '../../utils/utils'
 const Mode: React.FC<{}> = () => {
   const navigate = useNavigate()
   const { addPopup } = usePopups()
@@ -62,11 +63,35 @@ const Mode: React.FC<{}> = () => {
         navigate(`/game/${data.board.game_id}`)
       }
     })
+
+    socket.emit('cancelCreateGame', (response: any) => {
+      if (response.status === 200) {
+        setLoading(false)
+        clearInterval(interval)
+      }
+    })
   }
   const [activeButton, setActiveButton] = useState(null)
 
   const handleButtonClick = (buttonId: any) => {
     setActiveButton(buttonId)
+  }
+
+  const renderButton = (buttonId: string, label: string) => {
+    return (
+      <div className="flex-auto p-1">
+        <button
+          className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
+            activeButton === buttonId
+              ? 'bg-blue-gradient border-b-4 border-blue-200'
+              : 'bg-grey-100 border-b-4 border-grey-200'
+          }`}
+          onClick={() => handleButtonClick(buttonId)}
+        >
+          <span className="text-white font-ibm">{label}</span>
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -95,42 +120,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Bullet</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'bullet-1'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('bullet-1')}
-                    >
-                      <span className="text-white font-ibm">1 min</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'bullet-2'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('bullet-2')}
-                    >
-                      <span className="text-white font-ibm text-[20px]">1|1</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'bullet-3'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('bullet-3')}
-                    >
-                      <span className="text-white font-ibm">2|1</span>
-                    </button>
-                  </div>
+                  {renderButton('bullet-1', '1 min')}
+                  {renderButton('bullet-2', '1|1')}
+                  {renderButton('bullet-3', '2|1')}
                 </div>
               </div>
               <div className="pt-2">
@@ -139,42 +131,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Blitz</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'blitz-1'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('blitz-1')}
-                    >
-                      <span className="text-white font-ibm">3 min</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'blitz-2'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('blitz-2')}
-                    >
-                      <span className="text-white font-ibm">3|2</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'blitz-3'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('blitz-3')}
-                    >
-                      <span className="text-white font-ibm">5 min</span>
-                    </button>
-                  </div>
+                  {renderButton('blitz-1', '3 min')}
+                  {renderButton('blitz-2', '3|2')}
+                  {renderButton('blitz-3', '5 min')}
                 </div>
               </div>
               <div className="pt-2">
@@ -183,42 +142,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Rapid</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'rapid-1'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('rapid-1')}
-                    >
-                      <span className="text-white font-ibm">10 min</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'rapid-2'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('rapid-2')}
-                    >
-                      <span className="text-white font-ibm">15|10</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'rapid-3'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('rapid-3')}
-                    >
-                      <span className="text-white font-ibm">30 min</span>
-                    </button>
-                  </div>
+                  {renderButton('rapid-1', '10 min')}
+                  {renderButton('rapid-2', '15|10')}
+                  {renderButton('rapid-3', '30 min')}
                 </div>
               </div>
               <div className="pt-2">
@@ -227,42 +153,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Daily</span>
                 </div>
                 <div className="flex flex-row">
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'daily-1'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('daily-1')}
-                    >
-                      <span className="text-white font-ibm">1 day</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'daily-2'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('daily-2')}
-                    >
-                      <span className="text-white font-ibm">3 days</span>
-                    </button>
-                  </div>
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'daily-3'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('daily-3')}
-                    >
-                      <span className="text-white font-ibm">7 days</span>
-                    </button>
-                  </div>
+                  {renderButton('daily-1', '1 day')}
+                  {renderButton('daily-2', '3 days')}
+                  {renderButton('daily-3', '7 days')}
                 </div>
               </div>
 
@@ -292,6 +185,7 @@ const Mode: React.FC<{}> = () => {
               <button
                 className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200"
                 onClick={() => onCreateGame()}
+                disabled={!hasJWT()}
               >
                 <span className="text-black font-ibm">Start game</span>
               </button>
