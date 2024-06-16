@@ -60,6 +60,7 @@ module.exports = {
         grey: {
           100: '#3F3F3F',
           200: '#303030',
+          300: '#848C9B',
         },
         normal: {
           100: '#545a65',
@@ -108,6 +109,7 @@ module.exports = {
         blue: {
           100: '#1F2428',
           200: '#009ED0',
+          300: 'linear-gradient(45deg, #67E4FF 0%,#009ED0 100%)',
         },
       },
       backgroundImage: {

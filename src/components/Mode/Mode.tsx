@@ -5,12 +5,15 @@ import { usePopups } from '../Popup/PopupProvider'
 import { socket } from '../../services/socket'
 import 'react-circular-progressbar/dist/styles.css'
 import { hasJWT } from '../../utils/utils'
+import GameSpinner from '../Loading/Spinner'
 const Mode: React.FC<{}> = () => {
   const navigate = useNavigate()
-  const { addPopup } = usePopups()
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [totalSeconds, setTotalSeconds] = useState(0)
+  const [activeButton, setActiveButton] = useState(null)
+
+  let timerInterval: any
 
   useEffect(() => {
     function onConnect() {}
@@ -24,34 +27,43 @@ const Mode: React.FC<{}> = () => {
       socket.off('disconnect', onDisconnect)
     }
   }, [])
-  if (!games) {
-    return <>Loading...</>
+
+  useEffect(() => {
+    if (loading) {
+      startTimer()
+    } else {
+      clearInterval(timerInterval)
+    }
+
+    return () => clearInterval(timerInterval)
+  }, [loading])
+
+  const startTimer = () => {
+    timerInterval = setInterval(() => {
+      setTotalSeconds((prevSeconds) => prevSeconds + 1)
+    }, 1000)
+  }
+
+  const handleCancel = () => {
+    socket.emit('cancelCreateGame', (response: any) => {
+      if (response.status === 200) {
+        setLoading(false)
+        setTotalSeconds(0)
+      }
+    })
   }
 
   const onCreateGame = async () => {
     setLoading(true)
-    setProgress(0)
-
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          clearInterval(interval)
-          return 100
-        }
-        return prevProgress + 1
-      })
-    }, 100)
 
     socket.emit('createGame', (response: any) => {
       if (response.status === 200) {
         setLoading(false)
-        clearInterval(interval)
         navigate(`/game/${response.board.game_id}`)
       } else if (response.status === 202) {
         console.log('Waiting for an opponent...')
       } else {
         setLoading(false)
-        clearInterval(interval)
         console.error('Failed to create game')
       }
     })
@@ -59,19 +71,10 @@ const Mode: React.FC<{}> = () => {
     socket.on('createGame', async function (data) {
       if (data.status === 200) {
         setLoading(false)
-        clearInterval(interval)
         navigate(`/game/${data.board.game_id}`)
       }
     })
-
-    socket.emit('cancelCreateGame', (response: any) => {
-      if (response.status === 200) {
-        setLoading(false)
-        clearInterval(interval)
-      }
-    })
   }
-  const [activeButton, setActiveButton] = useState(null)
 
   const handleButtonClick = (buttonId: any) => {
     setActiveButton(buttonId)
@@ -101,17 +104,23 @@ const Mode: React.FC<{}> = () => {
         <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             {loading && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[250px]">
-                <div className="absolute top-[33.33%] transform -translate-y-1/2 w-[300px]  bg-black rounded-full h-6  ">
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full mb-2 text-white font-ibm">
-                    Queuing...
-                  </span>
-                  <div
-                    className="bg-blue-gradient h-6 rounded-full border-2 border-white"
-                    style={{ width: `${progress}%` }}
-                  ></div>
+              <>
+                <GameSpinner />
+                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50  font-ibm  rounded-lg">
+                  <div className="time-counter pb-[20px]">
+                    <span id="minutes">
+                      {String(Math.floor(totalSeconds / 60)).padStart(2, '0')}
+                    </span>
+                    :<span id="seconds">{String(totalSeconds % 60).padStart(2, '0')}</span>
+                  </div>
+                  <button
+                    className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg h-[50px] w-[100px] bg-grey-300 border-b-4 border-grey-200"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
                 </div>
-              </div>
+              </>
             )}
             <div>
               <div className="pt-2">
