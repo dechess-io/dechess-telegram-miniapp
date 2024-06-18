@@ -3,7 +3,7 @@ import React from 'react'
 const GameSpinner: React.FC<{}> = () => {
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[270px] grid min-h-[140px] w-full place-items-center overflow-x-scroll  lg:overflow-visible">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[220px] grid min-h-[140px] w-full place-items-center overflow-x-scroll  lg:overflow-visible">
         <svg
           className="w-[130px] h-[130px] animate-spin text-gray-900"
           viewBox="0 0 64 64"
