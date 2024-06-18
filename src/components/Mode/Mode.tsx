@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { usePopups } from '../Popup/PopupProvider'
 import { socket } from '../../services/socket'
 import 'react-circular-progressbar/dist/styles.css'
-import { hasJWT } from '../../utils/utils'
+import { formatTime, hasJWT } from '../../utils/utils'
 import GameSpinner from '../Loading/Spinner'
 const Mode: React.FC<{}> = () => {
   const navigate = useNavigate()
@@ -12,6 +12,8 @@ const Mode: React.FC<{}> = () => {
   const [loading, setLoading] = useState(false)
   const [totalSeconds, setTotalSeconds] = useState(0)
   const [activeButton, setActiveButton] = useState(null)
+  const [timeStep, setTimestep] = useState(0)
+  const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
 
   let timerInterval: any
 
@@ -56,7 +58,7 @@ const Mode: React.FC<{}> = () => {
   const onCreateGame = async () => {
     setLoading(true)
 
-    socket.emit('createGame', (response: any) => {
+    socket.emit('createGame', { timeStep, additionTimePerMove }, (response: any) => {
       if (response.status === 200) {
         setLoading(false)
         navigate(`/game/${response.board.game_id}`)
@@ -76,11 +78,18 @@ const Mode: React.FC<{}> = () => {
     })
   }
 
-  const handleButtonClick = (buttonId: any) => {
+  const handleButtonClick = (buttonId: any, timeStep: number, additionTime: number) => {
     setActiveButton(buttonId)
+    setTimestep(timeStep)
+    setAdditionTimePerMove(additionTime)
   }
 
-  const renderButton = (buttonId: string, label: string) => {
+  const renderButton = (
+    buttonId: string,
+    label: string,
+    timeStep: number,
+    additionTime: number
+  ) => {
     return (
       <div className="flex-auto p-1">
         <button
@@ -89,7 +98,7 @@ const Mode: React.FC<{}> = () => {
               ? 'bg-blue-gradient border-b-4 border-blue-200'
               : 'bg-grey-100 border-b-4 border-grey-200'
           }`}
-          onClick={() => handleButtonClick(buttonId)}
+          onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
         >
           <span className="text-white font-ibm">{label}</span>
         </button>
@@ -107,12 +116,7 @@ const Mode: React.FC<{}> = () => {
               <>
                 <GameSpinner />
                 <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50  font-ibm  rounded-lg">
-                  <div className="time-counter pb-[20px]">
-                    <span id="minutes">
-                      {String(Math.floor(totalSeconds / 60)).padStart(2, '0')}
-                    </span>
-                    :<span id="seconds">{String(totalSeconds % 60).padStart(2, '0')}</span>
-                  </div>
+                  <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
                   <button
                     className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg h-[50px] w-[100px] bg-grey-300 border-b-4 border-grey-200"
                     onClick={handleCancel}
@@ -129,9 +133,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Bullet</span>
                 </div>
                 <div className="flex flex-row">
-                  {renderButton('bullet-1', '1 min')}
-                  {renderButton('bullet-2', '1|1')}
-                  {renderButton('bullet-3', '2|1')}
+                  {renderButton('bullet-1', '1 min', 1, 0)}
+                  {renderButton('bullet-2', '1|1', 1, 1)}
+                  {renderButton('bullet-3', '2|1', 2, 1)}
                 </div>
               </div>
               <div className="pt-2">
@@ -140,9 +144,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Blitz</span>
                 </div>
                 <div className="flex flex-row">
-                  {renderButton('blitz-1', '3 min')}
-                  {renderButton('blitz-2', '3|2')}
-                  {renderButton('blitz-3', '5 min')}
+                  {renderButton('blitz-1', '3 min', 3, 0)}
+                  {renderButton('blitz-2', '3|2', 3, 2)}
+                  {renderButton('blitz-3', '5 min', 5, 0)}
                 </div>
               </div>
               <div className="pt-2">
@@ -151,9 +155,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Rapid</span>
                 </div>
                 <div className="flex flex-row">
-                  {renderButton('rapid-1', '10 min')}
-                  {renderButton('rapid-2', '15|10')}
-                  {renderButton('rapid-3', '30 min')}
+                  {renderButton('rapid-1', '10 min', 10, 0)}
+                  {renderButton('rapid-2', '15|10', 15, 10)}
+                  {renderButton('rapid-3', '30 min', 30, 0)}
                 </div>
               </div>
               <div className="pt-2">
@@ -162,9 +166,9 @@ const Mode: React.FC<{}> = () => {
                   <span className="text-white pl-2 font-ibm">Daily</span>
                 </div>
                 <div className="flex flex-row">
-                  {renderButton('daily-1', '1 day')}
-                  {renderButton('daily-2', '3 days')}
-                  {renderButton('daily-3', '7 days')}
+                  {renderButton('daily-1', '10 min', 10, 0)}
+                  {renderButton('daily-2', '15|10', 15, 10)}
+                  {renderButton('daily-3', '30 min', 30, 0)}
                 </div>
               </div>
 
@@ -181,7 +185,7 @@ const Mode: React.FC<{}> = () => {
                           ? 'bg-blue-gradient border-b-4 border-blue-200'
                           : 'bg-grey-100 border-b-4 border-grey-200'
                       }`}
-                      onClick={() => handleButtonClick('unlimited')}
+                      onClick={() => handleButtonClick('unlimited', 0, 0)}
                     >
                       <span className="text-white font-ibm">♾️</span>
                     </button>

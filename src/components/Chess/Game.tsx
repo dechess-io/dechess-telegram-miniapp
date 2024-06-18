@@ -3,14 +3,33 @@ import { Chess, Square } from 'chess.js'
 import { useNavigate, useLocation } from 'react-router-dom'
 import restApi from '../../services/api'
 import { socket } from '../../services/socket'
-import { ChessBishop } from '@styled-icons/fa-solid'
-// import { useCurrentAccount } from '@mysten/dapp-kit'
+import { formatTime } from '../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
 import { truncateSuiTx } from '../../services/address'
 import LoadingGame from '../Loading/Loading'
 import Popup from '../Popup/Popup'
 import Header from '../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
+import BottomPlayerDisplay from './BottomPlayerDisplay'
+import TopPlayerDisplay from './TopPlayerDisplay'
+
+const nameLists = [
+  'Callie',
+  'Tigger',
+  'Snickers',
+  'Midnight',
+  'Trouble',
+  'Sammy',
+  'Simon',
+  'Oliver',
+  'Lilly',
+  'Abby',
+  'Oreo',
+  'Angel',
+  'Luna',
+  'Jack',
+  'Salem',
+]
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
@@ -22,8 +41,13 @@ const Game: React.FC<{}> = () => {
   const [player1, setPlayer1] = useState('')
   const [player2, setPlayer2] = useState('')
 
+  const [name1, setName1] = useState(nameLists[Math.floor(Math.random() * nameLists.length)])
+  const [name2, setName2] = useState(nameLists[Math.floor(Math.random() * nameLists.length)])
+
   const [moveFrom, setMoveFrom] = useState<any>('')
   const [moveTo, setMoveTo] = useState<any>('')
+
+  const [turn, setTurn] = useState('')
 
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [showPromotionDialog, setShowPromotionDialog] = useState(false)
@@ -40,6 +64,50 @@ const Game: React.FC<{}> = () => {
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
+  const [player1Timer, setPlayer1Timer] = useState(600)
+  const [player2Timer, setPlayer2Timer] = useState(600)
+  const [currentPlayer, setCurrentPlayer] = useState('') // 1 for Player 1, 2 for Player 2
+
+  console.log(currentPlayer)
+
+  useEffect(() => {
+    let intervalId: any
+
+    if (currentPlayer === player1 && player1Timer > 0) {
+      // Only update timer for Player 1 if it's their turn and timer hasn't reached zero
+      intervalId = setInterval(() => {
+        setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
+      }, 1000)
+    } else if (currentPlayer === player2 && player2Timer > 0) {
+      // Only update timer for Player 2 if it's their turn and timer hasn't reached zero
+      intervalId = setInterval(() => {
+        setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
+      }, 1000)
+    }
+
+    return () => clearInterval(intervalId) // Cleanup function to clear interval
+  }, [currentPlayer, player1Timer, player2Timer]) // Dependency array: effect runs when player changes, timer reaches zero
+
+  const handleSwitchTurn = () => {
+    console.log('current ' + currentPlayer)
+    const nextPlayer = currentPlayer === player1 ? player2 : player1
+    console.log('next ' + nextPlayer)
+    setCurrentPlayer(nextPlayer)
+    console.log('set ' + currentPlayer)
+  }
+
+  const currentPlayerTurn = () => {
+    if (isOrientation() === 'white' && turn === 'w') {
+      return player1
+    } else if (isOrientation() === 'white' && turn === 'b') {
+      return player2
+    } else if (isOrientation() === 'black' && turn === 'b') {
+      return player2
+    } else if (isOrientation() === 'black' && turn === 'w') {
+      return player1
+    }
+  }
+
   useEffect(() => {
     restApi
       .get('/load-game-v2', {
@@ -50,18 +118,20 @@ const Game: React.FC<{}> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
+          setTurn(data.turn_player)
           setGame(new Chess(data.fen))
           setRaw(data)
           setPlayer1(data.player_1)
           setPlayer2(data.player_2)
           setTurnPlay(data.turnPlay)
+          setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
           if (data.player_1.length > 0 && data.player_2.length > 0) {
             setIsStartGame(true)
           }
         }
       })
       .catch((err) => {})
-  }, [])
+  }, [turn])
 
   useEffect(() => {
     function onConnect() {
@@ -69,10 +139,10 @@ const Game: React.FC<{}> = () => {
     }
 
     function onNewMove(room: any) {
-      console.log(room)
       setMoveLists((newMoves: any) => [...newMoves, `${room.from} ${room.to}`])
-      console.log(moveLists)
       if (room.fen) {
+        setTurn(room.turn)
+        handleSwitchTurn()
         setGame(new Chess(room.fen))
         setTurnPlay(room.turn)
       }
@@ -97,7 +167,6 @@ const Game: React.FC<{}> = () => {
       socket.off('start', onStart)
     }
   }, [])
-  console.log('wallet', wallet?.account.address)
 
   function getMoveOptions(square: Square) {
     const moves = game.moves({
@@ -131,7 +200,6 @@ const Game: React.FC<{}> = () => {
     setOptionSquares(newSquares)
     return true
   }
-  console.log('game', game)
   function onSquareClick(square: Square) {
     // if currentAccount
     if (true) {
@@ -194,6 +262,8 @@ const Game: React.FC<{}> = () => {
             (foundMove.color === 'b' && foundMove.piece === 'p' && square[1] === '1'),
         })
 
+        handleSwitchTurn()
+
         console.log(location.pathname.split('/')[2])
 
         if (move === null) {
@@ -239,6 +309,7 @@ const Game: React.FC<{}> = () => {
           isPromotion: true,
           promotion: piece[1].toLowerCase() ?? 'q',
         })
+        handleSwitchTurn()
       }
     }
 
@@ -264,33 +335,28 @@ const Game: React.FC<{}> = () => {
   const onShowPlayerTop = () => {
     if (wallet?.account.address !== player1 && wallet?.account.address !== player2) {
       return (
-        <div className="px-4 py-2  w-2/3 border border-none rounded-xl shadow-xl">
-          <div className="flex justify-center items-center space-x-2">
-            <ChessBishop color="white" size={26} />
-            <p className="font-bold text-[14px] text-white">
-              {raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
-            </p>
-          </div>
-        </div>
+        <TopPlayerDisplay
+          imageSrc={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`}
+          name={raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
+          time={isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)}
+        />
       )
     } else {
       if (wallet?.account.address === player2) {
         return (
-          <div className="px-4 py-2  w-2/3 bg-blue-400 border border-none rounded-xl shadow-xl">
-            <div className="flex justify-center items-center space-x-2">
-              <ChessBishop color="white" size={26} />
-              <p className="font-bold  text-white">{truncateSuiTx(player1)}</p>
-            </div>
-          </div>
+          <TopPlayerDisplay
+            imageSrc={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`}
+            name={truncateSuiTx(player1)}
+            time={isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)}
+          />
         )
       } else {
         return (
-          <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
-            <div className="flex justify-center items-center space-x-2">
-              <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px] text-white">{truncateSuiTx(player2)}</p>
-            </div>
-          </div>
+          <TopPlayerDisplay
+            imageSrc={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`}
+            name={truncateSuiTx(player2)}
+            time={isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)}
+          />
         )
       }
     }
@@ -298,33 +364,24 @@ const Game: React.FC<{}> = () => {
 
   const onShowPlayerBottom = () => {
     if (wallet?.account.address !== player1 && wallet?.account.address !== player2) {
-      return (
-        <div className="px-4 py-2 hel w-2/3 border border-none rounded-xl shadow-xl">
-          <div className="flex justify-center items-center space-x-2">
-            <ChessBishop color="white" size={26} />
-            <p className="font-bold text-[14px] text-white">{truncateSuiTx(raw.player_1)}</p>
-          </div>
-        </div>
-      )
+      return BottomPlayerDisplay({
+        imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
+        name: truncateSuiTx(player1),
+        time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
+      })
     } else {
       if (wallet?.account.address === player1) {
-        return (
-          <div className="px-4 py-2 w-2/3 bg-blue-400 border border-none rounded-xl shadow-xl">
-            <div className="flex justify-center items-center space-x-2">
-              <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px]">{truncateSuiTx(player1)}</p>
-            </div>
-          </div>
-        )
+        return BottomPlayerDisplay({
+          imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
+          name: truncateSuiTx(player1),
+          time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
+        })
       } else {
-        return (
-          <div className="px-4 py-2 bg-[#baca44] w-2/3 border border-none rounded-xl shadow-xl">
-            <div className="flex justify-center items-center space-x-2">
-              <ChessBishop color="white" size={26} />
-              <p className="font-bold text-[14px]">{truncateSuiTx(player2)}</p>
-            </div>
-          </div>
-        )
+        return BottomPlayerDisplay({
+          imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
+          name: truncateSuiTx(player1),
+          time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
+        })
       }
     }
   }
@@ -359,7 +416,6 @@ const Game: React.FC<{}> = () => {
   const moveListRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    console.log(moveLists)
     if (moveListRef.current) {
       moveListRef.current.scrollLeft = moveListRef.current.scrollWidth
     }
