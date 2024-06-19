@@ -49,6 +49,7 @@ class TonProofDemoApiService {
           state_init: account.walletStateInit,
         },
       }
+      console.log('7s200:req.body', reqBody)
 
       const response = await (
         await fetch(`${this.host}/check_proof`, {
