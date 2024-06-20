@@ -55,6 +55,7 @@ const Game: React.FC<{}> = () => {
   const [moveSquares, setMoveSquares] = useState({})
   const [isGameOver, setIsGameOver] = useState(new Chess().isGameOver())
   const [isGameDraw, setIsGameDraw] = useState(new Chess().isDraw())
+  const [activeButton, setActiveButton] = useState(null)
 
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [isHiddenGameStatus, setIsHiddenGameStatus] = useState(false)
@@ -64,11 +65,9 @@ const Game: React.FC<{}> = () => {
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
-  const [player1Timer, setPlayer1Timer] = useState(600)
-  const [player2Timer, setPlayer2Timer] = useState(600)
+  const [player1Timer, setPlayer1Timer] = useState(0)
+  const [player2Timer, setPlayer2Timer] = useState(0)
   const [currentPlayer, setCurrentPlayer] = useState('') // 1 for Player 1, 2 for Player 2
-
-  console.log(currentPlayer)
 
   useEffect(() => {
     let intervalId: any
@@ -124,6 +123,10 @@ const Game: React.FC<{}> = () => {
           setPlayer1(data.player_1)
           setPlayer2(data.player_2)
           setTurnPlay(data.turnPlay)
+          if (data.move_number === 1 && data.turn_player === 'w') {
+            setPlayer1Timer(data.timers.player1Timer)
+            setPlayer2Timer(data.timers.player2Timer)
+          }
           setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
           if (data.player_1.length > 0 && data.player_2.length > 0) {
             setIsStartGame(true)
@@ -145,6 +148,8 @@ const Game: React.FC<{}> = () => {
         handleSwitchTurn()
         setGame(new Chess(room.fen))
         setTurnPlay(room.turn)
+        setPlayer1Timer(room.timers.player1Timer)
+        setPlayer2Timer(room.timers.player2Timer)
       }
     }
 
@@ -260,6 +265,10 @@ const Game: React.FC<{}> = () => {
           isPromotion:
             (foundMove.color === 'w' && foundMove.piece === 'p' && square[1] === '8') ||
             (foundMove.color === 'b' && foundMove.piece === 'p' && square[1] === '1'),
+          timers: {
+            player1Timer,
+            player2Timer,
+          },
         })
 
         handleSwitchTurn()
@@ -308,6 +317,10 @@ const Game: React.FC<{}> = () => {
           fen: game.fen(),
           isPromotion: true,
           promotion: piece[1].toLowerCase() ?? 'q',
+          timers: {
+            player1Timer,
+            player2Timer,
+          },
         })
         handleSwitchTurn()
       }
@@ -379,24 +392,11 @@ const Game: React.FC<{}> = () => {
       } else {
         return BottomPlayerDisplay({
           imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
-          name: truncateSuiTx(player1),
+          name: truncateSuiTx(player2),
           time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
         })
       }
     }
-  }
-
-  const onShowWaitingStartGame = () => {
-    if (!isStartGame) {
-      return (
-        <div className="absolute top-1/3 left-[50px] w-[400px] bg-white border boder-none rounded-xl">
-          <div className="flex flex-col space-y-4 justify-center items-center h-[150px]">
-            <div className="font-bold">Waiting player join the game...</div>
-          </div>
-        </div>
-      )
-    }
-    return <></>
   }
 
   const isOrientation = () => {
@@ -406,8 +406,6 @@ const Game: React.FC<{}> = () => {
       return 'black'
     }
   }
-
-  const [activeButton, setActiveButton] = useState(null)
 
   const handleButtonClick = (buttonId: any) => {
     setActiveButton(buttonId)
@@ -420,10 +418,6 @@ const Game: React.FC<{}> = () => {
       moveListRef.current.scrollLeft = moveListRef.current.scrollWidth
     }
   }, [moveLists])
-
-  const onCreateGame = async () => {
-    navigate(`/mode`)
-  }
 
   const onShowGame: any = () => {
     return (
@@ -536,7 +530,6 @@ const Game: React.FC<{}> = () => {
                   </Popup>
                 </div>
               )}
-              {onShowWaitingStartGame()}
             </div>
             {onShowPlayerBottom()}
           </div>

@@ -6,7 +6,7 @@ type PlayerDisplayProps = {
 
 const TopPlayerDisplay: React.FC<PlayerDisplayProps> = ({ imageSrc, name, time }) => {
   return (
-    <div className="px-4 py-2 flex justify-between">
+    <div className="py-2 flex justify-between">
       <div className="flex justify-start items-center space-x-2">
         <img src={imageSrc} alt="avatar" width={30} height={30} />
         <p className="font-bold text-[14px] text-white">{name}</p>
