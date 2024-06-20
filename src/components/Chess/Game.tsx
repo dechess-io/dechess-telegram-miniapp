@@ -346,57 +346,60 @@ const Game: React.FC<{}> = () => {
   }
 
   const onShowPlayerTop = () => {
-    if (wallet?.account.address !== player1 && wallet?.account.address !== player2) {
-      return (
-        <TopPlayerDisplay
-          imageSrc={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`}
-          name={raw.player_2 === '' ? 'Waiting player...' : truncateSuiTx(raw.player_2)}
-          time={isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)}
-        />
-      )
-    } else {
-      if (wallet?.account.address === player2) {
-        return (
-          <TopPlayerDisplay
-            imageSrc={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`}
-            name={truncateSuiTx(player1)}
-            time={isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)}
-          />
-        )
-      } else {
-        return (
-          <TopPlayerDisplay
-            imageSrc={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`}
-            name={truncateSuiTx(player2)}
-            time={isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)}
-          />
-        )
-      }
-    }
+    const isPlayer1 = wallet?.account.address === player1
+    const isPlayer2 = wallet?.account.address === player2
+    const playerName =
+      wallet?.account.address !== player1 && wallet?.account.address !== player2
+        ? raw.player_2 === ''
+          ? 'Waiting player...'
+          : truncateSuiTx(raw.player_2)
+        : isPlayer2
+        ? player1
+        : player2
+    const playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`
+    const playerTime =
+      isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)
+
+    return (
+      <TopPlayerDisplay
+        imageSrc={playerImage}
+        name={truncateSuiTx(playerName ? playerName : '')}
+        time={playerTime}
+      />
+    )
   }
 
   const onShowPlayerBottom = () => {
-    if (wallet?.account.address !== player1 && wallet?.account.address !== player2) {
-      return BottomPlayerDisplay({
-        imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
-        name: truncateSuiTx(player1),
-        time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
-      })
-    } else {
-      if (wallet?.account.address === player1) {
-        return BottomPlayerDisplay({
-          imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
-          name: truncateSuiTx(player1),
-          time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
-        })
-      } else {
-        return BottomPlayerDisplay({
-          imageSrc: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`,
-          name: truncateSuiTx(player2),
-          time: isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer),
-        })
-      }
-    }
+    const isPlayer1 = wallet?.account.address === player1
+    const isPlayer2 = wallet?.account.address === player2
+    const playerName = isPlayer1 || !isPlayer2 ? player1 : player2
+    const playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`
+    const playerTime =
+      isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer)
+
+    return BottomPlayerDisplay({
+      imageSrc: playerImage,
+      name: truncateSuiTx(playerName),
+      time: playerTime,
+    })
+  }
+
+  const onShowMoveList = () => {
+    return (
+      <div
+        ref={moveListRef}
+        className="pb-4 bg-blue-gradient-1 h-[30px] text-white overflow-hidden whitespace-nowrap"
+        style={{ width: '100%' }}
+      >
+        <div className="flex space-x-2">
+          {' '}
+          {/* Ensure the container allows scrolling */}
+          {moveLists.map((move, index) => (
+            <span key={index} className="inline-block">{`${index + 1}: ${move}`}</span>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   const isOrientation = () => {
@@ -424,19 +427,7 @@ const Game: React.FC<{}> = () => {
       <>
         <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
           <div className="flex flex-col space-y-1">
-            <div
-              ref={moveListRef}
-              className="pb-4 bg-blue-gradient-1 h-[30px] text-white overflow-hidden whitespace-nowrap"
-              style={{ width: '100%' }}
-            >
-              <div className="flex space-x-2">
-                {' '}
-                {/* Ensure the container allows scrolling */}
-                {moveLists.map((move, index) => (
-                  <span key={index} className="inline-block">{`${index + 1}: ${move}`}</span>
-                ))}
-              </div>
-            </div>
+            {onShowMoveList()}
             {onShowPlayerTop()}
             <div className="relative border-8 border-white rounded-lg">
               <Board

@@ -4,6 +4,7 @@ import 'react-circular-progressbar/dist/styles.css'
 import Progress from './components/ProgressChart/Progress'
 import './index.css'
 import { hasJWT } from './utils/utils'
+import Button from './components/Button/Button'
 function App() {
   const navigate = useNavigate()
   const handlePlayClick = () => {
@@ -69,13 +70,13 @@ function App() {
             </div>
 
             <div className="flex-auto p-4">
-              <button
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200"
-                onClick={() => handlePlayClick()}
+              <Button
+                onClick={handlePlayClick}
+                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
                 disabled={!hasJWT()}
               >
-                <span className="font-ibm">Play</span>
-              </button>
+                <span>Play</span>
+              </Button>
             </div>
           </div>
         </div>
