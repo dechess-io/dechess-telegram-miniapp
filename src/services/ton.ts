@@ -49,6 +49,7 @@ class TonProofDemoApiService {
           state_init: account.walletStateInit,
         },
       }
+      console.log('7s200:req.body', reqBody)
 
       const response = await (
         await fetch(`${this.host}/check_proof`, {
@@ -56,6 +57,7 @@ class TonProofDemoApiService {
           body: JSON.stringify(reqBody),
         })
       ).json()
+      console.log('7s200:checkproof', response)
       if (response?.data) {
         // console.log(1)
         localStorage.setItem(this.localStorageKey, response.data)
