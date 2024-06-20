@@ -100,7 +100,7 @@ root.render(
           ],
         }}
         actionsConfiguration={{
-          twaReturnUrl: 'https://t.me/dechess_bot/start',
+          twaReturnUrl: 'https://t.me/dechess_bot',
         }}
       >
         <PopupProvider>
