@@ -65,9 +65,10 @@ const Game: React.FC<{}> = () => {
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
-  const [player1Timer, setPlayer1Timer] = useState(0)
-  const [player2Timer, setPlayer2Timer] = useState(0)
+  const [player1Timer, setPlayer1Timer] = useState(-1)
+  const [player2Timer, setPlayer2Timer] = useState(-1)
   const [currentPlayer, setCurrentPlayer] = useState('') // 1 for Player 1, 2 for Player 2
+  const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
 
   useEffect(() => {
     let intervalId: any
@@ -82,17 +83,18 @@ const Game: React.FC<{}> = () => {
       intervalId = setInterval(() => {
         setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
       }, 1000)
+    } else if (currentPlayer === player1 && player1Timer === 0) {
+      setIsGameOver(true)
+    } else if (currentPlayer === player2 && player2Timer === 0) {
+      setIsGameOver(true)
     }
 
     return () => clearInterval(intervalId) // Cleanup function to clear interval
   }, [currentPlayer, player1Timer, player2Timer]) // Dependency array: effect runs when player changes, timer reaches zero
 
   const handleSwitchTurn = () => {
-    console.log('current ' + currentPlayer)
     const nextPlayer = currentPlayer === player1 ? player2 : player1
-    console.log('next ' + nextPlayer)
     setCurrentPlayer(nextPlayer)
-    console.log('set ' + currentPlayer)
   }
 
   const currentPlayerTurn = () => {
@@ -126,6 +128,7 @@ const Game: React.FC<{}> = () => {
           if (data.move_number === 1 && data.turn_player === 'w') {
             setPlayer1Timer(data.timers.player1Timer)
             setPlayer2Timer(data.timers.player2Timer)
+            setAdditionTimePerMove(data.timePerMove)
           }
           setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
           if (data.player_1.length > 0 && data.player_2.length > 0) {
@@ -255,6 +258,8 @@ const Game: React.FC<{}> = () => {
           promation: 'q',
         })
 
+        console.log('before ' + player1Timer)
+        console.log('before ' + player2Timer)
         socket.emit('move', {
           from: moveFrom,
           to: square,
@@ -266,14 +271,14 @@ const Game: React.FC<{}> = () => {
             (foundMove.color === 'w' && foundMove.piece === 'p' && square[1] === '8') ||
             (foundMove.color === 'b' && foundMove.piece === 'p' && square[1] === '1'),
           timers: {
-            player1Timer,
-            player2Timer,
+            player1Timer:
+              currentPlayerTurn() === player1 ? player1Timer + additionTimePerMove : player1Timer,
+            player2Timer:
+              currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
           },
         })
 
         handleSwitchTurn()
-
-        console.log(location.pathname.split('/')[2])
 
         if (move === null) {
           const hasMoveOptions = getMoveOptions(square)
@@ -305,7 +310,9 @@ const Game: React.FC<{}> = () => {
       console.log('7s200:pro', { promotion: piece[1].toLowerCase() ?? 'q' })
       if (newMove) {
         setGame(gameCopy)
-
+        currentPlayerTurn() === player1
+          ? setPlayer1Timer((prevTime) => prevTime + additionTimePerMove)
+          : setPlayer2Timer((prevTime) => prevTime + additionTimePerMove)
         // Emit the move to the backend
         socket.emit('move', {
           from: moveFrom,
@@ -410,10 +417,6 @@ const Game: React.FC<{}> = () => {
     }
   }
 
-  const handleButtonClick = (buttonId: any) => {
-    setActiveButton(buttonId)
-  }
-
   const moveListRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -457,14 +460,14 @@ const Game: React.FC<{}> = () => {
                 promotionToSquare={moveTo}
                 showPromotionDialog={showPromotionDialog}
               />
-              {(game.isGameOver() || game.isDraw()) && (
+              {(game.isGameOver() || game.isDraw() || isGameOver || isGameDraw) && (
                 <div
                   className={`absolute top-1/4  ${isHiddenGameStatus && 'hidden'}`}
                   onClick={() => setIsHiddenGameStatus(true)}
                 >
                   <Popup className="bg-grey-100 w-[364px] h-[200px]">
                     <h1 className="mb-4 text-center font-bold text-[20px] font-ibm">
-                      {game.isGameOver() && (
+                      {(game.isGameOver() || isGameOver) && (
                         <div>
                           <h2 className="text-white font-ibm pb-5">Game Over</h2>
                           <span className="text-white font-ibm">
@@ -493,7 +496,7 @@ const Game: React.FC<{}> = () => {
                           </div>
                         </div>
                       )}
-                      {game.isDraw() && (
+                      {(game.isDraw() || isGameDraw) && (
                         <div>
                           <h2 className="text-white font-ibm pb-5">Game Over</h2>
                           <span className="text-white font-ibm">Draw !</span>
