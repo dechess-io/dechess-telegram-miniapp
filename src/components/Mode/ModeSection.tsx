@@ -15,7 +15,7 @@ const renderButton = (
   handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
 ) => {
   return (
-    <div className="flex-auto p-1">
+    <div className="flex-auto p-1" key={buttonId}>
       <button
         className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
           activeButton === buttonId

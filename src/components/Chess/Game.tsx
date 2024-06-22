@@ -3,7 +3,12 @@ import { Chess, Square } from 'chess.js'
 import { useNavigate, useLocation } from 'react-router-dom'
 import restApi from '../../services/api'
 import { socket } from '../../services/socket'
-import { formatTime } from '../../utils/utils'
+import {
+  formatTime,
+  getAvatarName,
+  getLastUpdateTime,
+  getTimeFromLocalStorage,
+} from '../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
 import { truncateSuiTx } from '../../services/address'
 import LoadingGame from '../Loading/Loading'
@@ -12,24 +17,6 @@ import Header from '../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import BottomPlayerDisplay from './BottomPlayerDisplay'
 import TopPlayerDisplay from './TopPlayerDisplay'
-
-const nameLists = [
-  'Callie',
-  'Tigger',
-  'Snickers',
-  'Midnight',
-  'Trouble',
-  'Sammy',
-  'Simon',
-  'Oliver',
-  'Lilly',
-  'Abby',
-  'Oreo',
-  'Angel',
-  'Luna',
-  'Jack',
-  'Salem',
-]
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
@@ -41,8 +28,8 @@ const Game: React.FC<{}> = () => {
   const [player1, setPlayer1] = useState('')
   const [player2, setPlayer2] = useState('')
 
-  const [name1, setName1] = useState(nameLists[Math.floor(Math.random() * nameLists.length)])
-  const [name2, setName2] = useState(nameLists[Math.floor(Math.random() * nameLists.length)])
+  const [name1, setName1] = useState(getAvatarName())
+  const [name2, setName2] = useState(getAvatarName())
 
   const [moveFrom, setMoveFrom] = useState<any>('')
   const [moveTo, setMoveTo] = useState<any>('')
@@ -65,36 +52,65 @@ const Game: React.FC<{}> = () => {
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
-  const [player1Timer, setPlayer1Timer] = useState(-1)
-  const [player2Timer, setPlayer2Timer] = useState(-1)
-  const [currentPlayer, setCurrentPlayer] = useState('') // 1 for Player 1, 2 for Player 2
+  const [currentPlayer, setCurrentPlayer] = useState('')
   const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
+
+  const [player1Timer, setPlayer1Timer] = useState(() =>
+    getTimeFromLocalStorage('player1Timer', -1)
+  )
+  const [player2Timer, setPlayer2Timer] = useState(() =>
+    getTimeFromLocalStorage('player2Timer', -1)
+  )
+
+  useEffect(() => {
+    const lastUpdateTime = getLastUpdateTime()
+    const currentTime = Date.now()
+    const elapsedTime = Math.floor((currentTime - lastUpdateTime) / 1000)
+
+    if (currentPlayer === player1) {
+      setPlayer1Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
+    } else {
+      setPlayer2Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('player1Timer', player1Timer.toString())
+  }, [player1Timer])
+
+  useEffect(() => {
+    localStorage.setItem('player2Timer', player2Timer.toString())
+  }, [player2Timer])
 
   useEffect(() => {
     let intervalId: any
+    const updateTime = () => {
+      localStorage.setItem('lastUpdateTime', Date.now().toString())
+    }
 
-    if (currentPlayer === player1 && player1Timer > 0) {
-      // Only update timer for Player 1 if it's their turn and timer hasn't reached zero
-      intervalId = setInterval(() => {
-        setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
-      }, 1000)
-    } else if (currentPlayer === player2 && player2Timer > 0) {
-      // Only update timer for Player 2 if it's their turn and timer hasn't reached zero
-      intervalId = setInterval(() => {
-        setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
-      }, 1000)
-    } else if (currentPlayer === player1 && player1Timer === 0) {
-      setIsGameOver(true)
-    } else if (currentPlayer === player2 && player2Timer === 0) {
-      setIsGameOver(true)
+    if (!(isGameDraw && isGameOver)) {
+      if (currentPlayer === player1 && player1Timer > 0) {
+        intervalId = setInterval(() => {
+          setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
+          updateTime()
+        }, 1000)
+      } else if (currentPlayer === player2 && player2Timer > 0) {
+        intervalId = setInterval(() => {
+          setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
+          updateTime()
+        }, 1000)
+      } else if (currentPlayer === player1 && player1Timer === 0) {
+        setIsGameOver(true)
+      } else if (currentPlayer === player2 && player2Timer === 0) {
+        setIsGameOver(true)
+      }
     }
 
     return () => clearInterval(intervalId) // Cleanup function to clear interval
-  }, [currentPlayer, player1Timer, player2Timer]) // Dependency array: effect runs when player changes, timer reaches zero
+  }, [currentPlayer, player1Timer, player2Timer])
 
   const handleSwitchTurn = () => {
-    const nextPlayer = currentPlayer === player1 ? player2 : player1
-    setCurrentPlayer(nextPlayer)
+    setCurrentPlayer((prev) => (prev === player1 ? player2 : player1))
   }
 
   const currentPlayerTurn = () => {
@@ -258,8 +274,6 @@ const Game: React.FC<{}> = () => {
           promation: 'q',
         })
 
-        console.log('before ' + player1Timer)
-        console.log('before ' + player2Timer)
         socket.emit('move', {
           from: moveFrom,
           to: square,
@@ -310,9 +324,6 @@ const Game: React.FC<{}> = () => {
       console.log('7s200:pro', { promotion: piece[1].toLowerCase() ?? 'q' })
       if (newMove) {
         setGame(gameCopy)
-        currentPlayerTurn() === player1
-          ? setPlayer1Timer((prevTime) => prevTime + additionTimePerMove)
-          : setPlayer2Timer((prevTime) => prevTime + additionTimePerMove)
         // Emit the move to the backend
         socket.emit('move', {
           from: moveFrom,
@@ -325,8 +336,10 @@ const Game: React.FC<{}> = () => {
           isPromotion: true,
           promotion: piece[1].toLowerCase() ?? 'q',
           timers: {
-            player1Timer,
-            player2Timer,
+            player1Timer:
+              currentPlayerTurn() === player1 ? player1Timer + additionTimePerMove : player1Timer,
+            player2Timer:
+              currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
           },
         })
         handleSwitchTurn()

@@ -1,5 +1,23 @@
 import axios from 'axios'
 
+const nameLists = [
+  'Callie',
+  'Tigger',
+  'Snickers',
+  'Midnight',
+  'Trouble',
+  'Sammy',
+  'Simon',
+  'Oliver',
+  'Lilly',
+  'Abby',
+  'Oreo',
+  'Angel',
+  'Luna',
+  'Jack',
+  'Salem',
+]
+
 export const setAuthToken = (token: string) => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -20,4 +38,18 @@ export const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
   const remainingSeconds = seconds % 60
   return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
+}
+
+export const getAvatarName = (): string => {
+  return nameLists[Math.floor(Math.random() * nameLists.length)]
+}
+
+export const getTimeFromLocalStorage = (key: string, defaultValue: number) => {
+  const savedTime = localStorage.getItem(key)
+  return savedTime !== null ? Number(savedTime) : defaultValue
+}
+
+export const getLastUpdateTime = () => {
+  const lastUpdateTime = localStorage.getItem('lastUpdateTime')
+  return lastUpdateTime !== null ? Number(lastUpdateTime) : Date.now()
 }
