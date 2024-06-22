@@ -15,8 +15,9 @@ import LoadingGame from '../Loading/Loading'
 import Popup from '../Popup/Popup'
 import Header from '../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
-import BottomPlayerDisplay from './BottomPlayerDisplay'
-import TopPlayerDisplay from './TopPlayerDisplay'
+import MoveRecord from './MoveRecord'
+import GameOverPopUp from './GameOverPopUp'
+import PlayerDisplay from './PlayerDisplay'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
@@ -381,10 +382,13 @@ const Game: React.FC<{}> = () => {
       isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)
 
     return (
-      <TopPlayerDisplay
+      <PlayerDisplay
         imageSrc={playerImage}
         name={truncateSuiTx(playerName ? playerName : '')}
         time={playerTime}
+        timeBoxClass="bg-grey-100 border-b-4 border-grey-200"
+        clockIconSrc="/clock-stopwatch-white.svg"
+        textColor="text-white"
       />
     )
   }
@@ -397,28 +401,15 @@ const Game: React.FC<{}> = () => {
     const playerTime =
       isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer)
 
-    return BottomPlayerDisplay({
-      imageSrc: playerImage,
-      name: truncateSuiTx(playerName),
-      time: playerTime,
-    })
-  }
-
-  const onShowMoveList = () => {
     return (
-      <div
-        ref={moveListRef}
-        className="pb-4 bg-blue-gradient-1 h-[30px] text-white overflow-hidden whitespace-nowrap"
-        style={{ width: '100%' }}
-      >
-        <div className="flex space-x-2">
-          {' '}
-          {/* Ensure the container allows scrolling */}
-          {moveLists.map((move, index) => (
-            <span key={index} className="inline-block">{`${index + 1}: ${move}`}</span>
-          ))}
-        </div>
-      </div>
+      <PlayerDisplay
+        imageSrc={playerImage}
+        name={truncateSuiTx(playerName ? playerName : '')}
+        time={playerTime}
+        timeBoxClass="bg-blue-gradient border-b-4 border-blue-200"
+        clockIconSrc="/clock-stopwatch-black.svg"
+        textColor="text-white"
+      />
     )
   }
 
@@ -430,20 +421,12 @@ const Game: React.FC<{}> = () => {
     }
   }
 
-  const moveListRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (moveListRef.current) {
-      moveListRef.current.scrollLeft = moveListRef.current.scrollWidth
-    }
-  }, [moveLists])
-
   const onShowGame: any = () => {
     return (
       <>
         <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
           <div className="flex flex-col space-y-1">
-            {onShowMoveList()}
+            <MoveRecord moveLists={moveLists} />
             {onShowPlayerTop()}
             <div className="relative border-8 border-white rounded-lg">
               <Board
@@ -473,70 +456,16 @@ const Game: React.FC<{}> = () => {
                 promotionToSquare={moveTo}
                 showPromotionDialog={showPromotionDialog}
               />
-              {(game.isGameOver() || game.isDraw() || isGameOver || isGameDraw) && (
-                <div
-                  className={`absolute top-1/4  ${isHiddenGameStatus && 'hidden'}`}
-                  onClick={() => setIsHiddenGameStatus(true)}
-                >
-                  <Popup className="bg-grey-100 w-[364px] h-[200px]">
-                    <h1 className="mb-4 text-center font-bold text-[20px] font-ibm">
-                      {(game.isGameOver() || isGameOver) && (
-                        <div>
-                          <h2 className="text-white font-ibm pb-5">Game Over</h2>
-                          <span className="text-white font-ibm">
-                            {(player1 === wallet?.account.address && game._turn === 'b') ||
-                            (player2 === wallet?.account.address && game._turn === 'w')
-                              ? 'You Win'
-                              : 'You Lose'}
-                          </span>
-                          <div className="flex flex-row pt-2">
-                            <div className="flex-auto p-1">
-                              <button
-                                className={`bg-gray-900 font-bold  rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
-                                onClick={() => navigate('/mode')}
-                              >
-                                <span className="text-white text-sm">New Game</span>
-                              </button>
-                            </div>
-                            <div className="flex-auto p-1">
-                              <button
-                                className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
-                                onClick={() => navigate('/')}
-                              >
-                                <span className="text-white text-sm">Game Overview</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      {(game.isDraw() || isGameDraw) && (
-                        <div>
-                          <h2 className="text-white font-ibm pb-5">Game Over</h2>
-                          <span className="text-white font-ibm">Draw !</span>
-                          <div className="flex flex-row pt-2">
-                            <div className="flex-auto p-1">
-                              <button
-                                className={`bg-gray-900 font-bold  rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
-                                onClick={() => navigate('/mode')}
-                              >
-                                <span className="text-white text-sm">New Game</span>
-                              </button>
-                            </div>
-                            <div className="flex-auto p-1">
-                              <button
-                                className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
-                                onClick={() => navigate('/')}
-                              >
-                                <span className="text-white text-sm">Game Overview</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </h1>
-                  </Popup>
-                </div>
-              )}
+              <GameOverPopUp
+                isHiddenGameStatus={isHiddenGameStatus}
+                setIsHiddenGameStatus={setIsHiddenGameStatus}
+                game={game}
+                isGameOver={isGameOver}
+                isGameDraw={isGameDraw}
+                player1={player1}
+                player2={player2}
+                wallet={wallet}
+              />
             </div>
             {onShowPlayerBottom()}
           </div>
