@@ -63,12 +63,14 @@ const Game: React.FC<{}> = () => {
   useEffect(() => {
     const lastUpdateTime = getLastUpdateTime()
     const currentTime = Date.now()
-    const elapsedTime = Math.floor((currentTime - lastUpdateTime) / 1000)
+    const elapsedTime = Math.floor((currentTime - lastUpdateTime) / 1000 + 0.5)
 
     if (currentPlayer === player1) {
       setPlayer1Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
+      localStorage.setItem('lastUpdateTime', Date.now().toString())
     } else {
       setPlayer2Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
+      localStorage.setItem('lastUpdateTime', Date.now().toString())
     }
   }, [])
 
