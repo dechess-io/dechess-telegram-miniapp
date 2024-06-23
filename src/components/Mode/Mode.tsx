@@ -186,7 +186,7 @@ const Mode: React.FC<{}> = () => {
               <Button
                 onClick={onCreateGame}
                 className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
-                disabled={!hasJWT()}
+                disabled={!hasJWT() || !activeButton}
               >
                 <span className="text-black font-ibm">Start game</span>
               </Button>

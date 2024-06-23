@@ -21,7 +21,7 @@ import PlayerDisplay from './PlayerDisplay'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
-  const [isStartGame, setIsStartGame] = useState(true)
+  const [isStartGame, setIsStartGame] = useState(false)
   const wallet = useTonWallet()
   const [game, setGame] = useState<Chess | any>()
   const [raw, setRaw] = useState<any>(null)
@@ -43,11 +43,8 @@ const Game: React.FC<{}> = () => {
   const [moveSquares, setMoveSquares] = useState({})
   const [isGameOver, setIsGameOver] = useState(new Chess().isGameOver())
   const [isGameDraw, setIsGameDraw] = useState(new Chess().isDraw())
-  const [activeButton, setActiveButton] = useState(null)
 
   const [isSocketConnected, setIsSocketConnected] = useState(false)
-  const [isHiddenGameStatus, setIsHiddenGameStatus] = useState(false)
-
   const [turnPlay, setTurnPlay] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -89,7 +86,7 @@ const Game: React.FC<{}> = () => {
       localStorage.setItem('lastUpdateTime', Date.now().toString())
     }
 
-    if (!(isGameDraw && isGameOver)) {
+    if (!isGameDraw && !isGameOver) {
       if (currentPlayer === player1 && player1Timer > 0) {
         intervalId = setInterval(() => {
           setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
@@ -102,13 +99,23 @@ const Game: React.FC<{}> = () => {
         }, 1000)
       } else if (currentPlayer === player1 && player1Timer === 0) {
         setIsGameOver(true)
+        emitGameOver()
       } else if (currentPlayer === player2 && player2Timer === 0) {
         setIsGameOver(true)
+        emitGameOver()
       }
     }
 
     return () => clearInterval(intervalId) // Cleanup function to clear interval
-  }, [currentPlayer, player1Timer, player2Timer])
+  }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver])
+
+  const emitGameOver = () => {
+    socket.emit('endGame', {
+      game_id: location.pathname.split('/')[2],
+      isGameOver: isGameOver,
+      isGameDraw: isGameDraw,
+    })
+  }
 
   const handleSwitchTurn = () => {
     setCurrentPlayer((prev) => (prev === player1 ? player2 : player1))
@@ -170,6 +177,14 @@ const Game: React.FC<{}> = () => {
         setTurnPlay(room.turn)
         setPlayer1Timer(room.timers.player1Timer)
         setPlayer2Timer(room.timers.player2Timer)
+        // if (game.isDraw()) {
+        //   setIsGameDraw(true)
+        //   setIsGameOver(true)
+        // }
+
+        // if (game.isGameOver()) {
+        //   setIsGameOver(true)
+        // }
       }
     }
 
@@ -228,6 +243,10 @@ const Game: React.FC<{}> = () => {
   function onSquareClick(square: Square) {
     // if currentAccount
     if (true) {
+      if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) {
+        return
+      }
+
       if (player1 !== wallet?.account.address && game._turn === 'w') {
         return
       }
@@ -457,8 +476,6 @@ const Game: React.FC<{}> = () => {
                 showPromotionDialog={showPromotionDialog}
               />
               <GameOverPopUp
-                isHiddenGameStatus={isHiddenGameStatus}
-                setIsHiddenGameStatus={setIsHiddenGameStatus}
                 game={game}
                 isGameOver={isGameOver}
                 isGameDraw={isGameDraw}
