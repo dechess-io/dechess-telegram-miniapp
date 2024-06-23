@@ -41,8 +41,8 @@ const Game: React.FC<{}> = () => {
   const [showPromotionDialog, setShowPromotionDialog] = useState(false)
   const [optionSquares, setOptionSquares] = useState({})
   const [moveSquares, setMoveSquares] = useState({})
-  const [isGameOver, setIsGameOver] = useState(new Chess().isGameOver())
-  const [isGameDraw, setIsGameDraw] = useState(new Chess().isDraw())
+  const [isGameOver, setIsGameOver] = useState(false)
+  const [isGameDraw, setIsGameDraw] = useState(false)
 
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [turnPlay, setTurnPlay] = useState(false)
@@ -86,7 +86,8 @@ const Game: React.FC<{}> = () => {
       localStorage.setItem('lastUpdateTime', Date.now().toString())
     }
 
-    if (!isGameDraw && !isGameOver) {
+    if (!isGameDraw && !isGameOver && isStartGame) {
+      if (game && game.isGameOver()) return
       if (currentPlayer === player1 && player1Timer > 0) {
         intervalId = setInterval(() => {
           setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
@@ -154,10 +155,15 @@ const Game: React.FC<{}> = () => {
             setPlayer2Timer(data.timers.player2Timer)
             setAdditionTimePerMove(data.timePerMove)
           }
-          setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
-          if (data.player_1.length > 0 && data.player_2.length > 0) {
+
+          if (!(data.move_number === 1 && data.turn_player === 'w')) {
             setIsStartGame(true)
           }
+
+          setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
+          // if (data.player_1.length > 0 && data.player_2.length > 0) {
+          //   setIsStartGame(true)
+          // }
         }
       })
       .catch((err) => {})
@@ -177,14 +183,6 @@ const Game: React.FC<{}> = () => {
         setTurnPlay(room.turn)
         setPlayer1Timer(room.timers.player1Timer)
         setPlayer2Timer(room.timers.player2Timer)
-        // if (game.isDraw()) {
-        //   setIsGameDraw(true)
-        //   setIsGameOver(true)
-        // }
-
-        // if (game.isGameOver()) {
-        //   setIsGameOver(true)
-        // }
       }
     }
 
@@ -287,6 +285,8 @@ const Game: React.FC<{}> = () => {
         }
 
         let gameCopy = game
+
+        setIsStartGame(true)
 
         const move = gameCopy.move({
           from: moveFrom,
