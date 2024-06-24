@@ -15,14 +15,15 @@ $text-color: white;
     overflow: hidden;
 
     .semi-circle {
+      position: relative;
       width: 216px;
       height: 216px;
       overflow: hidden;
       border-radius: 50%;
       box-sizing: border-box;
-      border: 25px solid greenyellow;
-      border-right-color: red;
-      border-bottom-color: red;
+      border: 30px solid #98FF32;
+      border-right-color: #FF3232;
+      border-bottom-color: #FF3232;
       margin-left: -108px;
     }
     .semi-circle-overlay {
