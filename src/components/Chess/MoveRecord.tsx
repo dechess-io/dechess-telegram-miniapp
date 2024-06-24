@@ -16,12 +16,14 @@ const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists }) => {
   return (
     <div
       ref={moveListRef}
-      className="pb-4 bg-blue-gradient-1 h-[30px] text-white overflow-hidden whitespace-nowrap"
+      className="pb-1 bg-blue-gradient-1 h-[15px] text-white overflow-hidden whitespace-nowrap"
       style={{ width: '100%' }}
     >
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 text-[12px]">
         {moveLists.map((move, index) => (
-          <span key={index} className="inline-block">{`${index + 1}: ${move}`}</span>
+          <span key={index} className="inline-block">{`${
+            index % 2 === 0 ? index / 2 + 1 + '. ' : ''
+          }${move}`}</span>
         ))}
       </div>
     </div>

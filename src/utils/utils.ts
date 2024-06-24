@@ -53,3 +53,32 @@ export const getLastUpdateTime = () => {
   const lastUpdateTime = localStorage.getItem('lastUpdateTime')
   return lastUpdateTime !== null ? Number(lastUpdateTime) : Date.now()
 }
+
+type ChessPieces = {
+  [key: string]: string
+}
+
+const blackPieces: ChessPieces = {
+  K: '♔',
+  Q: '♕',
+  N: '♘',
+  B: '♗',
+  R: '♖',
+}
+
+const whitePieces: ChessPieces = {
+  K: '♚',
+  Q: '♛',
+  N: '♞',
+  B: '♝',
+  R: '♜',
+}
+
+export function convertToFigurineSan(str: string, turn: string): string {
+  let mp: ChessPieces
+  mp = turn === 'w' ? whitePieces : blackPieces
+  if (mp.hasOwnProperty(str[0])) {
+    return mp[str[0]] + str.slice(1)
+  }
+  return str
+}

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import restApi from '../../services/api'
 import { socket } from '../../services/socket'
 import {
+  convertToFigurineSan,
   formatTime,
   getAvatarName,
   getLastUpdateTime,
@@ -177,7 +178,8 @@ const Game: React.FC<{}> = () => {
     }
 
     function onNewMove(room: any) {
-      setMoveLists((newMoves: any) => [...newMoves, `${room.from} ${room.to}`])
+      console.log(room)
+      setMoveLists((newMoves: any) => [...newMoves, `${room.san}`])
       if (room.fen) {
         setTurn(room.turn)
         handleSwitchTurn()
@@ -240,6 +242,7 @@ const Game: React.FC<{}> = () => {
     setOptionSquares(newSquares)
     return true
   }
+
   function onSquareClick(square: Square) {
     // if currentAccount
     if (true) {
@@ -296,6 +299,8 @@ const Game: React.FC<{}> = () => {
           promation: 'q',
         })
 
+        foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
+
         socket.emit('move', {
           from: moveFrom,
           to: square,
@@ -312,6 +317,7 @@ const Game: React.FC<{}> = () => {
             player2Timer:
               currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
           },
+          san: foundMove.san,
         })
 
         handleSwitchTurn()

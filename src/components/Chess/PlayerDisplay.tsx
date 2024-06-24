@@ -18,7 +18,7 @@ const PlayerDisplay: React.FC<PlayerDisplayProps> = ({
   textColor,
 }) => {
   return (
-    <div className="py-2 flex justify-between">
+    <div className="flex justify-between">
       <div className="flex justify-start items-center space-x-2">
         <img src={imageSrc} alt="avatar" width={30} height={30} />
         <p className={`font-bold text-[14px] ${textColor} font-ibm`}>{name}</p>

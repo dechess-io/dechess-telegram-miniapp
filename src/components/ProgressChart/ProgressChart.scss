@@ -1,6 +1,6 @@
 $success-color: #7fff00;
 $error-color: #ff4500;
-$background-color: #7B61FF;
+$background-color: #7b61ff;
 $text-color: white;
 
 .vertical-semi-circle-progress-chart {
@@ -21,9 +21,9 @@ $text-color: white;
       overflow: hidden;
       border-radius: 50%;
       box-sizing: border-box;
-      border: 30px solid #98FF32;
-      border-right-color: #FF3232;
-      border-bottom-color: #FF3232;
+      border: 30px solid #98ff32;
+      border-right-color: #ff3232;
+      border-bottom-color: #ff3232;
       margin-left: -108px;
     }
     .semi-circle-overlay {
@@ -70,12 +70,12 @@ $text-color: white;
           margin-right: 5px;
 
           &.win {
-            background: linear-gradient(136.59deg, #99FF32 7.32%, #EFFF38 67.9%);
+            background: linear-gradient(136.59deg, #99ff32 7.32%, #efff38 67.9%);
             box-shadow: 0px -3px 0px 0px #00000033 inset;
           }
 
           &.lose {
-            background: linear-gradient(39.74deg, #FF3232 4.83%, #FF655C 90.96%);
+            background: linear-gradient(39.74deg, #ff3232 4.83%, #ff655c 90.96%);
             box-shadow: 0px -3px 0px 0px #00000033 inset;
           }
         }
