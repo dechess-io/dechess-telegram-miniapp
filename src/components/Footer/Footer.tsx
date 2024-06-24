@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
     )
   }
   return (
-    <div className="fixed bottom-0 left-2/4 -translate-x-1/2 mx-auto w-[380px] h-[80px] px-[40px] py-[15px] justify-between items-center flex-shrink-0 rounded-tl-[20px] rounded-br-none rounded-tr-[20px] rounded-bl-none bg-[#1E1C1A]">
+    <div className="fixed bottom-0 left-2/4 -translate-x-1/2 mx-auto w-full h-[80px] px-[40px] py-[15px] justify-between items-center flex-shrink-0 rounded-tl-[20px] rounded-br-none rounded-tr-[20px] rounded-bl-none bg-[#1E1C1A]">
       <div className="flex w-full justify-between">
         {renderFooterItem('Home', '/home-icon.svg', true)}
         {renderFooterItem('Mini Game', '/game-icon.svg', false)}
