@@ -31,7 +31,7 @@ const Header: React.FC<{}> = () => {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full mx-auto bg-gray-1000">
+      <nav className="bg-[#041d21] fixed top-0 z-50 w-full mx-auto bg-gray-1000">
         <div className="mx-auto max-w-[398px] px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             {data.pathname === '/mode' ? (
