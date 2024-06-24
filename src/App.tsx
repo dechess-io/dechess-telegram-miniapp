@@ -44,7 +44,7 @@ function App() {
       <div className="flex flex-col pt-6 bg-gray-1000">
         <div className="border-none rounded-xl max-w-[380px] mx-auto min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            <div className="flex flex-row bg-black-gradient w-[370px] h-227 rounded-lg pl-2">
+            <div className="flex flex-row bg-[linear-gradient(180deg,_#303030_0%,_#000000_100%)] w-[370px] h-227 rounded-lg pl-2">
               <div className="flex-auto ">
                 <Progress losses={5} totalGames={10} wins={5} />
               </div>

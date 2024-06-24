@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import './ProgressChart.scss'
 
 type Props = {
@@ -7,29 +7,35 @@ type Props = {
   losses: number
 }
 const Progress = ({ totalGames, wins, losses }: Props) => {
-  const lossPercentage = (losses / totalGames) * 100
+  const [rotateDeg, setRotateDeg] = useState<number | null>(null);
+
+  useEffect(() => {
+    const winPercentage = (wins / totalGames) * 100;
+    // -45 is the initial rotation angle ~ 0 win
+    const calculatedRotateDeg = 360 + 45 - winPercentage*1.8;
+    setRotateDeg(calculatedRotateDeg);
+  }, [totalGames, wins, losses]);
   return (
     <div className="vertical-semi-circle-progress-chart">
-      <div className="chart-and-labels">
+      <div className="chart-and-labels gap-2">
         <div
-          className="semi-circle"
-          style={{ background: `conic-gradient(#ff4500 0% 50%, #7fff00 30% 20%)` }}
+          className={`semi-circle -rotate-[${rotateDeg}deg]`}
         >
-          <div className="semi-circle-overlay">
-            <div className="text">
-              <span className="font-ibm pr-2">Game</span>
-              <span className="font-ibm pr-2">{totalGames}</span>
-            </div>
+        </div>
+        <div className="semi-circle-overlay">
+          <div className="text">
+            <span className="font-ibm pr-2">Game</span>
+            <span className="font-ibm pr-2">{totalGames}</span>
           </div>
         </div>
-        <div className="labels">
+        <div className="labels gap-12 items-start">
           <div className="label win text-white">
             <div className="count win font-ibm">{wins}</div>
-            <div className="">Win</div>
+            <div className="flex justify-center items-center">Win</div>
           </div>
           <div className="label lose ">
             <div className="count lose font-ibm">{losses}</div>
-            <div className="font-ibm">Lose</div>
+            <div className="flex justify-center items-center">Lose</div>
           </div>
         </div>
       </div>

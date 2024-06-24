@@ -1,73 +1,81 @@
 $success-color: #7fff00;
 $error-color: #ff4500;
-$background-color: #3f3f3f;
+$background-color: #7B61FF;
 $text-color: white;
 
 .vertical-semi-circle-progress-chart {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   height: 100%;
 
   .chart-and-labels {
     display: flex;
+    position: relative;
     align-items: center;
+    overflow: hidden;
 
     .semi-circle {
-      position: relative;
-      width: 220px;
-      height: 120px;
-      border-radius: 150px 150px 10px 10px;
-      transform: rotate(90deg);
+      width: 216px;
+      height: 216px;
       overflow: hidden;
-      margin-left: -60px;
+      border-radius: 50%;
+      box-sizing: border-box;
+      border: 25px solid greenyellow;
+      border-right-color: red;
+      border-bottom-color: red;
+      margin-left: -108px;
+    }
+    .semi-circle-overlay {
+      position: absolute;
+      left: -68px;
+      width: 136px;
+      height: 136px;
+      //border-radius: 5px 68px 68px 5px;
+      border-radius: 50%;
+      background-color: $background-color;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $text-color;
+      font-size: 20px;
+      text-align: center;
 
-      .semi-circle-overlay {
-        position: absolute;
-        width: 158px;
-        height: 93px;
-        top: 27px;
-        left: 30px;
-        background-color: $background-color;
+      .text {
+        margin-left: 68px;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $text-color;
+        flex-direction: column;
         font-size: 20px;
-        text-align: center;
-        border-radius: 120px 120px 5px 5px;
-
-        .text {
-          transform: rotate(-90deg);
-          display: flex;
-          flex-direction: column;
-          font-size: 20px;
-        }
       }
     }
 
     .labels {
       display: flex;
       flex-direction: column;
-      margin-left: -10px; // Adjusted to avoid the need for negative margin classes
 
       .label {
         display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        margin-left: -30px;
 
         .count {
-          font-size: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: black;
+          width: 32px;
+          height: 32px;
+          font-size: 14px;
+          font-weight: bold;
+          padding: 10px;
+          border-radius: 4px;
           margin-right: 5px;
-          padding: 5px 10px;
-          border-radius: 5px;
 
           &.win {
-            background-color: $success-color;
+            background: linear-gradient(136.59deg, #99FF32 7.32%, #EFFF38 67.9%);
+            box-shadow: 0px -3px 0px 0px #00000033 inset;
           }
 
           &.lose {
-            background-color: $error-color;
+            background: linear-gradient(39.74deg, #FF3232 4.83%, #FF655C 90.96%);
+            box-shadow: 0px -3px 0px 0px #00000033 inset;
           }
         }
       }
