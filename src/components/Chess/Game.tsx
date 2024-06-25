@@ -10,15 +10,11 @@ import {
   getLastUpdateTime,
   getTimeFromLocalStorage,
 } from '../../utils/utils'
-import { Chessboard as Board } from 'react-chessboard'
-import { truncateSuiTx } from '../../services/address'
 import LoadingGame from '../Loading/Loading'
-import Popup from '../Popup/Popup'
 import Header from '../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
-import MoveRecord from './MoveRecord'
-import GameOverPopUp from './GameOverPopUp'
-import PlayerDisplay from './PlayerDisplay'
+import GameFooter from './GameFooter'
+import GameBoard from './Board'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
@@ -393,53 +389,6 @@ const Game: React.FC<{}> = () => {
     // console.log("7s200:onSquareRightClick", rightClickedSquares);
   }
 
-  const onShowPlayerTop = () => {
-    const isPlayer1 = wallet?.account.address === player1
-    const isPlayer2 = wallet?.account.address === player2
-    const playerName =
-      wallet?.account.address !== player1 && wallet?.account.address !== player2
-        ? raw.player_2 === ''
-          ? 'Waiting player...'
-          : truncateSuiTx(raw.player_2)
-        : isPlayer2
-        ? player1
-        : player2
-    const playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`
-    const playerTime =
-      isOrientation() === 'white' ? formatTime(player2Timer) : formatTime(player1Timer)
-
-    return (
-      <PlayerDisplay
-        imageSrc={playerImage}
-        name={truncateSuiTx(playerName ? playerName : '')}
-        time={playerTime}
-        timeBoxClass="bg-grey-100 border-b-4 border-grey-200"
-        clockIconSrc="/clock-stopwatch-white.svg"
-        textColor="text-white"
-      />
-    )
-  }
-
-  const onShowPlayerBottom = () => {
-    const isPlayer1 = wallet?.account.address === player1
-    const isPlayer2 = wallet?.account.address === player2
-    const playerName = isPlayer1 || !isPlayer2 ? player1 : player2
-    const playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`
-    const playerTime =
-      isOrientation() === 'white' ? formatTime(player1Timer) : formatTime(player2Timer)
-
-    return (
-      <PlayerDisplay
-        imageSrc={playerImage}
-        name={truncateSuiTx(playerName ? playerName : '')}
-        time={playerTime}
-        timeBoxClass="bg-blue-gradient border-b-4 border-blue-200"
-        clockIconSrc="/clock-stopwatch-black.svg"
-        textColor="text-white"
-      />
-    )
-  }
-
   const isOrientation = () => {
     if (wallet?.account.address === player1) {
       return 'white'
@@ -448,66 +397,35 @@ const Game: React.FC<{}> = () => {
     }
   }
 
-  const onShowGame: any = () => {
-    return (
-      <>
-        <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-          <div className="flex flex-col space-y-1">
-            <MoveRecord moveLists={moveLists} />
-            {onShowPlayerTop()}
-            <div className="relative border-8 border-white rounded-lg">
-              <Board
-                boardOrientation={isOrientation()}
-                position={game.fen()}
-                id="ClickToMove"
-                animationDuration={200}
-                arePiecesDraggable={false}
-                onSquareClick={onSquareClick}
-                onSquareRightClick={onSquareRightClick}
-                onPromotionPieceSelect={onPromotionPieceSelect}
-                customBoardStyle={{
-                  // borderRadius: '8px',
-                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
-                }}
-                customLightSquareStyle={{
-                  backgroundColor: '#E8EDF9',
-                }}
-                customDarkSquareStyle={{
-                  backgroundColor: '#B7C0D8',
-                }}
-                customSquareStyles={{
-                  ...moveSquares,
-                  ...optionSquares,
-                  ...rightClickedSquares,
-                }}
-                promotionToSquare={moveTo}
-                showPromotionDialog={showPromotionDialog}
-              />
-              <GameOverPopUp
-                game={game}
-                isGameOver={isGameOver}
-                isGameDraw={isGameDraw}
-                player1={player1}
-                player2={player2}
-                wallet={wallet}
-              />
-            </div>
-            {onShowPlayerBottom()}
-          </div>
-        </div>
-      </>
-    )
-  }
-
   if (!game || !raw) {
     return <LoadingGame />
   } else {
     return (
       <>
         <Header />
-        <div className="flex flex-col pt-6 justify-start bg-gray-1000 h-screen">
-          <div className="flex justify-center items-center pt-5 mt-10">{onShowGame()}</div>
-        </div>
+        <GameBoard
+          player1={player1}
+          player2={player2}
+          raw={raw}
+          player1Timer={player1Timer}
+          player2Timer={player2Timer}
+          isOrientation={isOrientation}
+          moveLists={moveLists}
+          game={game}
+          onSquareClick={onSquareClick}
+          onSquareRightClick={onSquareRightClick}
+          onPromotionPieceSelect={onPromotionPieceSelect}
+          isGameDraw={isGameDraw}
+          isGameOver={isGameOver}
+          showPromotionDialog={showPromotionDialog}
+          moveSquares={moveSquares}
+          optionSquares={optionSquares}
+          rightClickedSquares={rightClickedSquares}
+          name1={name1}
+          name2={name2}
+          moveTo={moveTo}
+        />
+        <GameFooter />
       </>
     )
   }
