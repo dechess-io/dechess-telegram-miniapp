@@ -15,6 +15,9 @@ import Header from '../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameFooter from './GameFooter'
 import GameBoard from './Board'
+import GameSidebar from './GameSideBar'
+import GameChat from './GameChat'
+import { Message } from './GameChat'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
@@ -40,10 +43,25 @@ const Game: React.FC<{}> = () => {
   const [moveSquares, setMoveSquares] = useState({})
   const [isGameOver, setIsGameOver] = useState(false)
   const [isGameDraw, setIsGameDraw] = useState(false)
+  const [gameHistory, setGameHistory] = useState<string[]>([new Chess().fen()])
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false)
+  const [isChatVisible, setIsChatVisible] = useState(false)
+
+  const [messages, setMessages] = useState<Message[]>([])
+
+  // Function to toggle sidebar visibility
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible)
+  }
+
+  const toggleChat = () => {
+    setIsChatVisible(!isChatVisible)
+  }
 
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [turnPlay, setTurnPlay] = useState(false)
-  const navigate = useNavigate()
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
@@ -174,7 +192,6 @@ const Game: React.FC<{}> = () => {
     }
 
     function onNewMove(room: any) {
-      console.log(room)
       setMoveLists((newMoves: any) => [...newMoves, `${room.san}`])
       if (room.fen) {
         setTurn(room.turn)
@@ -183,6 +200,8 @@ const Game: React.FC<{}> = () => {
         setTurnPlay(room.turn)
         setPlayer1Timer(room.timers.player1Timer)
         setPlayer2Timer(room.timers.player2Timer)
+        setGameHistory((prevHistory) => [...prevHistory, room.fen])
+        setCurrentMoveIndex((prevIndex) => prevIndex + 1)
       }
     }
 
@@ -191,7 +210,6 @@ const Game: React.FC<{}> = () => {
         setIsStartGame(true)
       }
     }
-
     socket.connect()
     socket.on('connection', onConnect)
     socket.on('newmove', onNewMove)
@@ -206,11 +224,19 @@ const Game: React.FC<{}> = () => {
     }
   }, [])
 
+  useEffect(() => {
+    function onMessage(data: Message) {
+      setMessages((prev) => [...prev, data])
+    }
+
+    socket.on('message', onMessage)
+    return () => {
+      socket.off('message', onMessage)
+    }
+  }, [])
+
   function getMoveOptions(square: Square) {
-    const moves = game.moves({
-      square,
-      verbose: true,
-    })
+    const moves = game.moves({ square, verbose: true })
 
     if (moves.length === 0) {
       setOptionSquares({})
@@ -242,16 +268,9 @@ const Game: React.FC<{}> = () => {
   function onSquareClick(square: Square) {
     // if currentAccount
     if (true) {
-      if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) {
-        return
-      }
-
-      if (player1 !== wallet?.account.address && game._turn === 'w') {
-        return
-      }
-      if (player2 !== wallet?.account.address && game._turn === 'b') {
-        return
-      }
+      if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return
+      if (player1 !== wallet?.account.address && game._turn === 'w') return
+      if (player2 !== wallet?.account.address && game._turn === 'b') return
 
       setRightClickedSquares({})
 
@@ -330,6 +349,8 @@ const Game: React.FC<{}> = () => {
         setMoveFrom('')
         setMoveTo(null)
         setOptionSquares({})
+        // setGameHistory((prevHistory) => [...prevHistory, gameCopy.fen()])
+        // setCurrentMoveIndex((prevIndex) => prevIndex + 1)
         return
       }
     }
@@ -339,7 +360,6 @@ const Game: React.FC<{}> = () => {
     // if no piece passed then user has cancelled dialog, don't make move and reset
     if (piece) {
       let gameCopy: any = game
-      console.log(game)
       const newMove = gameCopy.move({
         from: moveFrom,
         to: moveTo,
@@ -374,6 +394,8 @@ const Game: React.FC<{}> = () => {
     setMoveTo(null)
     setShowPromotionDialog(false)
     setOptionSquares({})
+    // setGameHistory((prevHistory) => [...prevHistory, game.fen()])
+    // setCurrentMoveIndex((prevIndex) => prevIndex + 1)
     return true
   }
 
@@ -397,12 +419,36 @@ const Game: React.FC<{}> = () => {
     }
   }
 
+  function handlePreviousMove() {
+    if (currentMoveIndex > 0) {
+      setCurrentMoveIndex((prevIndex) => prevIndex - 1)
+      const newGame = new Chess(gameHistory[currentMoveIndex - 1])
+      setGame(newGame)
+    }
+  }
+
+  function handleNextMove() {
+    if (currentMoveIndex < gameHistory.length - 1) {
+      setCurrentMoveIndex((prevIndex) => prevIndex + 1)
+      const newGame = new Chess(gameHistory[currentMoveIndex + 1])
+      setGame(newGame)
+    }
+  }
+
   if (!game || !raw) {
     return <LoadingGame />
   } else {
     return (
       <>
         <Header />
+        <GameSidebar
+          isSidebarVisible={isSidebarVisible}
+          handleAbort={false}
+          handleCancel={toggleSidebar}
+          handleDraw={false}
+          handleSettings={false}
+          handleShareGame={false}
+        />
         <GameBoard
           player1={player1}
           player2={player2}
@@ -425,7 +471,20 @@ const Game: React.FC<{}> = () => {
           name2={name2}
           moveTo={moveTo}
         />
-        <GameFooter />
+        <GameChat
+          socket={socket}
+          isChatVisible={isChatVisible}
+          setIsChatVisible={toggleChat}
+          messages={messages}
+          setMessages={setMessages}
+          userId={wallet?.account.address ? wallet?.account.address : ''}
+        />
+        <GameFooter
+          handlePreviousMove={handlePreviousMove}
+          handleNextMove={handleNextMove}
+          handleMenuToggle={toggleSidebar}
+          handleChatToggle={toggleChat}
+        />
       </>
     )
   }
