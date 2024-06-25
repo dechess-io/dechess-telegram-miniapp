@@ -90,7 +90,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <>
-      <div className="flex flex-col pt-6 justify-start bg-gray-1000 h-screen">
+      <div className="flex flex-col pt-6 justify-start bg-[#041d21] h-screen">
         <div className="flex justify-center items-center pt-5 mt-10">
           <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
             <div className="flex flex-col space-y-1">

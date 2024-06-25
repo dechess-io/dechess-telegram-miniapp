@@ -113,8 +113,8 @@ const Mode: React.FC<{}> = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col pt-4 bg-gray-1000">
-        <div className="border-none rounded-xl bg-gray-1000 min-h-screen">
+      <div className="flex flex-col pt-4 bg-[#041d21]">
+        <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
             {loading && (
               <>
