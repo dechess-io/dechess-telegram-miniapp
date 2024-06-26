@@ -1,10 +1,10 @@
 import { Chess, Square } from 'chess.js'
-import { formatTime } from '../../utils/utils'
+import { formatTime } from '../../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
-import { truncateSuiTx } from '../../services/address'
+import { truncateSuiTx } from '../../../services/address'
 import { useTonWallet } from '@tonconnect/ui-react'
 import MoveRecord from './MoveRecord'
-import GameOverPopUp from './GameOverPopUp'
+import GameOverPopUp from '../Popup/GameOverPopUp'
 import PlayerDisplay from './PlayerDisplay'
 
 interface GameBoardProps {

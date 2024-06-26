@@ -1,23 +1,19 @@
 import { useEffect, useState, useRef } from 'react'
 import { Chess, Square } from 'chess.js'
 import { useNavigate, useLocation } from 'react-router-dom'
-import restApi from '../../services/api'
-import { socket } from '../../services/socket'
+import restApi from '../../../services/api'
+import { socket } from '../../../services/socket'
 import {
   convertToFigurineSan,
-  formatTime,
   getAvatarName,
   getLastUpdateTime,
   getTimeFromLocalStorage,
-} from '../../utils/utils'
-import LoadingGame from '../Loading/Loading'
-import Header from '../Header/Header'
+} from '../../../utils/utils'
+import LoadingGame from '../../Loading/Loading'
+import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
-import GameFooter from './GameFooter'
+import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
-import GameSidebar from './GameSideBar'
-import GameChat from './GameChat'
-import { Message } from './GameChat'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
@@ -45,20 +41,6 @@ const Game: React.FC<{}> = () => {
   const [isGameDraw, setIsGameDraw] = useState(false)
   const [gameHistory, setGameHistory] = useState<string[]>([new Chess().fen()])
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
-
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false)
-  const [isChatVisible, setIsChatVisible] = useState(false)
-
-  const [messages, setMessages] = useState<Message[]>([])
-
-  // Function to toggle sidebar visibility
-  const toggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible)
-  }
-
-  const toggleChat = () => {
-    setIsChatVisible(!isChatVisible)
-  }
 
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [turnPlay, setTurnPlay] = useState(false)
@@ -221,17 +203,6 @@ const Game: React.FC<{}> = () => {
       socket.off('connection', onConnect)
       socket.off('newmove', onNewMove)
       socket.off('start', onStart)
-    }
-  }, [])
-
-  useEffect(() => {
-    function onMessage(data: Message) {
-      setMessages((prev) => [...prev, data])
-    }
-
-    socket.on('message', onMessage)
-    return () => {
-      socket.off('message', onMessage)
     }
   }, [])
 
@@ -441,14 +412,6 @@ const Game: React.FC<{}> = () => {
     return (
       <>
         <Header />
-        <GameSidebar
-          isSidebarVisible={isSidebarVisible}
-          handleAbort={false}
-          handleCancel={toggleSidebar}
-          handleDraw={false}
-          handleSettings={false}
-          handleShareGame={false}
-        />
         <GameBoard
           player1={player1}
           player2={player2}
@@ -471,19 +434,12 @@ const Game: React.FC<{}> = () => {
           name2={name2}
           moveTo={moveTo}
         />
-        <GameChat
-          socket={socket}
-          isChatVisible={isChatVisible}
-          setIsChatVisible={toggleChat}
-          messages={messages}
-          setMessages={setMessages}
-          userId={wallet?.account.address ? wallet?.account.address : ''}
-        />
-        <GameFooter
+
+        <GameNavbar
           handlePreviousMove={handlePreviousMove}
           handleNextMove={handleNextMove}
-          handleMenuToggle={toggleSidebar}
-          handleChatToggle={toggleChat}
+          socket={socket}
+          game={game}
         />
       </>
     )

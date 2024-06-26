@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import Popup from '../Popup/Popup'
+import Popup from '../../Popup/Popup'
 import { useEffect, useState } from 'react'
 
 type GameOverPopUpProps = {

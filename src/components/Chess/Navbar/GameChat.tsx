@@ -7,7 +7,7 @@ import {
 } from '@chatscope/chat-ui-kit-react'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css'
 
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 
 interface GameChatProps {
   isChatVisible: boolean
@@ -42,11 +42,11 @@ const GameChat: React.FC<GameChatProps> = ({
   if (isChatVisible) {
     return (
       <div
-        className={`fixed pt-10 top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[600px]  transition-all duration-300 z-50 rounded-lg ${
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] md:w-[400px] h-[80%] md:h-[600px]  transition-all duration-300 z-50 rounded-lg ${
           isChatVisible ? 'block' : 'hidden'
         }`}
       >
-        <MainContainer>
+        <MainContainer responsive={true}>
           <ChatContainer>
             <MessageList
               style={{
@@ -80,6 +80,7 @@ const GameChat: React.FC<GameChatProps> = ({
               onSend={handleClick}
               className="text-white flex"
               placeholder="Type message here"
+              attachButton={false}
             />
           </ChatContainer>
         </MainContainer>
