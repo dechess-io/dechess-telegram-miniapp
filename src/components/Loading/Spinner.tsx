@@ -3,7 +3,7 @@ import React from 'react'
 const GameSpinner: React.FC<{}> = () => {
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[220px] grid min-h-[140px] w-full place-items-center overflow-x-scroll  lg:overflow-visible">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[220px] grid  w-full place-items-center">
         <svg
           className="w-[130px] h-[130px] animate-spin text-gray-900"
           viewBox="0 0 64 64"
@@ -34,6 +34,7 @@ const GameSpinner: React.FC<{}> = () => {
             strokeLinejoin="round"
             className="text-blue-200"
           ></path>
+
           <image
             href="/Group.svg"
             x="40"
@@ -42,17 +43,9 @@ const GameSpinner: React.FC<{}> = () => {
             height="22"
             transform="rotate(-40 20 30)"
           />
+          <image href="/Vector.svg" x="17" y="17" width="30" height="30" />
+          <image href="/Subtract.svg" x="22" y="22" width="20" height="20" />
         </svg>
-        <img
-          src="/Vector.svg"
-          alt="Centered Image"
-          className="absolute w-[50px] h-[50px] top-1/3 left-1/1 "
-        />
-        <img
-          src="/Subtract.svg"
-          alt="Centered Image"
-          className="absolute w-[30px] h-[30px] top-1/3 left-1/1 mt-[9px]"
-        />
       </div>
     </>
   )

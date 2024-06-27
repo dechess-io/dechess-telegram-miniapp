@@ -70,6 +70,8 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
         socket={socket}
         toggleGameOver={toggleGameOver}
         toggleGameDraw={toggleGameDraw}
+        user={user}
+        opponent={opponent}
       />
 
       {isChatVisible && (
