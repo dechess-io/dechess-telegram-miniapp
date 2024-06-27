@@ -1,19 +1,16 @@
 import { Chess, Square } from 'chess.js'
-import { formatTime } from '../../../utils/utils'
+import { formatTime, getTimeFromLocalStorage } from '../../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
 import { truncateSuiTx } from '../../../services/address'
 import { useTonWallet } from '@tonconnect/ui-react'
 import MoveRecord from './MoveRecord'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import PlayerDisplay from './PlayerDisplay'
+import { socket } from '../../../services/socket'
 
 interface GameBoardProps {
   player1: string
   player2: string
-  raw: any
-  player1Timer: number
-  player2Timer: number
-  isOrientation: () => 'white' | 'black'
   moveLists: string[]
   game: Chess | any
   onSquareClick: (square: Square) => void
@@ -33,10 +30,6 @@ interface GameBoardProps {
 const GameBoard: React.FC<GameBoardProps> = ({
   player1,
   player2,
-  raw,
-  player1Timer,
-  player2Timer,
-  isOrientation,
   moveLists,
   game,
   onSquareClick,
@@ -52,7 +45,19 @@ const GameBoard: React.FC<GameBoardProps> = ({
   name2,
   moveTo,
 }) => {
+  console.log('hello')
   const wallet = useTonWallet()
+
+  let player1Timer = getTimeFromLocalStorage('player1Timer', -1)
+  let player2Timer = getTimeFromLocalStorage('player2Timer', -1)
+
+  const isOrientation = () => {
+    if (wallet?.account.address === player1) {
+      return 'white'
+    } else {
+      return 'black'
+    }
+  }
 
   const getPlayerDisplayProps = (isTop: boolean) => {
     const isPlayer1 = wallet?.account.address === player1
@@ -60,14 +65,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     const isWhite = isOrientation() === 'white'
     let playerName, playerImage, playerTime
     if (isTop) {
-      playerName =
-        !isPlayer1 && !isPlayer2
-          ? raw.player_2 === ''
-            ? 'Waiting player...'
-            : truncateSuiTx(raw.player_2)
-          : isPlayer2
-          ? player1
-          : player2
+      playerName = isPlayer2 ? player1 : player2
       playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`
       playerTime = isWhite ? formatTime(player2Timer) : formatTime(player1Timer)
     } else {
@@ -124,14 +122,14 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   promotionToSquare={moveTo}
                   showPromotionDialog={showPromotionDialog}
                 />
-                <GameOverPopUp
+                {/* <GameOverPopUp
                   game={game}
                   isGameOver={isGameOver}
                   isGameDraw={isGameDraw}
                   player1={player1}
                   player2={player2}
                   wallet={wallet}
-                />
+                /> */}
               </div>
               <PlayerDisplay {...getPlayerDisplayProps(false)} />
             </div>

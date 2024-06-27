@@ -3,8 +3,14 @@ import { Chess, Square } from 'chess.js'
 import { useNavigate, useLocation } from 'react-router-dom'
 import restApi from '../../../services/api'
 import { socket } from '../../../services/socket'
+import MoveRecord from './MoveRecord'
+import GameOverPopUp from '../Popup/GameOverPopUp'
+import PlayerDisplay from './PlayerDisplay'
+import { Chessboard as Board } from 'react-chessboard'
+
 import {
   convertToFigurineSan,
+  formatTime,
   getAvatarName,
   getLastUpdateTime,
   getTimeFromLocalStorage,
@@ -14,13 +20,13 @@ import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
+import { truncateSuiTx } from '../../../services/address'
 
 const Game: React.FC<{}> = () => {
   // const currentAccount = useCurrentAccount()
   const [isStartGame, setIsStartGame] = useState(false)
   const wallet = useTonWallet()
   const [game, setGame] = useState<Chess | any>()
-  const [raw, setRaw] = useState<any>(null)
 
   const [player1, setPlayer1] = useState('')
   const [player2, setPlayer2] = useState('')
@@ -39,11 +45,12 @@ const Game: React.FC<{}> = () => {
   const [moveSquares, setMoveSquares] = useState({})
   const [isGameOver, setIsGameOver] = useState(false)
   const [isGameDraw, setIsGameDraw] = useState(false)
+  const [isWinner, setIsWinner] = useState(false)
+  const [isLoser, setIsLoser] = useState(false)
   const [gameHistory, setGameHistory] = useState<string[]>([new Chess().fen()])
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
 
   const [isSocketConnected, setIsSocketConnected] = useState(false)
-  const [turnPlay, setTurnPlay] = useState(false)
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
@@ -143,12 +150,19 @@ const Game: React.FC<{}> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
+          console.log(data)
           setTurn(data.turn_player)
           setGame(new Chess(data.fen))
-          setRaw(data)
           setPlayer1(data.player_1)
           setPlayer2(data.player_2)
-          setTurnPlay(data.turnPlay)
+          setIsGameDraw(data.isGameDraw)
+          setIsGameOver(data.isGameOver)
+          if (data.winner && currentPlayer === data.winner) {
+            setIsWinner(true)
+          }
+          if (data.loser && currentPlayer === data.loser) {
+            setIsLoser(true)
+          }
           if (data.move_number === 1 && data.turn_player === 'w') {
             setPlayer1Timer(data.timers.player1Timer)
             setPlayer2Timer(data.timers.player2Timer)
@@ -179,7 +193,6 @@ const Game: React.FC<{}> = () => {
         setTurn(room.turn)
         handleSwitchTurn()
         setGame(new Chess(room.fen))
-        setTurnPlay(room.turn)
         setPlayer1Timer(room.timers.player1Timer)
         setPlayer2Timer(room.timers.player2Timer)
         setGameHistory((prevHistory) => [...prevHistory, room.fen])
@@ -320,8 +333,6 @@ const Game: React.FC<{}> = () => {
         setMoveFrom('')
         setMoveTo(null)
         setOptionSquares({})
-        // setGameHistory((prevHistory) => [...prevHistory, gameCopy.fen()])
-        // setCurrentMoveIndex((prevIndex) => prevIndex + 1)
         return
       }
     }
@@ -370,6 +381,33 @@ const Game: React.FC<{}> = () => {
     return true
   }
 
+  const getPlayerDisplayProps = (isTop: boolean) => {
+    const isPlayer1 = wallet?.account.address === player1
+    const isPlayer2 = wallet?.account.address === player2
+    const isWhite = isOrientation() === 'white'
+    let playerName, playerImage, playerTime
+    if (isTop) {
+      playerName = isPlayer2 ? player1 : player2
+      playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`
+      playerTime = isWhite ? formatTime(player2Timer) : formatTime(player1Timer)
+    } else {
+      playerName = isPlayer1 || !isPlayer2 ? player1 : player2
+      playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`
+      playerTime = isWhite ? formatTime(player1Timer) : formatTime(player2Timer)
+    }
+
+    return {
+      imageSrc: playerImage,
+      name: truncateSuiTx(playerName ? playerName : ''),
+      time: playerTime,
+      timeBoxClass: isTop
+        ? 'bg-grey-100 border-b-4 border-grey-200'
+        : 'bg-blue-gradient border-b-4 border-blue-200',
+      clockIconSrc: isTop ? '/clock-stopwatch-white.svg' : '/clock-stopwatch-black.svg',
+      textColor: 'text-white',
+    }
+  }
+
   function onSquareRightClick(square: any) {
     const colour = 'rgba(123, 97, 255, 1)'
     setRightClickedSquares({
@@ -406,36 +444,68 @@ const Game: React.FC<{}> = () => {
     }
   }
 
-  if (!game || !raw) {
+  if (!game) {
     return <LoadingGame />
   } else {
     return (
       <>
         <Header />
-        <GameBoard
-          player1={player1}
-          player2={player2}
-          raw={raw}
-          player1Timer={player1Timer}
-          player2Timer={player2Timer}
-          isOrientation={isOrientation}
-          moveLists={moveLists}
-          game={game}
-          onSquareClick={onSquareClick}
-          onSquareRightClick={onSquareRightClick}
-          onPromotionPieceSelect={onPromotionPieceSelect}
-          isGameDraw={isGameDraw}
-          isGameOver={isGameOver}
-          showPromotionDialog={showPromotionDialog}
-          moveSquares={moveSquares}
-          optionSquares={optionSquares}
-          rightClickedSquares={rightClickedSquares}
-          name1={name1}
-          name2={name2}
-          moveTo={moveTo}
-        />
+        <div className="flex flex-col pt-6 justify-start bg-[#041d21] h-screen">
+          <div className="flex justify-center items-center pt-5 mt-10">
+            <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+              <div className="flex flex-col space-y-1">
+                <MoveRecord moveLists={moveLists} />
+                <PlayerDisplay {...getPlayerDisplayProps(true)} />
+                <div className="relative border-8 border-white rounded-lg">
+                  <Board
+                    boardOrientation={isOrientation()}
+                    position={game.fen()}
+                    id="ClickToMove"
+                    animationDuration={200}
+                    arePiecesDraggable={false}
+                    onSquareClick={onSquareClick}
+                    onSquareRightClick={onSquareRightClick}
+                    onPromotionPieceSelect={onPromotionPieceSelect}
+                    customBoardStyle={{
+                      // borderRadius: '8px',
+                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                    }}
+                    customLightSquareStyle={{
+                      backgroundColor: '#E8EDF9',
+                    }}
+                    customDarkSquareStyle={{
+                      backgroundColor: '#B7C0D8',
+                    }}
+                    customSquareStyles={{
+                      ...moveSquares,
+                      ...optionSquares,
+                      ...rightClickedSquares,
+                    }}
+                    promotionToSquare={moveTo}
+                    showPromotionDialog={showPromotionDialog}
+                  />
+                  <GameOverPopUp
+                    isWinner={isWinner}
+                    isLoser={isLoser}
+                    game={game}
+                    isGameOver={isGameOver}
+                    isGameDraw={isGameDraw}
+                    player1={player1}
+                    player2={player2}
+                    wallet={wallet}
+                  />
+                </div>
+                <PlayerDisplay {...getPlayerDisplayProps(false)} />
+              </div>
+            </div>
+          </div>
+        </div>
 
         <GameNavbar
+          user={currentPlayer}
+          opponent={currentPlayer === player1 ? player2 : player1}
+          toggleGameDraw={() => setIsGameDraw((prev) => !prev)}
+          toggleGameOver={() => setIsGameOver((prev) => !prev)}
           handlePreviousMove={handlePreviousMove}
           handleNextMove={handleNextMove}
           socket={socket}

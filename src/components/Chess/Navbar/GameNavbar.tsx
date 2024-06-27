@@ -9,6 +9,10 @@ interface GameNavbarProps {
   handleNextMove: any
   socket: any
   game: Chess | any
+  toggleGameDraw: any
+  toggleGameOver: any
+  user: string
+  opponent: string
 }
 
 const GameNavbar: React.FC<GameNavbarProps> = ({
@@ -16,12 +20,16 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   handlePreviousMove,
   socket,
   game,
+  toggleGameDraw,
+  toggleGameOver,
+  user,
+  opponent,
 }) => {
   const wallet = useTonWallet()
 
   const [messages, setMessages] = useState<Message[]>([])
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
-  const [isChatVisible, setIsChatVisible] = useState(true)
+  const [isChatVisible, setIsChatVisible] = useState(false)
 
   useEffect(() => {
     const onMessage = (data: Message) => {
@@ -55,9 +63,15 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
           {renderFooterItem('Next', '/arrow-right-1.svg', false, handleNextMove)}
         </div>
       </div>
-      {isSidebarVisible && (
-        <GameSidebar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-      )}
+      <GameSidebar
+        isSidebarVisible={isSidebarVisible}
+        toggleSidebar={toggleSidebar}
+        game={game}
+        socket={socket}
+        toggleGameOver={toggleGameOver}
+        toggleGameDraw={toggleGameDraw}
+      />
+
       {isChatVisible && (
         <GameChat
           socket={socket}

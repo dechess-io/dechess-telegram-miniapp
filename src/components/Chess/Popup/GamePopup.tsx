@@ -1,0 +1,58 @@
+import React from 'react'
+import Popup from '../../Popup/Popup'
+
+interface GamePopupProps {
+  title: string
+  message: string
+  onConfirm: () => void
+  onCancel: () => void
+  showPopup: boolean
+  setShowPopup: any
+}
+
+const GamePopup: React.FC<GamePopupProps> = ({
+  title,
+  message,
+  onConfirm,
+  onCancel,
+  showPopup,
+  setShowPopup,
+}) => {
+  if (!showPopup) return null
+
+  return (
+    <div className={`absolute top-1/4 left-1/4`}>
+      <Popup className="bg-grey-100 w-[364px] h-[200px]">
+        <button className="absolute top-0 right-3 text-white" onClick={() => setShowPopup(false)}>
+          X
+        </button>
+        <h1 className="mb-4 text-center font-bold text-[20px] font-ibm">
+          <div>
+            <h2 className="text-white font-ibm pb-5">{title}</h2>
+            <span className="text-white font-ibm">{message}</span>
+            <div className="flex flex-row pt-2">
+              <div className="flex-auto p-1">
+                <button
+                  className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                  onClick={onConfirm}
+                >
+                  <span className="text-white text-sm">Yes</span>
+                </button>
+              </div>
+              <div className="flex-auto p-1">
+                <button
+                  className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                  onClick={onCancel}
+                >
+                  <span className="text-white text-sm">No</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </h1>
+      </Popup>
+    </div>
+  )
+}
+
+export default GamePopup
