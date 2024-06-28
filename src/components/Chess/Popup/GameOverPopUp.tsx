@@ -20,7 +20,7 @@ const GameOverMessage: React.FC<{ message: string }> = ({ message }) => (
     <div className="flex flex-row pt-2">
       <div className="flex-auto p-1">
         <button
-          className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient"
+          className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200"
           onClick={() => useNavigate()('/mode')}
         >
           <span className="text-white text-sm">New Game</span>
@@ -28,7 +28,7 @@ const GameOverMessage: React.FC<{ message: string }> = ({ message }) => (
       </div>
       <div className="flex-auto p-1">
         <button
-          className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient"
+          className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200"
           onClick={() => useNavigate()('/')}
         >
           <span className="text-white text-sm">Game Overview</span>
@@ -78,8 +78,10 @@ const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
       {showPopup && (
         <div>
           {(game.isGameOver() || game.isDraw() || isGameOver || isGameDraw) && (
-            <div className={`absolute top-1/4`}>
-              <Popup className="bg-grey-100 w-[364px] h-[200px]">
+            <div
+              className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50`}
+            >
+              <Popup className="relative bg-blue-100 w-[90%] max-w-md h-[200px] p-4 border-b-4 border-grey-200">
                 <button
                   className="absolute top-0 right-3 text-white"
                   onClick={() => setShowPopup(false)}

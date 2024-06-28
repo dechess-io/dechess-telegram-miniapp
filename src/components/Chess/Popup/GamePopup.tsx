@@ -21,8 +21,8 @@ const GamePopup: React.FC<GamePopupProps> = ({
   if (!showPopup) return null
 
   return (
-    <div className={`absolute top-1/4 left-1/4`}>
-      <Popup className="bg-grey-100 w-[364px] h-[200px]">
+    <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
+      <Popup className="relative bg-blue-100 w-[90%] max-w-md h-[200px] p-4 border-b-4 border-grey-200">
         <button className="absolute top-0 right-3 text-white" onClick={() => setShowPopup(false)}>
           X
         </button>
@@ -33,7 +33,7 @@ const GamePopup: React.FC<GamePopupProps> = ({
             <div className="flex flex-row pt-2">
               <div className="flex-auto p-1">
                 <button
-                  className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                  className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200`}
                   onClick={onConfirm}
                 >
                   <span className="text-white text-sm">Yes</span>
@@ -41,7 +41,7 @@ const GamePopup: React.FC<GamePopupProps> = ({
               </div>
               <div className="flex-auto p-1">
                 <button
-                  className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 hover:bg-blue-gradient`}
+                  className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200`}
                   onClick={onCancel}
                 >
                   <span className="text-white text-sm">No</span>

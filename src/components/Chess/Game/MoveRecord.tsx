@@ -16,7 +16,7 @@ const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists }) => {
   return (
     <div
       ref={moveListRef}
-      className="pb-1 bg-blue-gradient-1 h-[15px] text-white overflow-hidden whitespace-nowrap"
+      className="pb-1 bg-blue-gradient-1 h-[15px] text-white overflow-hidden whitespace-nowrap bg-opacity-80"
       style={{ width: '100%' }}
     >
       <div className="flex space-x-2 text-[12px]">

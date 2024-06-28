@@ -42,17 +42,13 @@ const GameChat: React.FC<GameChatProps> = ({
   if (isChatVisible) {
     return (
       <div
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] md:w-[400px] h-[80%] md:h-[600px]  transition-all duration-300 z-50 rounded-lg ${
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[50%]   transition-all duration-300 z-50 rounded-lg ${
           isChatVisible ? 'block' : 'hidden'
         }`}
       >
-        <MainContainer responsive={true}>
+        <MainContainer responsive={true} style={{ borderRadius: '20px' }}>
           <ChatContainer>
-            <MessageList
-              style={{
-                backgroundColor: '',
-              }}
-            >
+            <MessageList>
               {messages.map((message, index) => {
                 let position: 'normal' | 'first' | 'last' = 'normal'
 
@@ -60,6 +56,12 @@ const GameChat: React.FC<GameChatProps> = ({
                   position = 'first'
                 } else if (index === messages.length - 1) {
                   position = 'last'
+                }
+                const isOutgoing = message.sender === userId
+
+                const messageStyle = {
+                  borderRadius: '5px',
+                  maxWidth: '70%',
                 }
 
                 return (
@@ -71,6 +73,7 @@ const GameChat: React.FC<GameChatProps> = ({
                       direction: message.sender === userId ? 'outgoing' : 'incoming',
                       position: position,
                     }}
+                    style={messageStyle}
                   />
                 )
               })}

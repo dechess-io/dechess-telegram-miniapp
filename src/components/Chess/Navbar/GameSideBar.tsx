@@ -3,6 +3,8 @@ import { Chess } from 'chess.js'
 import { useNavigate } from 'react-router-dom'
 import GamePopup from '../Popup/GamePopup'
 import { useCallback } from 'react'
+import Popup from '../../Popup/Popup'
+import NotificationPopup from '../Popup/NotificationPopup'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -36,6 +38,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   const gameId = location.pathname.split('/')[2]
   const [opponentAction, setOpponentAction] = useState<string | null>(null)
   const [drawRequest, setDrawRequest] = useState<boolean>(false)
+  const [notificationPopup, setNotificationPopup] = useState(false)
   const togglePopup = (popup: string | null) => {
     setVisiblePopup((prev) => (prev === popup ? null : popup))
   }
@@ -96,6 +99,15 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
     setDrawRequest(false)
   }, [socket, gameId])
 
+  const handleAbort = () => {
+    console.log(game)
+    if (game._moveNumber === 1 && game._turn === 'b') {
+      togglePopup('abort')
+    } else {
+      setNotificationPopup(true)
+    }
+  }
+
   const renderPopups = () => (
     <>
       {['resign', 'draw', 'abort'].map((action) => (
@@ -131,6 +143,15 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
           setShowPopup={setDrawRequest}
         />
       )}
+      {notificationPopup && (
+        <NotificationPopup
+          key={'Abort'}
+          title="Abort"
+          message="Can not abort the game because you already make your move"
+          showPopup={notificationPopup}
+          setShowPopup={() => setNotificationPopup((prev) => !prev)}
+        />
+      )}
     </>
   )
 
@@ -147,7 +168,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
           <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('draw')}>
             Draw
           </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('abort')}>
+          <li className="py-2 cursor-pointer pb-4" onClick={handleAbort}>
             Abort
           </li>
           <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('resign')}>

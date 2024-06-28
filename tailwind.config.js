@@ -61,6 +61,7 @@ module.exports = {
           100: '#3F3F3F',
           200: '#303030',
           300: '#848C9B',
+          400: 'linear-gradient(45deg, #303030 0%,#000000 100%)',
         },
         normal: {
           100: '#545a65',
@@ -129,7 +130,8 @@ module.exports = {
           'linear-gradient(270deg, #000000 0%, #5116CE 35.42%, #8021DF 68.75%, #000000 100%)',
         'blue-gradient': 'linear-gradient(to right, #67E4FF, #009ED0)',
         'black-gradient': 'linear-gradient(to right, #303030, #000000)',
-        'blue-gradient-1': 'linear-gradient(45deg, #67E4FF 0%,#009ED0 100%)',
+        'blue-gradient-1': 'linear-gradient(25deg, #005f80 0%,#009ED0 100%)',
+
         'darkblue-gradient': 'linear-gradient(to bottom right, #1F2428, #2E3E5E)',
         'green-gradient': 'linear-gradient(to right, #98FF32, #EFFF38)',
       },
