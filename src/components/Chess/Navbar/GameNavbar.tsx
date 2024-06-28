@@ -48,7 +48,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   const renderFooterItem = (label: string, iconSrc: string, isActive: boolean, onClick: any) => {
     return (
       <button className="flex flex-col justify-center items-center w-[30px]" onClick={onClick}>
-        <img className="w-[30px] h-[30px]" src={iconSrc} />
+        <img className="w-[30px] h-[30px]" src={iconSrc} alt={label} />
       </button>
     )
   }

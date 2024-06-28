@@ -26,7 +26,7 @@ const PlayerDisplay: React.FC<PlayerDisplayProps> = ({
       <div
         className={`flex justify-center items-center border ${timeBoxClass} rounded-lg w-[100px] h-[40px]`}
       >
-        <img src={clockIconSrc} className="pr-1" />
+        <img src={clockIconSrc} className="pr-1" alt="clock-icon" />
         <div className={`font-ibm ${textColor}`}>{time}</div>
       </div>
     </div>

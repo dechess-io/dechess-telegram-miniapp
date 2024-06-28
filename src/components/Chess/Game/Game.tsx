@@ -31,8 +31,8 @@ const Game: React.FC<{}> = () => {
   const [player1, setPlayer1] = useState('')
   const [player2, setPlayer2] = useState('')
 
-  const [name1, setName1] = useState(getAvatarName())
-  const [name2, setName2] = useState(getAvatarName())
+  const [name1] = useState(getAvatarName())
+  const [name2] = useState(getAvatarName())
 
   const [moveFrom, setMoveFrom] = useState<any>('')
   const [moveTo, setMoveTo] = useState<any>('')
@@ -50,7 +50,6 @@ const Game: React.FC<{}> = () => {
   const [gameHistory, setGameHistory] = useState<string[]>([new Chess().fen()])
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
 
-  const [isSocketConnected, setIsSocketConnected] = useState(false)
   const location = useLocation()
   const [moveLists, setMoveLists] = useState<string[]>([])
 
@@ -104,10 +103,7 @@ const Game: React.FC<{}> = () => {
           setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
           updateTime()
         }, 1000)
-      } else if (currentPlayer === player1 && player1Timer === 0) {
-        setIsGameOver(true)
-        emitGameOver()
-      } else if (currentPlayer === player2 && player2Timer === 0) {
+      } else if (isPlayerTimeout()) {
         setIsGameOver(true)
         emitGameOver()
       }
@@ -115,6 +111,13 @@ const Game: React.FC<{}> = () => {
 
     return () => clearInterval(intervalId) // Cleanup function to clear interval
   }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver])
+
+  function isPlayerTimeout() {
+    return (
+      (currentPlayer === player1 && player1Timer === 0) ||
+      (currentPlayer === player2 && player2Timer === 0)
+    )
+  }
 
   const emitGameOver = () => {
     socket.emit('endGame', {
@@ -129,15 +132,11 @@ const Game: React.FC<{}> = () => {
   }
 
   const currentPlayerTurn = () => {
-    if (isOrientation() === 'white' && turn === 'w') {
-      return player1
-    } else if (isOrientation() === 'white' && turn === 'b') {
-      return player2
-    } else if (isOrientation() === 'black' && turn === 'b') {
-      return player2
-    } else if (isOrientation() === 'black' && turn === 'w') {
-      return player1
+    const orientation = isOrientation()
+    if (orientation === 'white') {
+      return turn === 'w' ? player1 : player2
     }
+    return turn === 'b' ? player2 : player1
   }
 
   useEffect(() => {
@@ -174,18 +173,13 @@ const Game: React.FC<{}> = () => {
           }
 
           setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
-          // if (data.player_1.length > 0 && data.player_2.length > 0) {
-          //   setIsStartGame(true)
-          // }
         }
       })
       .catch((err) => {})
   }, [turn])
 
   useEffect(() => {
-    function onConnect() {
-      setIsSocketConnected(true)
-    }
+    function onConnect() {}
 
     function onNewMove(room: any) {
       setMoveLists((newMoves: any) => [...newMoves, `${room.san}`])
@@ -249,91 +243,109 @@ const Game: React.FC<{}> = () => {
     return true
   }
 
+  function isEligibleToPlay() {
+    if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false
+
+    const isPlayerTurn =
+      (player1 === wallet?.account.address && game._turn === 'w') ||
+      (player2 === wallet?.account.address && game._turn === 'b')
+    return isPlayerTurn
+  }
+
+  function handleMoveFromSelection(square: Square) {
+    const hasMoveOptions = getMoveOptions(square)
+    if (hasMoveOptions) setMoveFrom(square)
+  }
+
+  function handleMoveToSelection(square: Square) {
+    const moves = game.moves({
+      square: moveFrom,
+      verbose: true,
+    })
+
+    const foundMove = moves.find((m: any) => m.from === moveFrom && m.to === square) as any
+
+    if (!foundMove) {
+      const hasMoveOptions = getMoveOptions(square)
+      setMoveFrom(hasMoveOptions ? square : '')
+      return
+    }
+
+    setMoveTo(square)
+
+    if (isPromotionMove(foundMove, square)) {
+      setShowPromotionDialog(true)
+      return
+    }
+
+    makeMove(foundMove, square)
+  }
+
+  function makeMove(foundMove: any, square: Square) {
+    setIsStartGame(true)
+
+    let gameCopy = game
+
+    const move = gameCopy.move({
+      from: moveFrom,
+      to: square,
+      promation: 'q',
+    })
+
+    foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
+
+    emitMove(foundMove, square, gameCopy)
+
+    handleSwitchTurn()
+
+    if (!move) {
+      handleMoveFromSelection(square)
+      return
+    }
+
+    setGame(gameCopy)
+    setMoveFrom('')
+    setMoveTo(null)
+    setOptionSquares({})
+  }
+
+  function isPromotionMove(move: any, square: Square) {
+    return (
+      (move.color === 'w' && move.piece === 'p' && square[1] === '8') ||
+      (move.color === 'b' && move.piece === 'p' && square[1] === '1')
+    )
+  }
+
+  function emitMove(foundMove: any, square: Square, gameCopy: any) {
+    socket.emit('move', {
+      from: moveFrom,
+      to: square,
+      game_id: location.pathname.split('/')[2],
+      turn: game.turn(),
+      address: '',
+      fen: game.fen(),
+      isPromotion: isPromotionMove(foundMove, square),
+      timers: {
+        player1Timer:
+          currentPlayerTurn() === player1 ? player1Timer + additionTimePerMove : player1Timer,
+        player2Timer:
+          currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
+      },
+      san: foundMove.san,
+    })
+  }
+
   function onSquareClick(square: Square) {
-    // if currentAccount
-    if (true) {
-      if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return
-      if (player1 !== wallet?.account.address && game._turn === 'w') return
-      if (player2 !== wallet?.account.address && game._turn === 'b') return
+    if (!isEligibleToPlay()) return
 
-      setRightClickedSquares({})
+    setRightClickedSquares({})
 
-      if (!moveTo) {
-        if (!moveFrom) {
-          const hasMoveOptions = getMoveOptions(square)
-          if (hasMoveOptions) setMoveFrom(square)
-          return
-        }
-
-        const moves = game.moves({
-          square: moveFrom,
-          verbose: true,
-        })
-
-        const foundMove = moves.find((m: any) => m.from === moveFrom && m.to === square) as any
-
-        if (!foundMove) {
-          const hasMoveOptions = getMoveOptions(square)
-          setMoveFrom(hasMoveOptions ? square : '')
-          return
-        }
-
-        setMoveTo(square)
-
-        if (
-          (foundMove.color === 'w' && foundMove.piece === 'p' && square[1] === '8') ||
-          (foundMove.color === 'b' && foundMove.piece === 'p' && square[1] === '1')
-        ) {
-          setShowPromotionDialog(true)
-          return
-        }
-
-        let gameCopy = game
-
-        setIsStartGame(true)
-
-        const move = gameCopy.move({
-          from: moveFrom,
-          to: square,
-          promation: 'q',
-        })
-
-        foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
-
-        socket.emit('move', {
-          from: moveFrom,
-          to: square,
-          game_id: location.pathname.split('/')[2],
-          turn: game.turn(),
-          address: '',
-          fen: game.fen(),
-          isPromotion:
-            (foundMove.color === 'w' && foundMove.piece === 'p' && square[1] === '8') ||
-            (foundMove.color === 'b' && foundMove.piece === 'p' && square[1] === '1'),
-          timers: {
-            player1Timer:
-              currentPlayerTurn() === player1 ? player1Timer + additionTimePerMove : player1Timer,
-            player2Timer:
-              currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
-          },
-          san: foundMove.san,
-        })
-
-        handleSwitchTurn()
-
-        if (move === null) {
-          const hasMoveOptions = getMoveOptions(square)
-          if (hasMoveOptions) setMoveFrom(square)
-          return
-        }
-
-        setGame(gameCopy)
-
-        // setTimeout(makeRandomMove, 300);
-        setMoveFrom('')
-        setMoveTo(null)
-        setOptionSquares({})
+    if (!moveTo) {
+      if (!moveFrom) {
+        handleMoveFromSelection(square)
         return
+      } else {
+        handleMoveToSelection(square)
       }
     }
   }
@@ -350,13 +362,11 @@ const Game: React.FC<{}> = () => {
       console.log('7s200:pro', { promotion: piece[1].toLowerCase() ?? 'q' })
       if (newMove) {
         setGame(gameCopy)
-        // Emit the move to the backend
         socket.emit('move', {
           from: moveFrom,
           to: moveTo,
           game_id: location.pathname.split('/')[2],
           turn: game.turn(),
-          // address: activeAccount?.address,
           address: '',
           fen: game.fen(),
           isPromotion: true,
@@ -376,8 +386,6 @@ const Game: React.FC<{}> = () => {
     setMoveTo(null)
     setShowPromotionDialog(false)
     setOptionSquares({})
-    // setGameHistory((prevHistory) => [...prevHistory, game.fen()])
-    // setCurrentMoveIndex((prevIndex) => prevIndex + 1)
     return true
   }
 

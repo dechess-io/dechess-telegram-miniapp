@@ -34,7 +34,6 @@ const buttonsData = {
 
 const Mode: React.FC<{}> = () => {
   const navigate = useNavigate()
-  const [games, setGames] = useState([])
   const [loading, setLoading] = useState(false)
   const [totalSeconds, setTotalSeconds] = useState(0)
   const [activeButton, setActiveButton] = useState(null)

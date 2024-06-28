@@ -13,30 +13,33 @@ type GameOverPopUpProps = {
   isLoser: boolean
 }
 
-const GameOverMessage: React.FC<{ message: string }> = ({ message }) => (
-  <>
-    <h2 className="text-white font-ibm pb-5">Game Over</h2>
-    <span className="text-white font-ibm">{message}</span>
-    <div className="flex flex-row pt-2">
-      <div className="flex-auto p-1">
-        <button
-          className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200"
-          onClick={() => useNavigate()('/mode')}
-        >
-          <span className="text-white text-sm">New Game</span>
-        </button>
+const GameOverMessage: React.FC<{ message: string }> = ({ message }) => {
+  const navigate = useNavigate()
+  return (
+    <>
+      <h2 className="text-white font-ibm pb-5">Game Over</h2>
+      <span className="text-white font-ibm">{message}</span>
+      <div className="flex flex-row pt-2">
+        <div className="flex-auto p-1">
+          <button
+            className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200"
+            onClick={() => navigate('/mode')}
+          >
+            <span className="text-white text-sm">New Game</span>
+          </button>
+        </div>
+        <div className="flex-auto p-1">
+          <button
+            className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200"
+            onClick={() => navigate('/')}
+          >
+            <span className="text-white text-sm">Game Overview</span>
+          </button>
+        </div>
       </div>
-      <div className="flex-auto p-1">
-        <button
-          className="bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200"
-          onClick={() => useNavigate()('/')}
-        >
-          <span className="text-white text-sm">Game Overview</span>
-        </button>
-      </div>
-    </div>
-  </>
-)
+    </>
+  )
+}
 
 const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
   game,
