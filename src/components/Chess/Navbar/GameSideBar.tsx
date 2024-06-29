@@ -22,6 +22,8 @@ interface GameSidebarProps {
   toggleGameOver: any
   user: string
   opponent: string
+  isMoved: boolean
+  isWhite: boolean
 }
 
 const GameSidebar: React.FC<GameSidebarProps> = ({
@@ -33,6 +35,8 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   toggleGameOver,
   user,
   opponent,
+  isMoved,
+  isWhite,
 }) => {
   const [visiblePopup, setVisiblePopup] = useState<string | null>(null)
   const gameId = location.pathname.split('/')[2]
@@ -40,7 +44,17 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   const [drawRequest, setDrawRequest] = useState<boolean>(false)
   const [notificationPopup, setNotificationPopup] = useState(false)
   const togglePopup = (popup: string | null) => {
-    setVisiblePopup((prev) => (prev === popup ? null : popup))
+    setVisiblePopup((prev) => {
+      if (prev === popup) {
+        toggleSidebar()
+        return null
+      } else {
+        if (popup) {
+          toggleSidebar()
+        }
+        return popup
+      }
+    })
   }
 
   useEffect(() => {
@@ -65,34 +79,31 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
     }
   }, [socket, toggleGameOver, toggleGameDraw])
 
-  const handlePopupAction = useCallback(
-    (actionType: string) => {
-      const actions: Record<string, () => void> = {
-        abort: () => {
-          socket.emit('abort', { game_id: gameId, isGameOver: true })
-          toggleGameOver()
-        },
-        draw: () => {
-          socket.emit('drawRequest', { game_id: gameId })
-          setVisiblePopup(null)
-        },
-        resign: () => {
-          socket.emit('resign', {
-            game_id: gameId,
-            isGameOver: true,
-            isGameDraw: false,
-            winner: opponent,
-            loser: user,
-          })
-          toggleGameOver()
-        },
-      }
+  const handlePopupAction = (actionType: string) => {
+    const actions: Record<string, () => void> = {
+      abort: () => {
+        socket.emit('abort', { game_id: gameId, isGameOver: true, winner: opponent, loser: user })
+        toggleGameOver()
+      },
+      draw: () => {
+        socket.emit('drawRequest', { game_id: gameId })
+        setVisiblePopup(null)
+      },
+      resign: () => {
+        socket.emit('resign', {
+          game_id: gameId,
+          isGameOver: true,
+          isGameDraw: false,
+          winner: opponent,
+          loser: user,
+        })
+        toggleGameOver()
+      },
+    }
 
-      actions[actionType]?.()
-      setVisiblePopup(null)
-    },
-    [socket, gameId, toggleGameOver, opponent, user]
-  )
+    actions[actionType]?.()
+    setVisiblePopup(null)
+  }
 
   const handleConfirmDraw = useCallback(() => {
     socket.emit('confirmDraw', { game_id: gameId })
@@ -100,12 +111,20 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   }, [socket, gameId])
 
   const handleAbort = () => {
-    console.log(game)
-    if (game._moveNumber === 1 && game._turn === 'b') {
+    if (isAbortAllow()) {
       togglePopup('abort')
-    } else {
-      setNotificationPopup(true)
+      return
     }
+
+    setNotificationPopup(true)
+    toggleSidebar()
+  }
+
+  function isAbortAllow() {
+    return (
+      (game._moveNumber === 1 && game._turn === 'b' && isMoved && !isWhite) ||
+      (game._moveNumber === 1 && game._turn === 'w' && !isMoved)
+    )
   }
 
   const renderPopups = () => (
@@ -113,7 +132,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       {['resign', 'draw', 'abort'].map((action) => (
         <GamePopup
           key={action}
-          title={action.charAt(0).toUpperCase() + action.slice(1)}
+          title=""
           message={`Do you want to ${action} the game?`}
           onConfirm={() => handlePopupAction(action)}
           onCancel={() => togglePopup(null)}
@@ -146,7 +165,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       {notificationPopup && (
         <NotificationPopup
           key={'Abort'}
-          title="Abort"
+          title=""
           message="Can not abort the game because you already make your move"
           showPopup={notificationPopup}
           setShowPopup={() => setNotificationPopup((prev) => !prev)}

@@ -11,13 +11,15 @@ type GameOverPopUpProps = {
   wallet: any
   isWinner: boolean
   isLoser: boolean
+  showPopup: boolean
+  setShowPopup: any
 }
 
 const GameOverMessage: React.FC<{ message: string }> = ({ message }) => {
   const navigate = useNavigate()
   return (
     <>
-      <h2 className="text-white font-ibm pb-5">Game Over</h2>
+      <span className="text-white font-ibm pb-5 block">Game Over</span>
       <span className="text-white font-ibm">{message}</span>
       <div className="flex flex-row pt-2">
         <div className="flex-auto p-1">
@@ -50,11 +52,9 @@ const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
   wallet,
   isWinner,
   isLoser,
+  showPopup,
+  setShowPopup,
 }) => {
-  const navigate = useNavigate()
-
-  const [showPopup, setShowPopup] = useState(false)
-
   useEffect(() => {
     if (game.isGameOver() || isGameOver || game.isDraw() || isGameDraw) {
       setTimeout(() => {

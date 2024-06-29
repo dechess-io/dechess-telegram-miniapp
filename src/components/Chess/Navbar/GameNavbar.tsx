@@ -13,6 +13,8 @@ interface GameNavbarProps {
   toggleGameOver: any
   user: string
   opponent: string
+  isMoved: boolean
+  isWhite: boolean
 }
 
 const GameNavbar: React.FC<GameNavbarProps> = ({
@@ -24,6 +26,8 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   toggleGameOver,
   user,
   opponent,
+  isMoved,
+  isWhite,
 }) => {
   const wallet = useTonWallet()
 
@@ -64,6 +68,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
         </div>
       </div>
       <GameSidebar
+        isMoved={isMoved}
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
         game={game}
@@ -72,6 +77,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
         toggleGameDraw={toggleGameDraw}
         user={user}
         opponent={opponent}
+        isWhite={isWhite}
       />
 
       {isChatVisible && (

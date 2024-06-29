@@ -151,13 +151,13 @@ const Mode: React.FC<{}> = () => {
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
               />
-              <ModeSection
+              {/* <ModeSection
                 imgSrc="/Sun.svg"
                 title="Daily"
                 buttons={buttonsData.daily}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
-              />
+              /> */}
 
               <div className="pt-2">
                 <div className="flex flex-row items-center pl-4">

@@ -29,8 +29,8 @@ const GamePopup: React.FC<GamePopupProps> = ({
         <h1 className="mb-4 text-center font-bold text-[20px] font-ibm">
           <div>
             <h2 className="text-white font-ibm pb-5">{title}</h2>
-            <span className="text-white font-ibm">{message}</span>
-            <div className="flex flex-row pt-2">
+            <span className="text-white font-ibm pb-5">{message}</span>
+            <div className="flex flex-row pt-5">
               <div className="flex-auto p-1">
                 <button
                   className={`bg-gray-900 font-bold rounded-lg h-[45px] w-127 border-b-4 border-grey-300 hover:bg-blue-gradient hover:border-blue-200`}

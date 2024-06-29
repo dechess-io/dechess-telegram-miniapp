@@ -1,5 +1,5 @@
 import { Chess, Square } from 'chess.js'
-import { formatTime, getTimeFromLocalStorage } from '../../../utils/utils'
+import { formatTime, getAvatarName, getTimeFromLocalStorage } from '../../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
 import { truncateSuiTx } from '../../../services/address'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -7,6 +7,7 @@ import MoveRecord from './MoveRecord'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import PlayerDisplay from './PlayerDisplay'
 import { socket } from '../../../services/socket'
+import { useState } from 'react'
 
 interface GameBoardProps {
   player1: string
@@ -16,15 +17,13 @@ interface GameBoardProps {
   onSquareClick: (square: Square) => void
   onSquareRightClick: (square: Square) => void
   onPromotionPieceSelect: any
-  isGameDraw: boolean
-  isGameOver: boolean
   showPromotionDialog: boolean
   moveSquares: Record<string, any>
   optionSquares: Record<string, any>
   rightClickedSquares: Record<string, any>
-  name1: string
-  name2: string
   moveTo: any
+  player1Timer: any
+  player2Timer: any
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
@@ -35,21 +34,18 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onSquareClick,
   onSquareRightClick,
   onPromotionPieceSelect,
-  isGameDraw,
-  isGameOver,
   showPromotionDialog,
   moveSquares,
   optionSquares,
   rightClickedSquares,
-  name1,
-  name2,
   moveTo,
+  player1Timer,
+  player2Timer,
 }) => {
-  console.log('hello')
-  const wallet = useTonWallet()
+  const [name1] = useState(getAvatarName())
+  const [name2] = useState(getAvatarName())
 
-  let player1Timer = getTimeFromLocalStorage('player1Timer', -1)
-  let player2Timer = getTimeFromLocalStorage('player2Timer', -1)
+  const wallet = useTonWallet()
 
   const isOrientation = () => {
     if (wallet?.account.address === player1) {
@@ -122,14 +118,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   promotionToSquare={moveTo}
                   showPromotionDialog={showPromotionDialog}
                 />
-                {/* <GameOverPopUp
-                  game={game}
-                  isGameOver={isGameOver}
-                  isGameDraw={isGameDraw}
-                  player1={player1}
-                  player2={player2}
-                  wallet={wallet}
-                /> */}
               </div>
               <PlayerDisplay {...getPlayerDisplayProps(false)} />
             </div>
