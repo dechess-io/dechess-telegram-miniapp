@@ -8,6 +8,7 @@ import {
   convertToFigurineSan,
   getLastUpdateTime,
   getTimeFromLocalStorage,
+  isThreefoldRepetition,
 } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
@@ -34,6 +35,7 @@ const Game: React.FC<{}> = () => {
   const [optionSquares, setOptionSquares] = useState({})
   const [moveLists, setMoveLists] = useState<string[]>([])
   const [currentPlayer, setCurrentPlayer] = useState('')
+  const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [showPromotionDialog, setShowPromotionDialog] = useState(false)
@@ -48,6 +50,12 @@ const Game: React.FC<{}> = () => {
   )
 
   useEffect(() => {
+    if (isThreefoldRepetition(gameHistory)) {
+      socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
+    }
+  }, [gameHistory])
+
+  useEffect(() => {
     if (isGameOver || isGameDraw) {
       setShowPopup(true)
     }
@@ -58,6 +66,10 @@ const Game: React.FC<{}> = () => {
       localStorage.setItem('address', wallet.account?.address)
     }
   }, [wallet])
+
+  const dismissPopup = () => {
+    setIsPopupDismissed(true)
+  }
 
   useEffect(() => {
     const lastUpdateTime = getLastUpdateTime()
@@ -404,8 +416,7 @@ const Game: React.FC<{}> = () => {
       setCurrentMoveIndex((prevIndex) => prevIndex - 1)
       const newGame = new Chess(gameHistory[currentMoveIndex - 1])
       setGame(newGame)
-      setShowPopup(false)
-      setIsGameOver(false)
+      dismissPopup()
     }
   }
 
@@ -414,8 +425,7 @@ const Game: React.FC<{}> = () => {
       setCurrentMoveIndex((prevIndex) => prevIndex + 1)
       const newGame = new Chess(gameHistory[currentMoveIndex + 1])
       setGame(newGame)
-      setShowPopup(false)
-      setIsGameOver(false)
+      dismissPopup()
     }
   }
 
@@ -455,7 +465,7 @@ const Game: React.FC<{}> = () => {
         />
         <GameOverPopUp
           setShowPopup={setShowPopup}
-          showPopup={showPopup}
+          showPopup={showPopup && !isPopupDismissed}
           isWinner={isWinner}
           isLoser={isLoser}
           game={game}

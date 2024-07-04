@@ -51,14 +51,18 @@
 }
 
 .skyline--input-box-shadow {
-  box-shadow: inset 4px -4px 3px #ffffff, inset 8px -8px 60px -5px #f1e9ec,
+  box-shadow:
+    inset 4px -4px 3px #ffffff,
+    inset 8px -8px 60px -5px #f1e9ec,
     inset -7px 7px 5px -4px rgba(174, 174, 192, 0.4);
   box-sizing: border-box;
   transition: all 0.15s ease-out;
 }
 
 .skyline--account-box-shadow {
-  box-shadow: inset 4px -4px 3px #716e70, inset 8px -8px 60px -5px #ee26ac,
+  box-shadow:
+    inset 4px -4px 3px #716e70,
+    inset 8px -8px 60px -5px #ee26ac,
     inset -7px 7px 5px -4px rgba(174, 174, 192, 0.4);
   box-sizing: border-box;
   transition: all 0.15s ease-out;

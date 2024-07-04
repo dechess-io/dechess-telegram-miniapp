@@ -82,3 +82,27 @@ export function convertToFigurineSan(str: string, turn: string): string {
   }
   return str
 }
+
+const normalizeFEN = (fen: string): string => {
+  // Remove the halfmove clock and fullmove number from the FEN
+  return fen.split(' ').slice(0, 4).join(' ')
+}
+
+const addPositions = (fens: string[]): { [fen: string]: number } => {
+  const positionHistory: { [fen: string]: number } = {}
+  fens.forEach((fen) => {
+    const normalizedFen = normalizeFEN(fen)
+    if (positionHistory[normalizedFen]) {
+      positionHistory[normalizedFen]++
+    } else {
+      positionHistory[normalizedFen] = 1
+    }
+  })
+  return positionHistory
+}
+
+export const isThreefoldRepetition = (fens: string[]): boolean => {
+  const positionHistory = addPositions(fens)
+  const lastFen = fens[fens.length - 1]
+  return positionHistory[normalizeFEN(lastFen)] >= 3
+}
