@@ -253,6 +253,8 @@ const Game: React.FC<{}> = () => {
   function isEligibleToPlay() {
     if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false
 
+    if (currentMoveIndex < gameHistory.length - 1) return false
+
     const isPlayerTurn =
       (player1 === wallet?.account.address && game._turn === 'w') ||
       (player2 === wallet?.account.address && game._turn === 'b')
