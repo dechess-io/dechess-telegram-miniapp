@@ -452,6 +452,7 @@ const Game: React.FC<{}> = () => {
           moveTo={moveTo}
           player1Timer={player1Timer}
           player2Timer={player2Timer}
+          currentMoveIndex={currentMoveIndex}
         />
         <GameNavbar
           user={wallet?.account.address ? wallet?.account.address : ''}

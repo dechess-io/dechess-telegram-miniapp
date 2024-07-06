@@ -24,6 +24,7 @@ interface GameBoardProps {
   moveTo: any
   player1Timer: any
   player2Timer: any
+  currentMoveIndex: any
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
@@ -41,6 +42,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   moveTo,
   player1Timer,
   player2Timer,
+  currentMoveIndex,
 }) => {
   const [name1] = useState(getAvatarName())
   const [name2] = useState(getAvatarName())
@@ -88,7 +90,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <div className="flex justify-center items-center pt-5 mt-10">
           <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
             <div className="flex flex-col space-y-1">
-              <MoveRecord moveLists={moveLists} />
+              <MoveRecord moveLists={moveLists} currentMoveIndex={currentMoveIndex} />
               <PlayerDisplay {...getPlayerDisplayProps(true)} />
               <div className="relative border-8 border-white rounded-lg">
                 <Board

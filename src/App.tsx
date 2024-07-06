@@ -6,11 +6,27 @@ import './index.css'
 import { hasJWT } from './utils/utils'
 import Button from './components/Button/Button'
 import Footer from './components/Footer/Footer.tsx'
+import { useEffect } from 'react'
+import { socket } from './services/socket.ts'
 function App() {
   const navigate = useNavigate()
   const handlePlayClick = () => {
     navigate('/mode')
   }
+
+  // useEffect(() => {
+  //   socket.emit('reconnect')
+  // }, [])
+
+  // useEffect(() => {
+  //   socket.on('rejoinGame', (data) => {
+  //     if (data.status === 200) {
+  //       const { gameId } = data
+  //       console.log(data)
+  //       navigate('/game/' + gameId)
+  //     }
+  //   })
+  // }, [])
 
   const renderActionButton = (label: string, iconSrc: string) => {
     return (

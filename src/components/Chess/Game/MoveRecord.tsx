@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react'
 
 type MoveRecordProps = {
   moveLists: string[]
+  currentMoveIndex: any
 }
 
-const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists }) => {
+const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists, currentMoveIndex }) => {
   const moveListRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -20,11 +21,14 @@ const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists }) => {
       style={{ width: '100%' }}
     >
       <div className="flex space-x-2 text-[12px]">
-        {moveLists.map((move, index) => (
-          <span key={index} className="inline-block">{`${
-            index % 2 === 0 ? index / 2 + 1 + '. ' : ''
-          }${move}`}</span>
-        ))}
+        {moveLists.map((move, index) => {
+          if (index >= currentMoveIndex) return
+          return (
+            <span key={index} className="inline-block">{`${
+              index % 2 === 0 ? index / 2 + 1 + '. ' : ''
+            }${move}`}</span>
+          )
+        })}
       </div>
     </div>
   )
