@@ -6,27 +6,47 @@ import './index.css'
 import { hasJWT } from './utils/utils'
 import Button from './components/Button/Button'
 import Footer from './components/Footer/Footer.tsx'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { socket } from './services/socket.ts'
+import GamePopup from './components/Chess/Popup/GamePopup.tsx'
 function App() {
   const navigate = useNavigate()
+  const [showPopup, setShowPopup] = useState(false)
+  const [data, setData] = useState<any>()
   const handlePlayClick = () => {
     navigate('/mode')
   }
 
-  // useEffect(() => {
-  //   socket.emit('reconnect')
-  // }, [])
+  useEffect(() => {
+    socket.emit('reconnect')
+  }, [])
 
-  // useEffect(() => {
-  //   socket.on('rejoinGame', (data) => {
-  //     if (data.status === 200) {
-  //       const { gameId } = data
-  //       console.log(data)
-  //       navigate('/game/' + gameId)
-  //     }
-  //   })
-  // }, [])
+  useEffect(() => {
+    socket.on('rejoinGame', (data) => {
+      if (data.status === 200 && data.game_id) {
+        setData(data)
+        setTimeout(() => {
+          setShowPopup(true)
+        }, 1500)
+      }
+    })
+  }, [])
+
+  const handleRejoin = () => {
+    navigate('/game/' + data.game_id)
+    setShowPopup(false)
+  }
+
+  const handleCancel = () => {
+    setShowPopup(false)
+    socket.emit('resign', {
+      game_id: data.game_id,
+      isGameOver: true,
+      isGameDraw: false,
+      winner: data.opponent,
+      loser: data.user,
+    })
+  }
 
   const renderActionButton = (label: string, iconSrc: string) => {
     return (
@@ -103,6 +123,16 @@ function App() {
           </div>
         </div>
       </div>
+      {showPopup && (
+        <GamePopup
+          showPopup={showPopup}
+          setShowPopup={setShowPopup}
+          title=""
+          message="You have an unfinished game. Do you want to rejoin?"
+          onCancel={handleCancel}
+          onConfirm={handleRejoin}
+        />
+      )}
       <Footer />
     </>
   )

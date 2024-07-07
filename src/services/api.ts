@@ -4,7 +4,7 @@ export const restApi = axios.create({
   baseURL: 'https://api.dechess.io',
 })
 
-// const restApi = axios.create({
+// export const restApi = axios.create({
 //   baseURL: 'http://localhost:3001',
 // })
 
