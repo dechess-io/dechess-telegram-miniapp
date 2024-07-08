@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePopups } from '../Popup/PopupProvider'
 import { socket } from '../../services/socket'
-import 'react-circular-progressbar/dist/styles.css'
 import { formatTime, hasJWT } from '../../utils/utils'
 import GameSpinner from '../Loading/Spinner'
 import Button from '../Button/Button'
 import ModeSection from './ModeSection'
+import { Button as KonstaButton } from 'konsta/react'
 
 const buttonsData = {
   bullet: [
@@ -120,12 +120,12 @@ const Mode: React.FC<{}> = () => {
                 <GameSpinner />
                 <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50  font-ibm  rounded-lg">
                   <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
-                  <button
+                  <KonstaButton
                     className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg h-[50px] w-[100px] bg-grey-300 border-b-4 border-grey-200"
                     onClick={handleCancel}
                   >
                     Cancel
-                  </button>
+                  </KonstaButton>
                 </div>
               </>
             )}
@@ -166,7 +166,7 @@ const Mode: React.FC<{}> = () => {
                 </div>
                 <div className="flex flex-row">
                   <div className="flex-auto p-1">
-                    <button
+                    <KonstaButton
                       className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
                         activeButton === 'unlimited'
                           ? 'bg-blue-gradient border-b-4 border-blue-200'
@@ -175,20 +175,20 @@ const Mode: React.FC<{}> = () => {
                       onClick={() => handleButtonClick('unlimited', 0, 0)}
                     >
                       <span className="text-white font-ibm">♾️</span>
-                    </button>
+                    </KonstaButton>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="flex-auto p-4">
-              <Button
+              <KonstaButton
                 onClick={onCreateGame}
                 className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
                 disabled={!hasJWT() || !activeButton}
               >
                 <span className="text-black font-ibm">Start game</span>
-              </Button>
+              </KonstaButton>
             </div>
           </div>
         </div>

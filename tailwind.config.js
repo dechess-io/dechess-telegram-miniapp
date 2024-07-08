@@ -1,4 +1,6 @@
-module.exports = {
+const konstaConfig = require('konsta/config')
+
+module.exports = konstaConfig({
   mode: 'jit',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
@@ -55,7 +57,6 @@ module.exports = {
           700: '#818a98',
           800: '#848c9b',
           900: '#6b7381',
-          1000: '#00000',
         },
         grey: {
           100: '#3F3F3F',
@@ -145,4 +146,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+})

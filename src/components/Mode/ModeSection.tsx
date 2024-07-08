@@ -1,3 +1,5 @@
+import { Button } from 'konsta/react'
+
 type ModeSectionProps = {
   imgSrc: string
   title: string
@@ -16,7 +18,7 @@ const renderButton = (
 ) => {
   return (
     <div className="flex-auto p-1" key={buttonId}>
-      <button
+      <Button
         className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
           activeButton === buttonId
             ? 'bg-blue-gradient border-b-4 border-blue-200'
@@ -25,7 +27,7 @@ const renderButton = (
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
       >
         <span className="text-white font-ibm">{label}</span>
-      </button>
+      </Button>
     </div>
   )
 }
