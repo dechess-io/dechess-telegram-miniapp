@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './ProgressChart.scss'
+import { Block } from 'konsta/react'
 
 type Props = {
   totalGames: number
@@ -16,7 +17,7 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
     setRotateDeg(calculatedRotateDeg)
   }, [totalGames, wins, losses])
   return (
-    <div className="vertical-semi-circle-progress-chart">
+    <Block className="vertical-semi-circle-progress-chart">
       <div className="chart-and-labels gap-2">
         <div className={`semi-circle -rotate-[279deg]`}></div>
         <div className="semi-circle-overlay">
@@ -36,7 +37,7 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
           </div>
         </div>
       </div>
-    </div>
+    </Block>
   )
 }
 

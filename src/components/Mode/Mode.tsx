@@ -5,9 +5,8 @@ import { usePopups } from '../Popup/PopupProvider'
 import { socket } from '../../services/socket'
 import { formatTime, hasJWT } from '../../utils/utils'
 import GameSpinner from '../Loading/Spinner'
-import Button from '../Button/Button'
 import ModeSection from './ModeSection'
-import { Button as KonstaButton } from 'konsta/react'
+import { Block, Button as KonstaButton } from 'konsta/react'
 
 const buttonsData = {
   bullet: [
@@ -151,13 +150,6 @@ const Mode: React.FC<{}> = () => {
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
               />
-              {/* <ModeSection
-                imgSrc="/Sun.svg"
-                title="Daily"
-                buttons={buttonsData.daily}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              /> */}
 
               <div className="pt-2">
                 <div className="flex flex-row items-center pl-4">
@@ -181,7 +173,7 @@ const Mode: React.FC<{}> = () => {
               </div>
             </div>
 
-            <div className="flex-auto p-4">
+            <Block>
               <KonstaButton
                 onClick={onCreateGame}
                 className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
@@ -189,7 +181,7 @@ const Mode: React.FC<{}> = () => {
               >
                 <span className="text-black font-ibm">Start game</span>
               </KonstaButton>
-            </div>
+            </Block>
           </div>
         </div>
       </div>

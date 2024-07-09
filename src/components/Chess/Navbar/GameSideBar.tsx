@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Chess } from 'chess.js'
-import { useNavigate } from 'react-router-dom'
-import GamePopup from '../Popup/GamePopup'
 import { useCallback } from 'react'
-import Popup from '../../Popup/Popup'
-import NotificationPopup from '../Popup/NotificationPopup'
+import { Dialog, DialogButton } from 'konsta/react'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -130,47 +126,51 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   const renderPopups = () => (
     <>
       {['resign', 'draw', 'abort'].map((action) => (
-        <GamePopup
-          key={action}
+        <Dialog
+          opened={visiblePopup === action}
+          onBackdropClick={setVisiblePopup}
           title=""
-          message={`Do you want to ${action} the game?`}
-          onConfirm={() => handlePopupAction(action)}
-          onCancel={() => togglePopup(null)}
-          showPopup={visiblePopup === action}
-          setShowPopup={setVisiblePopup}
+          content={`Do you want to ${action} the game?`}
+          buttons={
+            <>
+              <DialogButton onClick={() => handlePopupAction(action)}>Yes</DialogButton>
+              <DialogButton onClick={() => togglePopup(null)}>No</DialogButton>
+            </>
+          }
         />
       ))}
 
-      {opponentAction && (
-        <GamePopup
-          title="Opponent Action"
-          message={opponentAction}
-          onConfirm={() => setOpponentAction(null)}
-          onCancel={() => setOpponentAction(null)}
-          showPopup={true}
-          setShowPopup={setOpponentAction}
-        />
-      )}
+      <Dialog
+        opened={opponentAction ? true : false}
+        onBackdropClick={setOpponentAction}
+        title="Opponent Action"
+        content={opponentAction}
+        buttons={
+          <>
+            <DialogButton onClick={() => setOpponentAction(null)}>Yes</DialogButton>
+            <DialogButton onClick={() => setOpponentAction(null)}>No</DialogButton>
+          </>
+        }
+      />
 
-      {drawRequest && (
-        <GamePopup
-          title="Draw Request"
-          message="Your opponent requested a draw. Do you accept?"
-          onConfirm={handleConfirmDraw}
-          onCancel={() => setDrawRequest(false)}
-          showPopup={true}
-          setShowPopup={setDrawRequest}
-        />
-      )}
-      {notificationPopup && (
-        <NotificationPopup
-          key={'Abort'}
-          title=""
-          message="Can not abort the game because you already make your move"
-          showPopup={notificationPopup}
-          setShowPopup={() => setNotificationPopup((prev) => !prev)}
-        />
-      )}
+      <Dialog
+        opened={drawRequest}
+        onBackdropClick={setDrawRequest}
+        title="Draw Request"
+        content="Your opponent requested a draw. Do you accept?"
+        buttons={
+          <>
+            <DialogButton onClick={handleConfirmDraw}>Yes</DialogButton>
+            <DialogButton onClick={() => setDrawRequest(false)}>No</DialogButton>
+          </>
+        }
+      />
+      <Dialog
+        opened={notificationPopup}
+        onBackdropClick={() => setNotificationPopup((prev) => !prev)}
+        title=""
+        content="Can not abort the game because you already make your move"
+      />
     </>
   )
 
