@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useCallback } from 'react'
-import { Dialog, DialogButton } from 'konsta/react'
+import {
+  Actions,
+  ActionsButton,
+  ActionsGroup,
+  ActionsLabel,
+  Dialog,
+  DialogButton,
+} from 'konsta/react'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -177,33 +184,20 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   return (
     <>
       {renderPopups()}
-
-      <div
-        className={`fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[400px] bg-black bg-opacity-75 text-white p-4 transition-all duration-300 z-50 rounded-lg ${
-          isSidebarVisible ? 'block' : 'hidden'
-        }`}
-      >
-        <ul className="mt-4 flex flex-col items-center">
-          <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('draw')}>
+      <Actions opened={isSidebarVisible} onBackdropClick={toggleSidebar()}>
+        <ActionsGroup>
+          <ActionsButton onClick={() => togglePopup('draw')} bold>
             Draw
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={handleAbort}>
-            Abort
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('resign')}>
-            Resign
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={toggleSidebar}>
+          </ActionsButton>
+          <ActionsButton onClick={handleAbort}>Abort</ActionsButton>
+          <ActionsButton onClick={() => togglePopup('resign')}>Resign</ActionsButton>
+          <ActionsButton onClick={toggleSidebar} bold>
             Share Game
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={toggleSidebar}>
-            Settings
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={toggleSidebar}>
-            Cancel
-          </li>
-        </ul>
-      </div>
+          </ActionsButton>
+          <ActionsButton onClick={toggleSidebar}>Setting</ActionsButton>
+          <ActionsButton onClick={toggleSidebar}>Cancel</ActionsButton>
+        </ActionsGroup>
+      </Actions>
     </>
   )
 }

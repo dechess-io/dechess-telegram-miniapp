@@ -22,6 +22,7 @@ import {
   toggleGameDraw,
   toggleGameOver,
 } from '../../../redux/game/game_state.reducer'
+import { Block, Page } from 'konsta/react'
 
 const Game: React.FC<{}> = () => {
   const [
@@ -437,48 +438,52 @@ const Game: React.FC<{}> = () => {
   } else {
     return (
       <>
-        <Header />
-        <GameBoard
-          player1={player1}
-          player2={player2}
-          moveLists={moves}
-          game={game}
-          onSquareClick={onSquareClick}
-          onSquareRightClick={onSquareRightClick}
-          onPromotionPieceSelect={onPromotionPieceSelect}
-          showPromotionDialog={showPromotionDialog}
-          moveSquares={moveSquares}
-          optionSquares={optionSquares}
-          rightClickedSquares={rightClickedSquares}
-          moveTo={moveTo}
-          player1Timer={player1Timer}
-          player2Timer={player2Timer}
-          currentMoveIndex={currentMoveIndex}
-        />
-        <GameNavbar
-          user={wallet?.account.address ? wallet?.account.address : ''}
-          opponent={wallet?.account.address === player1 ? player2 : player1}
-          toggleGameDraw={() => toggleGameDraw(isGameDraw, gameDispatch)}
-          toggleGameOver={() => toggleGameOver(isGameOver, gameDispatch)}
-          handlePreviousMove={handlePreviousMove}
-          handleNextMove={handleNextMove}
-          socket={socket}
-          game={game}
-          isMoved={moves.length !== 0}
-          isWhite={player1 === wallet?.account.address}
-        />
-        <GameOverPopUp
-          setShowPopup={setShowPopup}
-          showPopup={showPopup && !isPopupDismissed}
-          isWinner={isWinner}
-          isLoser={isLoser}
-          game={game}
-          isGameOver={isGameOver}
-          isGameDraw={isGameDraw}
-          player1={player1}
-          player2={player2}
-          wallet={wallet}
-        />
+        <Page component="div" className="overflow-auto hide-scrollbar">
+          <Header />
+          <Block>
+            <GameBoard
+              player1={player1}
+              player2={player2}
+              moveLists={moves}
+              game={game}
+              onSquareClick={onSquareClick}
+              onSquareRightClick={onSquareRightClick}
+              onPromotionPieceSelect={onPromotionPieceSelect}
+              showPromotionDialog={showPromotionDialog}
+              moveSquares={moveSquares}
+              optionSquares={optionSquares}
+              rightClickedSquares={rightClickedSquares}
+              moveTo={moveTo}
+              player1Timer={player1Timer}
+              player2Timer={player2Timer}
+              currentMoveIndex={currentMoveIndex}
+            />
+          </Block>
+          <GameNavbar
+            user={wallet?.account.address ? wallet?.account.address : ''}
+            opponent={wallet?.account.address === player1 ? player2 : player1}
+            toggleGameDraw={() => toggleGameDraw(isGameDraw, gameDispatch)}
+            toggleGameOver={() => toggleGameOver(isGameOver, gameDispatch)}
+            handlePreviousMove={handlePreviousMove}
+            handleNextMove={handleNextMove}
+            socket={socket}
+            game={game}
+            isMoved={moves.length !== 0}
+            isWhite={player1 === wallet?.account.address}
+          />
+          <GameOverPopUp
+            setShowPopup={setShowPopup}
+            showPopup={showPopup && !isPopupDismissed}
+            isWinner={isWinner}
+            isLoser={isLoser}
+            game={game}
+            isGameOver={isGameOver}
+            isGameDraw={isGameDraw}
+            player1={player1}
+            player2={player2}
+            wallet={wallet}
+          />
+        </Page>
       </>
     )
   }

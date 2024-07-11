@@ -6,7 +6,8 @@ import { socket } from '../../services/socket'
 import { formatTime, hasJWT } from '../../utils/utils'
 import GameSpinner from '../Loading/Spinner'
 import ModeSection from './ModeSection'
-import { Block, Button as KonstaButton } from 'konsta/react'
+import { Block, Button, Page } from 'konsta/react'
+import Footer from '../Footer/Footer'
 
 const buttonsData = {
   bullet: [
@@ -110,81 +111,65 @@ const Mode: React.FC<{}> = () => {
 
   return (
     <>
-      <Header />
-      <div className="flex flex-col pt-4 bg-[#041d21]">
-        <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
-          <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            {loading && (
-              <>
-                <GameSpinner />
-                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50  font-ibm  rounded-lg">
-                  <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
-                  <KonstaButton
-                    className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg h-[50px] w-[100px] bg-grey-300 border-b-4 border-grey-200"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </KonstaButton>
-                </div>
-              </>
-            )}
-            <div>
-              <ModeSection
-                imgSrc="/bullet.svg"
-                title="Bullet"
-                buttons={buttonsData.bullet}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              />
-              <ModeSection
-                imgSrc="/Thunder.svg"
-                title="Blitz"
-                buttons={buttonsData.blitz}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              />
-              <ModeSection
-                imgSrc="/QuickLock.svg"
-                title="Rapid"
-                buttons={buttonsData.rapid}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              />
+      <Page className="overflow-auto hide-scrollbar">
+        <Header />
+        <Block strong style={{ paddingRight: '0', paddingLeft: '0' }}>
+          <div className="flex flex-col pt-4 bg-[#041d21]">
+            <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
+              <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
+                {loading && (
+                  <>
+                    <GameSpinner />
+                    <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 font-ibm  rounded-lg  ">
+                      <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
+                      <Button
+                        className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6  h-10 w-[70px] rounded-lg bg-grey-300 border-b-4 border-grey-200"
+                        onClick={handleCancel}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </>
+                )}
+                <div>
+                  <ModeSection
+                    imgSrc="/bullet.svg"
+                    title="Bullet"
+                    buttons={buttonsData.bullet}
+                    handleButtonClick={handleButtonClick}
+                    activeButton={activeButton}
+                  />
+                  <ModeSection
+                    imgSrc="/Thunder.svg"
+                    title="Blitz"
+                    buttons={buttonsData.blitz}
+                    handleButtonClick={handleButtonClick}
+                    activeButton={activeButton}
+                  />
+                  <ModeSection
+                    imgSrc="/QuickLock.svg"
+                    title="Rapid"
+                    buttons={buttonsData.rapid}
+                    handleButtonClick={handleButtonClick}
+                    activeButton={activeButton}
+                  />
 
-              <div className="pt-2">
-                <div className="flex flex-row items-center pl-4">
-                  <img src="/QuickLock.svg" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2 font-ibm">Unlimited</span>
-                </div>
-                <div className="flex flex-row">
-                  <div className="flex-auto p-1">
-                    <KonstaButton
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'unlimited'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('unlimited', 0, 0)}
+                  <Block>
+                    <Button
+                      onClick={onCreateGame}
+                      className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
+                      disabled={!hasJWT() || !activeButton}
                     >
-                      <span className="text-white font-ibm">♾️</span>
-                    </KonstaButton>
-                  </div>
+                      <span className="text-black font-ibm">Start game</span>
+                    </Button>
+                  </Block>
                 </div>
               </div>
             </div>
-
-            <Block>
-              <KonstaButton
-                onClick={onCreateGame}
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
-                disabled={!hasJWT() || !activeButton}
-              >
-                <span className="text-black font-ibm">Start game</span>
-              </KonstaButton>
-            </Block>
           </div>
-        </div>
-      </div>
+        </Block>
+        <Footer />
+      </Page>
     </>
   )
 }
