@@ -25,3 +25,7 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera*/
 }
+
+.no-padding {
+  padding: 0 !important;
+}

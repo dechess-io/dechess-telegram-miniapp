@@ -17,7 +17,7 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
     setRotateDeg(calculatedRotateDeg)
   }, [totalGames, wins, losses])
   return (
-    <Block className="vertical-semi-circle-progress-chart">
+    <div className="vertical-semi-circle-progress-chart">
       <div className="chart-and-labels gap-2">
         <div className={`semi-circle -rotate-[279deg]`}></div>
         <div className="semi-circle-overlay">
@@ -37,7 +37,7 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
           </div>
         </div>
       </div>
-    </Block>
+    </div>
   )
 }
 
