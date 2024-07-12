@@ -8,6 +8,7 @@ import Mode from './components/Mode/Mode'
 import PopupProvider from './components/Popup/PopupProvider'
 import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
+// import  Telegram from 'telegram-webapps'
 // import './styles/main.scss'
 
 // import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
@@ -18,6 +19,9 @@ import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
 
 WebApp.ready()
 WebApp.expand()
+WebApp.MainButton.hide()
+WebApp.enableClosingConfirmation()
+// (Telegram as any).disableVerticalSwipes();
 
 // const networkConfig = {
 //   testnet: {
