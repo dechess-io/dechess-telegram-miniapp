@@ -94,6 +94,8 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
             }
           />
         </Tabbar>
+      </Block>
+      {isSidebarVisible && (
         <GameSidebar
           isMoved={isMoved}
           isSidebarVisible={isSidebarVisible}
@@ -106,7 +108,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
           opponent={opponent}
           isWhite={isWhite}
         />
-      </Block>
+      )}
       {isChatVisible && (
         <GameChat
           socket={socket}

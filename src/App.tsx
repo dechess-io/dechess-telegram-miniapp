@@ -71,8 +71,7 @@ function App() {
             }
           />
           <Block
-            strong
-            className="bg-[#041d21] flex flex-col"
+            className="bg-[#041d21] flex flex-col pb-[20px]"
             style={{ paddingRight: '0', paddingLeft: '0' }}
           >
             <div className="border-none rounded-xl">
@@ -104,18 +103,17 @@ function App() {
                     <ActionButton label="Puzzles" iconSrc="/Piece.svg" />
                   </div>
                 </Block>
+                <Button
+                  onClick={handlePlayClick}
+                  className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 font-ibm"
+                  disabled={!hasJWT()}
+                >
+                  <span className="text-sm md:text-base lg:text-lg">Play</span>
+                </Button>
               </div>
             </div>
           </Block>
-          <Block strong>
-            <Button
-              onClick={handlePlayClick}
-              className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 font-ibm"
-              disabled={!hasJWT()}
-            >
-              <span className="text-sm md:text-base lg:text-lg">Play</span>
-            </Button>
-          </Block>
+
           <Footer />
         </Page>
       </KonstaApp>

@@ -124,13 +124,16 @@ const Mode: React.FC<{}> = () => {
                     <>
                       <GameSpinner />
                       <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 font-ibm  rounded-lg  ">
-                        <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
-                        <Button
-                          className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6  h-12 w-[80px] rounded-lg bg-grey-300 border-b-4 border-grey-200"
-                          onClick={handleCancel}
-                        >
-                          Cancel
-                        </Button>
+                        <Block>
+                          <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
+
+                          <Button
+                            className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg bg-grey-300 border-b-4 border-grey-200"
+                            onClick={handleCancel}
+                          >
+                            Cancel
+                          </Button>
+                        </Block>
                       </div>
                     </>
                   )}
