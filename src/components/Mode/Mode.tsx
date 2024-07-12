@@ -1,13 +1,13 @@
 import Header from '../Header/Header'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { usePopups } from '../Popup/PopupProvider'
 import { socket } from '../../services/socket'
-import 'react-circular-progressbar/dist/styles.css'
 import { formatTime, hasJWT } from '../../utils/utils'
 import GameSpinner from '../Loading/Spinner'
-import Button from '../Button/Button'
 import ModeSection from './ModeSection'
+import { App, Block, Button, Page } from 'konsta/react'
+import Footer from '../Footer/Footer'
+import { isAndroid } from 'react-device-detect'
 
 const buttonsData = {
   bullet: [
@@ -109,90 +109,71 @@ const Mode: React.FC<{}> = () => {
     setAdditionTimePerMove(additionTime)
   }
 
+  const theme = isAndroid ? 'material' : 'ios'
+
   return (
     <>
-      <Header />
-      <div className="flex flex-col pt-4 bg-[#041d21]">
-        <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
-          <div className="mx-auto flex flex-col items-center justify-center text-center text-white px-6 py-12">
-            {loading && (
-              <>
-                <GameSpinner />
-                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50  font-ibm  rounded-lg">
-                  <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
-                  <button
-                    className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg h-[50px] w-[100px] bg-grey-300 border-b-4 border-grey-200"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </>
-            )}
-            <div>
-              <ModeSection
-                imgSrc="/bullet.svg"
-                title="Bullet"
-                buttons={buttonsData.bullet}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              />
-              <ModeSection
-                imgSrc="/Thunder.svg"
-                title="Blitz"
-                buttons={buttonsData.blitz}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              />
-              <ModeSection
-                imgSrc="/QuickLock.svg"
-                title="Rapid"
-                buttons={buttonsData.rapid}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              />
-              {/* <ModeSection
-                imgSrc="/Sun.svg"
-                title="Daily"
-                buttons={buttonsData.daily}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-              /> */}
+      <App theme={theme}>
+        <Page className="overflow-auto hide-scrollbar">
+          <Header />
+          <Block strong style={{ paddingRight: '0', paddingLeft: '0' }}>
+            <div className="flex flex-col pt-4 bg-[#041d21]">
+              <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
+                <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
+                  {loading && (
+                    <>
+                      <GameSpinner />
+                      <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 font-ibm  rounded-lg  ">
+                        <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
+                        <Button
+                          className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6  h-12 w-[80px] rounded-lg bg-grey-300 border-b-4 border-grey-200"
+                          onClick={handleCancel}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                  <div>
+                    <ModeSection
+                      imgSrc="/bullet.svg"
+                      title="Bullet"
+                      buttons={buttonsData.bullet}
+                      handleButtonClick={handleButtonClick}
+                      activeButton={activeButton}
+                    />
+                    <ModeSection
+                      imgSrc="/Thunder.svg"
+                      title="Blitz"
+                      buttons={buttonsData.blitz}
+                      handleButtonClick={handleButtonClick}
+                      activeButton={activeButton}
+                    />
+                    <ModeSection
+                      imgSrc="/QuickLock.svg"
+                      title="Rapid"
+                      buttons={buttonsData.rapid}
+                      handleButtonClick={handleButtonClick}
+                      activeButton={activeButton}
+                    />
 
-              <div className="pt-2">
-                <div className="flex flex-row items-center pl-4">
-                  <img src="/QuickLock.svg" alt="Leaderboard" className="h-24 w-24" />
-                  <span className="text-white pl-2 font-ibm">Unlimited</span>
-                </div>
-                <div className="flex flex-row">
-                  <div className="flex-auto p-1">
-                    <button
-                      className={`font-bold py-2 px-6 rounded-lg h-54 w-[115px] ${
-                        activeButton === 'unlimited'
-                          ? 'bg-blue-gradient border-b-4 border-blue-200'
-                          : 'bg-grey-100 border-b-4 border-grey-200'
-                      }`}
-                      onClick={() => handleButtonClick('unlimited', 0, 0)}
-                    >
-                      <span className="text-white font-ibm">♾️</span>
-                    </button>
+                    <Block>
+                      <Button
+                        onClick={onCreateGame}
+                        className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
+                        disabled={!hasJWT() || !activeButton}
+                      >
+                        <span className="text-black font-ibm">Start game</span>
+                      </Button>
+                    </Block>
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="flex-auto p-4">
-              <Button
-                onClick={onCreateGame}
-                className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
-                disabled={!hasJWT() || !activeButton}
-              >
-                <span className="text-black font-ibm">Start game</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+          </Block>
+          <Footer />
+        </Page>
+      </App>
     </>
   )
 }

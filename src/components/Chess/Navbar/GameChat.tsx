@@ -1,13 +1,18 @@
+import { useState, useRef, useEffect } from 'react'
 import {
-  MainContainer,
-  ChatContainer,
-  MessageList,
+  Page,
+  Navbar,
+  NavbarBackLink,
+  Messagebar,
+  Messages,
   Message,
-  MessageInput,
-} from '@chatscope/chat-ui-kit-react'
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css'
-
-import React, { useRef, useEffect } from 'react'
+  MessagesTitle,
+  Link,
+  Icon,
+  Button,
+} from 'konsta/react'
+import Header from '../../Header/Header'
+import { MdCameraAlt, MdClose, MdSend } from 'react-icons/md'
 
 interface GameChatProps {
   isChatVisible: boolean
@@ -31,65 +36,99 @@ const GameChat: React.FC<GameChatProps> = ({
   userId,
   socket,
 }) => {
-  const handleClick = (data: any) => {
-    setMessages((prev) => [...prev, { sender: userId, message: data }])
+  const handleSendClick = () => {
+    setMessages((prev) => [
+      ...prev,
+      { sender: userId, message: messageText.replace('g', '<br>').trim() },
+    ])
     socket.emit('message', {
       game_id: location.pathname.split('/')[2],
-      message: { sender: userId, message: data },
+      message: { sender: userId, message: messageText.replace('g', '<br>').trim() },
     })
+    setMessageText('')
   }
 
-  if (isChatVisible) {
-    return (
-      <div
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[50%]   transition-all duration-300 z-50 rounded-lg ${
-          isChatVisible ? 'block' : 'hidden'
-        }`}
-      >
-        <MainContainer responsive={true} style={{ borderRadius: '20px' }}>
-          <ChatContainer>
-            <MessageList>
-              {messages.map((message, index) => {
-                let position: 'normal' | 'first' | 'last' = 'normal'
+  const [messageText, setMessageText] = useState('')
 
-                if (index === 0) {
-                  position = 'first'
-                } else if (index === messages.length - 1) {
-                  position = 'last'
-                }
-                const isOutgoing = message.sender === userId
+  const inputOpacity = messageText ? 1 : 0.3
+  const isClickable = messageText.trim().length > 0
 
-                const messageStyle = {
-                  borderRadius: '5px',
-                  maxWidth: '70%',
-                }
+  const currentDate = new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+    .formatToParts(new Date())
+    .map((part) => {
+      if (['weekday', 'month', 'day'].includes(part.type)) {
+        return <b key={part.type}>{part.value}</b>
+      }
+      return part.value
+    })
 
-                return (
-                  <Message
-                    key={index}
-                    model={{
-                      message: message.message,
-                      sender: message.sender,
-                      direction: message.sender === userId ? 'outgoing' : 'incoming',
-                      position: position,
-                    }}
-                    style={messageStyle}
-                  />
-                )
-              })}
-            </MessageList>
-
-            <MessageInput
-              onSend={handleClick}
-              className="text-white flex"
-              placeholder="Type message here"
-              attachButton={false}
+  return (
+    <Page component="div" className="z-50 fixed hide-scrollbar space-y-[50px]">
+      <Header />
+      <Messages className="hide-scrollbar">
+        <MessagesTitle>{currentDate}</MessagesTitle>
+        {messages.map((message, index) => (
+          <Message
+            key={index}
+            type={message.sender === userId ? 'sent' : 'received'}
+            // name={message.name}
+            text={message.message}
+            // avatar={
+            //   message.type === 'received' && (
+            //     <img
+            //       alt="avatar"
+            //       src={message.avatar}
+            //       className="w-8 h-8 rounded-full"
+            //     />
+            //   )
+            // }
+          />
+        ))}
+      </Messages>
+      <Messagebar
+        className="hide-scrollbar"
+        placeholder="Message"
+        value={messageText}
+        onInput={(e) => setMessageText(e.target.value)}
+        left={
+          <Link
+            onClick={setIsChatVisible}
+            toolbar
+            style={{
+              opacity: inputOpacity,
+              cursor: 'pointer',
+            }}
+          >
+            <Icon>
+              <MdClose className="w-6 h-6 fill-black dark:fill-md-dark-on-surface" />
+            </Icon>
+          </Link>
+        }
+        right={
+          <Link
+            onClick={isClickable ? handleSendClick : undefined}
+            toolbar
+            style={{
+              opacity: inputOpacity,
+              cursor: isClickable ? 'pointer' : 'default',
+            }}
+          >
+            <Icon
+              material={<MdSend className="w-6 h-6 fill-black dark:fill-md-dark-on-surface" />}
+              ios={<MdSend className="w-6 h-6 fill-black dark:fill-md-dark-on-surface" />}
             />
-          </ChatContainer>
-        </MainContainer>
-      </div>
-    )
-  }
+          </Link>
+        }
+      />
+    </Page>
+  )
 }
 
 export default GameChat

@@ -8,14 +8,13 @@ import Mode from './components/Mode/Mode'
 import PopupProvider from './components/Popup/PopupProvider'
 import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
-import './styles/main.scss'
+// import './styles/main.scss'
 
 // import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
 // import { getFullnodeUrl } from '@mysten/sui/client'
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import '@mysten/dapp-kit/dist/index.css'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
-import './index.css'
+// import './index.css'
 
 WebApp.ready()
 WebApp.expand()

@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Chess } from 'chess.js'
-import { useNavigate } from 'react-router-dom'
-import GamePopup from '../Popup/GamePopup'
 import { useCallback } from 'react'
-import Popup from '../../Popup/Popup'
-import NotificationPopup from '../Popup/NotificationPopup'
+import {
+  Actions,
+  ActionsButton,
+  ActionsGroup,
+  ActionsLabel,
+  Dialog,
+  DialogButton,
+} from 'konsta/react'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -130,80 +133,67 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   const renderPopups = () => (
     <>
       {['resign', 'draw', 'abort'].map((action) => (
-        <GamePopup
-          key={action}
+        <Dialog
+          opened={visiblePopup === action}
+          onBackdropClick={setVisiblePopup}
           title=""
-          message={`Do you want to ${action} the game?`}
-          onConfirm={() => handlePopupAction(action)}
-          onCancel={() => togglePopup(null)}
-          showPopup={visiblePopup === action}
-          setShowPopup={setVisiblePopup}
+          content={`Do you want to ${action} the game?`}
+          buttons={
+            <>
+              <DialogButton onClick={() => handlePopupAction(action)}>Yes</DialogButton>
+              <DialogButton onClick={() => togglePopup(null)}>No</DialogButton>
+            </>
+          }
         />
       ))}
 
-      {opponentAction && (
-        <GamePopup
-          title="Opponent Action"
-          message={opponentAction}
-          onConfirm={() => setOpponentAction(null)}
-          onCancel={() => setOpponentAction(null)}
-          showPopup={true}
-          setShowPopup={setOpponentAction}
-        />
-      )}
+      <Dialog
+        opened={opponentAction ? true : false}
+        onBackdropClick={setOpponentAction}
+        title="Opponent Action"
+        content={opponentAction}
+        buttons={
+          <>
+            <DialogButton onClick={() => setOpponentAction(null)}>Yes</DialogButton>
+            <DialogButton onClick={() => setOpponentAction(null)}>No</DialogButton>
+          </>
+        }
+      />
 
-      {drawRequest && (
-        <GamePopup
-          title="Draw Request"
-          message="Your opponent requested a draw. Do you accept?"
-          onConfirm={handleConfirmDraw}
-          onCancel={() => setDrawRequest(false)}
-          showPopup={true}
-          setShowPopup={setDrawRequest}
-        />
-      )}
-      {notificationPopup && (
-        <NotificationPopup
-          key={'Abort'}
-          title=""
-          message="Can not abort the game because you already make your move"
-          showPopup={notificationPopup}
-          setShowPopup={() => setNotificationPopup((prev) => !prev)}
-        />
-      )}
+      <Dialog
+        opened={drawRequest}
+        onBackdropClick={setDrawRequest}
+        title="Draw Request"
+        content="Your opponent requested a draw. Do you accept?"
+        buttons={
+          <>
+            <DialogButton onClick={handleConfirmDraw}>Yes</DialogButton>
+            <DialogButton onClick={() => setDrawRequest(false)}>No</DialogButton>
+          </>
+        }
+      />
+      <Dialog
+        opened={notificationPopup}
+        onBackdropClick={() => setNotificationPopup((prev) => !prev)}
+        title=""
+        content="Can not abort the game because you already make your move"
+      />
     </>
   )
 
   return (
     <>
       {renderPopups()}
-
-      <div
-        className={`fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[400px] bg-black bg-opacity-75 text-white p-4 transition-all duration-300 z-50 rounded-lg ${
-          isSidebarVisible ? 'block' : 'hidden'
-        }`}
-      >
-        <ul className="mt-4 flex flex-col items-center">
-          <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('draw')}>
-            Draw
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={handleAbort}>
-            Abort
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={() => togglePopup('resign')}>
-            Resign
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={toggleSidebar}>
-            Share Game
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={toggleSidebar}>
-            Settings
-          </li>
-          <li className="py-2 cursor-pointer pb-4" onClick={toggleSidebar}>
-            Cancel
-          </li>
-        </ul>
-      </div>
+      <Actions opened={isSidebarVisible} onBackdropClick={toggleSidebar()}>
+        <ActionsGroup>
+          <ActionsButton onClick={() => togglePopup('draw')}>Draw</ActionsButton>
+          <ActionsButton onClick={handleAbort}>Abort</ActionsButton>
+          <ActionsButton onClick={() => togglePopup('resign')}>Resign</ActionsButton>
+          <ActionsButton onClick={toggleSidebar}>Share Game</ActionsButton>
+          <ActionsButton onClick={toggleSidebar}>Setting</ActionsButton>
+          <ActionsButton onClick={toggleSidebar}>Cancel</ActionsButton>
+        </ActionsGroup>
+      </Actions>
     </>
   )
 }
