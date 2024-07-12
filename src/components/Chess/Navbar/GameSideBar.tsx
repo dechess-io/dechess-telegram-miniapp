@@ -49,12 +49,8 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   const togglePopup = (popup: string | null) => {
     setVisiblePopup((prev) => {
       if (prev === popup) {
-        toggleSidebar()
         return null
       } else {
-        if (popup) {
-          toggleSidebar()
-        }
         return popup
       }
     })
@@ -134,6 +130,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
     <>
       {['resign', 'draw', 'abort'].map((action) => (
         <Dialog
+          key={action}
           opened={visiblePopup === action}
           onBackdropClick={setVisiblePopup}
           title=""
@@ -184,14 +181,14 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   return (
     <>
       {renderPopups()}
-      <Actions opened={isSidebarVisible} onBackdropClick={toggleSidebar()}>
+      <Actions opened={isSidebarVisible && !visiblePopup} onBackdropClick={() => toggleSidebar()}>
         <ActionsGroup>
           <ActionsButton onClick={() => togglePopup('draw')}>Draw</ActionsButton>
           <ActionsButton onClick={handleAbort}>Abort</ActionsButton>
           <ActionsButton onClick={() => togglePopup('resign')}>Resign</ActionsButton>
-          <ActionsButton onClick={toggleSidebar}>Share Game</ActionsButton>
-          <ActionsButton onClick={toggleSidebar}>Setting</ActionsButton>
-          <ActionsButton onClick={toggleSidebar}>Cancel</ActionsButton>
+          <ActionsButton onClick={() => toggleSidebar()}>Share Game</ActionsButton>
+          <ActionsButton onClick={() => toggleSidebar()}>Setting</ActionsButton>
+          <ActionsButton onClick={() => toggleSidebar()}>Cancel</ActionsButton>
         </ActionsGroup>
       </Actions>
     </>

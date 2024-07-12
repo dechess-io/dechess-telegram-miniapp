@@ -96,20 +96,23 @@ function App() {
                   </div>
                 </Block>
                 <Block>
-                  <div className="grid grid-cols-2 gap-2" style={{ background: 'transparent' }}>
+                  <div
+                    className="grid grid-cols-2 gap-2 pb-2"
+                    style={{ background: 'transparent' }}
+                  >
                     <ActionButton label="Leaderboard" iconSrc="/Rank.svg" />
                     <ActionButton label="Quest" iconSrc="/layer.svg" />
                     <ActionButton label="Play Versus Bot" iconSrc="/ChessBoard.svg" />
                     <ActionButton label="Puzzles" iconSrc="/Piece.svg" />
                   </div>
+                  <Button
+                    onClick={handlePlayClick}
+                    className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 font-ibm "
+                    disabled={!hasJWT()}
+                  >
+                    <span className="text-sm md:text-base lg:text-lg">Play</span>
+                  </Button>
                 </Block>
-                <Button
-                  onClick={handlePlayClick}
-                  className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 font-ibm"
-                  disabled={!hasJWT()}
-                >
-                  <span className="text-sm md:text-base lg:text-lg">Play</span>
-                </Button>
               </div>
             </div>
           </Block>

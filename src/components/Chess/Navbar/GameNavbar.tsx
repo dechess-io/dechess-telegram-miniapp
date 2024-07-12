@@ -4,8 +4,6 @@ import GameChat, { Message } from './GameChat'
 import { useTonWallet } from '@tonconnect/ui-react'
 import { Chess } from 'chess.js'
 import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react'
-import classnames from '@sindresorhus/class-names'
-import { ClassNames } from '../../../services/cn'
 
 interface GameNavbarProps {
   handlePreviousMove: any
@@ -54,7 +52,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
 
   return (
     <>
-      <Block inset component="div" className="h-[10px]">
+      <Block component="div" className="h-[10px] fixed">
         <Tabbar icons className="left-0 bottom-0 fixed">
           <TabbarLink
             active
@@ -95,20 +93,20 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
           />
         </Tabbar>
       </Block>
-      {isSidebarVisible && (
-        <GameSidebar
-          isMoved={isMoved}
-          isSidebarVisible={isSidebarVisible}
-          toggleSidebar={toggleSidebar}
-          game={game}
-          socket={socket}
-          toggleGameOver={toggleGameOver}
-          toggleGameDraw={toggleGameDraw}
-          user={user}
-          opponent={opponent}
-          isWhite={isWhite}
-        />
-      )}
+
+      <GameSidebar
+        isMoved={isMoved}
+        isSidebarVisible={isSidebarVisible}
+        toggleSidebar={toggleSidebar}
+        game={game}
+        socket={socket}
+        toggleGameOver={toggleGameOver}
+        toggleGameDraw={toggleGameDraw}
+        user={user}
+        opponent={opponent}
+        isWhite={isWhite}
+      />
+
       {isChatVisible && (
         <GameChat
           socket={socket}

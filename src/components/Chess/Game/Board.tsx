@@ -8,6 +8,7 @@ import GameOverPopUp from '../Popup/GameOverPopUp'
 import PlayerDisplay from './PlayerDisplay'
 import { socket } from '../../../services/socket'
 import { useState } from 'react'
+import { Block } from 'konsta/react'
 
 interface GameBoardProps {
   player1: string
@@ -86,46 +87,48 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <>
-      <div className="flex flex-col pt-6 justify-start bg-[#041d21] h-screen">
-        <div className="flex justify-center items-center pt-5 mt-10">
-          <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-            <div className="flex flex-col space-y-1">
-              <MoveRecord moveLists={moveLists} currentMoveIndex={currentMoveIndex} />
-              <PlayerDisplay {...getPlayerDisplayProps(true)} />
-              <div className="relative border-8 border-white rounded-lg">
-                <Board
-                  boardOrientation={isOrientation()}
-                  position={game.fen()}
-                  id="ClickToMove"
-                  animationDuration={200}
-                  arePiecesDraggable={false}
-                  onSquareClick={onSquareClick}
-                  onSquareRightClick={onSquareRightClick}
-                  onPromotionPieceSelect={onPromotionPieceSelect}
-                  customBoardStyle={{
-                    // borderRadius: '8px',
-                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
-                  }}
-                  customLightSquareStyle={{
-                    backgroundColor: '#E8EDF9',
-                  }}
-                  customDarkSquareStyle={{
-                    backgroundColor: '#B7C0D8',
-                  }}
-                  customSquareStyles={{
-                    ...moveSquares,
-                    ...optionSquares,
-                    ...rightClickedSquares,
-                  }}
-                  promotionToSquare={moveTo}
-                  showPromotionDialog={showPromotionDialog}
-                />
+      <Block strong style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <div className="flex flex-col pt-6 justify-start bg-[#041d21] h-screen">
+          <div className="flex justify-center items-center">
+            <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+              <div className="flex flex-col space-y-1">
+                <MoveRecord moveLists={moveLists} currentMoveIndex={currentMoveIndex} />
+                <PlayerDisplay {...getPlayerDisplayProps(true)} />
+                <div className="relative border-8 border-white rounded-lg">
+                  <Board
+                    boardOrientation={isOrientation()}
+                    position={game.fen()}
+                    id="ClickToMove"
+                    animationDuration={200}
+                    arePiecesDraggable={false}
+                    onSquareClick={onSquareClick}
+                    onSquareRightClick={onSquareRightClick}
+                    onPromotionPieceSelect={onPromotionPieceSelect}
+                    customBoardStyle={{
+                      // borderRadius: '8px',
+                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                    }}
+                    customLightSquareStyle={{
+                      backgroundColor: '#E8EDF9',
+                    }}
+                    customDarkSquareStyle={{
+                      backgroundColor: '#B7C0D8',
+                    }}
+                    customSquareStyles={{
+                      ...moveSquares,
+                      ...optionSquares,
+                      ...rightClickedSquares,
+                    }}
+                    promotionToSquare={moveTo}
+                    showPromotionDialog={showPromotionDialog}
+                  />
+                </div>
+                <PlayerDisplay {...getPlayerDisplayProps(false)} />
               </div>
-              <PlayerDisplay {...getPlayerDisplayProps(false)} />
             </div>
           </div>
         </div>
-      </div>
+      </Block>
     </>
   )
 }
