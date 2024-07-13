@@ -1,8 +1,5 @@
 import { useEffect, useState, useRef, useReducer } from 'react'
 import { Chess, Square } from 'chess.js'
-import { useLocation } from 'react-router-dom'
-import { restApi } from '../../../services/api'
-import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import {
   convertToFigurineSan,
@@ -14,7 +11,7 @@ import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
-import GameBoard from './Board'
+import GameBoard from '../Game/Board'
 import {
   gameReducer,
   initialGameState,
@@ -25,8 +22,9 @@ import {
 import { App, Block, Page } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { engine } from '../../../services/worker'
+import { useLocation, useParams } from 'react-router-dom'
 
-const Game: React.FC<{}> = () => {
+const BotGame: React.FC<{}> = () => {
   const [
     {
       optionSquares,
@@ -42,24 +40,61 @@ const Game: React.FC<{}> = () => {
       isLoser,
     },
     gameDispatch,
-  ] = useReducer(gameReducer, initialGameState)
+  ] = useReducer(gameReducer, {
+    optionSquares: {},
+    moveFrom: undefined,
+    moveTo: undefined,
+    showPromotionDialog: false,
+    isGameOver: false,
+    isGameDraw: false,
+    gameHistory: [new Chess().fen()],
+    currentMoveIndex: 0,
+    moves: [],
+    game: new Chess(),
+    isWinner: false,
+    isLoser: false,
+  })
 
   const location = useLocation()
+
+  // Parse the query parameters
+  const queryParams = new URLSearchParams(location.search)
+
   const wallet = useTonWallet()
-  const [turn, setTurn] = useState('')
-  const [player1, setPlayer1] = useState('')
-  const [player2, setPlayer2] = useState('')
+  const [turn, setTurn] = useState(wallet?.account.address ? wallet.account.address : 'player1')
+  const [player1, setPlayer1] = useState(
+    wallet?.account.address ? wallet.account.address : 'player1'
+  )
+  const [player2, setPlayer2] = useState('bot')
   const [moveSquares, setMoveSquares] = useState({})
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
-  const [currentPlayer, setCurrentPlayer] = useState('')
+  const [currentPlayer, setCurrentPlayer] = useState(
+    wallet?.account.address ? wallet.account.address : 'player1'
+  )
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+
   engine.onmessage = function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
-      console.log(event.data)
+      const data = event.data.split(' ')
+      let gameCopy = game
+      const move = gameCopy.move({
+        from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
+        to: data[1].substring(2, 4),
+      })
+      setTimeout(() => {
+        gameDispatch({ type: 'SET_GAME', payload: gameCopy })
+        gameDispatch({ type: 'RESET_MOVE_SELECTION' })
+        gameDispatch({ type: 'ADD_MOVES', payload: convertToFigurineSan(data[1], 'b') })
+        gameDispatch({ type: 'ADD_GAME_HISTORY', payload: gameCopy.fen() })
+        setPlayer2Timer((prevTimer) => prevTimer + additionTimePerMove)
+        gameDispatch({ type: 'SET_GAME_OVER', payload: gameCopy.isGameOver() })
+        setCurrentMoveIndex((prevIndex) => prevIndex + 1)
+        handleSwitchTurn()
+      }, 1500)
     }
   }
 
@@ -68,16 +103,12 @@ const Game: React.FC<{}> = () => {
     engine.postMessage('go depth 5')
   }
 
-  const [player1Timer, setPlayer1Timer] = useState(() =>
-    getTimeFromLocalStorage('player1Timer', -1)
-  )
-  const [player2Timer, setPlayer2Timer] = useState(() =>
-    getTimeFromLocalStorage('player2Timer', -1)
-  )
+  const [player1Timer, setPlayer1Timer] = useState(Number(queryParams.get('time')) * 60)
+  const [player2Timer, setPlayer2Timer] = useState(Number(queryParams.get('time')) * 60)
 
   useEffect(() => {
     if (isThreefoldRepetition(gameHistory)) {
-      socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
+      gameDispatch({ type: 'SET_GAME_DRAW', payload: true })
     }
   }, [gameHistory])
 
@@ -154,11 +185,7 @@ const Game: React.FC<{}> = () => {
   }
 
   const emitGameOver = () => {
-    socket.emit('endGame', {
-      game_id: location.pathname.split('/')[2],
-      isGameOver: isGameOver,
-      isGameDraw: isGameDraw,
-    })
+    gameDispatch({ type: 'SET_GAME_OVER', payload: true })
   }
 
   const handleSwitchTurn = () => {
@@ -172,79 +199,6 @@ const Game: React.FC<{}> = () => {
     }
     return turn === 'b' ? player2 : player1
   }
-
-  useEffect(() => {
-    restApi
-      .get('/load-game-v2', {
-        params: {
-          game_id: location.pathname.split('/')[2],
-        },
-      })
-      .then(async (res) => {
-        if (res.status === 200) {
-          const data = res.data.game
-          setTurn(data.turn_player)
-          gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
-          setPlayer1(data.player_1)
-          setPlayer2(data.player_2)
-          gameDispatch({ type: 'SET_GAME_DRAW', payload: data.isGameDraw })
-          gameDispatch({ type: 'SET_GAME_OVER', payload: data.isGameOver })
-          if (data.winner && localStorage.getItem('address') === data.winner) {
-            gameDispatch({ type: 'SET_WINNER', payload: true })
-          }
-          if (data.loser && localStorage.getItem('address') === data.loser) {
-            gameDispatch({ type: 'SET_LOSER', payload: true })
-          }
-          if (data.move_number === 1 && data.turn_player === 'w') {
-            setPlayer1Timer(data.timers.player1Timer)
-            setPlayer2Timer(data.timers.player2Timer)
-            setAdditionTimePerMove(data.timePerMove)
-          }
-
-          if (!(data.move_number === 1 && data.turn_player === 'w')) {
-            setIsStartGame(true)
-          }
-
-          setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
-        }
-      })
-      .catch((err) => {})
-  }, [turn, isGameOver])
-
-  useEffect(() => {
-    function onConnect() {}
-
-    function onNewMove(room: any) {
-      gameDispatch({ type: 'ADD_MOVES', payload: `${room.san}` })
-      if (room.fen) {
-        setTurn(room.turn)
-        handleSwitchTurn()
-        gameDispatch({ type: 'SET_GAME', payload: new Chess(room.fen) })
-        setPlayer1Timer(room.timers.player1Timer)
-        setPlayer2Timer(room.timers.player2Timer)
-        gameDispatch({ type: 'ADD_GAME_HISTORY', payload: room.fen })
-        setCurrentMoveIndex((prevIndex) => prevIndex + 1)
-      }
-    }
-
-    function onStart(data: any) {
-      if (data.start === true) {
-        setIsStartGame(true)
-      }
-    }
-    socket.connect()
-    socket.on('connection', onConnect)
-    socket.on('newmove', onNewMove)
-    socket.on('start', onStart)
-
-    socket.emit('joinGame', { game_id: location.pathname.split('/')[2] })
-
-    return () => {
-      socket.off('connection', onConnect)
-      socket.off('newmove', onNewMove)
-      socket.off('start', onStart)
-    }
-  }, [])
 
   function getMoveOptions(square: Square) {
     const moves = game.moves({ square, verbose: true })
@@ -279,7 +233,7 @@ const Game: React.FC<{}> = () => {
   function isEligibleToPlay() {
     if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false
 
-    if (currentMoveIndex < gameHistory.length - 1) return false
+    // if (currentMoveIndex < gameHistory.length - 1) return false
 
     const isPlayerTurn =
       (player1 === wallet?.account.address && (game as any)._turn === 'w') ||
@@ -336,7 +290,11 @@ const Game: React.FC<{}> = () => {
       return
     }
 
+    gameDispatch({ type: 'ADD_MOVES', payload: `${foundMove.san}` })
+    gameDispatch({ type: 'ADD_GAME_HISTORY', payload: gameCopy.fen() })
+    gameDispatch({ type: 'SET_CURRENT_MOVE_INDEX', payload: currentMoveIndex + 1 })
     gameDispatch({ type: 'SET_GAME', payload: gameCopy })
+    gameDispatch({ type: 'SET_GAME_OVER', payload: gameCopy.isGameOver() })
     gameDispatch({ type: 'RESET_MOVE_SELECTION' })
   }
 
@@ -348,22 +306,6 @@ const Game: React.FC<{}> = () => {
   }
 
   function emitMove(foundMove: any, square: Square, gameCopy: any) {
-    socket.emit('move', {
-      from: moveFrom,
-      to: square,
-      game_id: location.pathname.split('/')[2],
-      turn: game.turn(),
-      address: '',
-      fen: game.fen(),
-      isPromotion: isPromotionMove(foundMove, square),
-      timers: {
-        player1Timer:
-          currentPlayerTurn() === player1 ? player1Timer + additionTimePerMove : player1Timer,
-        player2Timer:
-          currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
-      },
-      san: foundMove.san,
-    })
     sendPositionToEngine(gameCopy.fen())
   }
 
@@ -391,22 +333,6 @@ const Game: React.FC<{}> = () => {
       console.log('7s200:pro', { promotion: piece[1].toLowerCase() ?? 'q' })
       if (newMove) {
         gameDispatch({ type: 'SET_GAME', payload: gameCopy })
-        socket.emit('move', {
-          from: moveFrom,
-          to: moveTo,
-          game_id: location.pathname.split('/')[2],
-          turn: game.turn(),
-          address: '',
-          fen: game.fen(),
-          isPromotion: true,
-          promotion: piece[1].toLowerCase() ?? 'q',
-          timers: {
-            player1Timer:
-              currentPlayerTurn() === player1 ? player1Timer + additionTimePerMove : player1Timer,
-            player2Timer:
-              currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
-          },
-        })
         handleSwitchTurn()
       }
     }
@@ -472,18 +398,6 @@ const Game: React.FC<{}> = () => {
             player2Timer={player2Timer}
             currentMoveIndex={currentMoveIndex}
           />
-          <GameNavbar
-            user={wallet?.account.address ? wallet?.account.address : ''}
-            opponent={wallet?.account.address === player1 ? player2 : player1}
-            toggleGameDraw={() => toggleGameDraw(isGameDraw, gameDispatch)}
-            toggleGameOver={() => toggleGameOver(isGameOver, gameDispatch)}
-            handlePreviousMove={handlePreviousMove}
-            handleNextMove={handleNextMove}
-            socket={socket}
-            game={game}
-            isMoved={moves.length !== 0}
-            isWhite={player1 === wallet?.account.address}
-          />
           <GameOverPopUp
             setShowPopup={setShowPopup}
             showPopup={showPopup && !isPopupDismissed}
@@ -502,4 +416,4 @@ const Game: React.FC<{}> = () => {
   }
 }
 
-export default Game
+export default BotGame

@@ -15,11 +15,13 @@ import { store } from './redux/store'
 // import { getFullnodeUrl } from '@mysten/sui/client'
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
+import BotMode from './components/BotMode/BotMode'
+import BotGame from './components/Chess/BotGame/BotGame'
 // import './index.css'
 
 WebApp.ready()
 WebApp.expand()
-WebApp.MainButton.hide()
+WebApp.MainButton.enable()
 WebApp.enableClosingConfirmation()
 // (Telegram as any).disableVerticalSwipes();
 
@@ -47,6 +49,8 @@ const router = createBrowserRouter([
       },
       { path: '/game/:id', element: <Game /> },
       { path: '/mode', element: <Mode /> },
+      { path: '/bot', element: <BotMode /> },
+      { path: '/game-bot', element: <BotGame /> },
       // { path: '/tournament', element: <TournamentBoard /> },
       // { path: "/tournament", element: <Tournament2 /> },
     ],
