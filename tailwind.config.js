@@ -115,6 +115,7 @@ module.exports = konstaConfig({
         },
       },
       backgroundImage: {
+        'black-linear': 'linear-gradient(180deg, #303030 0%, #000 100%)',
         top1: 'linear-gradient(116.86deg, rgba(13, 13, 14, 0.77) 12.8%, rgba(23, 23, 23, 0.77) 86.03%)',
         bottom1:
           'radial-gradient(68.62% 260.46%  at 50% 50%, #6ADBFF 0%, #6D6AFF 42.71%, #FC6AFF 100%)',

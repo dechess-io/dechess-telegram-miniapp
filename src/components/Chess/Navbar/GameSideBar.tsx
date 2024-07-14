@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Actions, ActionsButton, ActionsGroup, Dialog, DialogButton } from 'konsta/react'
+import CloseIcn from '../../../assets/icons/close.svg'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -123,9 +124,22 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       {['resign', 'draw', 'abort'].map((action) => (
         <Dialog
           key={action}
+          className="bg-black-linear"
           opened={visiblePopup === action}
           onBackdropClick={setVisiblePopup}
-          title=""
+          title={
+            <div className="relative">
+              <div className="capitalize">Game {action}</div>
+              <div className="absolute -top-2 -right-2">
+                <img
+                  src={CloseIcn}
+                  alt="close-icn"
+                  className="cursor-pointer"
+                  onClick={() => setVisiblePopup(null)}
+                />
+              </div>
+            </div>
+          }
           content={`Do you want to ${action} the game?`}
           buttons={
             <>
