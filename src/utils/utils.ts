@@ -30,7 +30,7 @@ export const apiHeader = {
 
 export function hasJWT() {
   let flag = false
-  localStorage.getItem('token') ? (flag = true) : (flag = false)
+  flag = localStorage.getItem('token') ? true : false
   return flag
 }
 

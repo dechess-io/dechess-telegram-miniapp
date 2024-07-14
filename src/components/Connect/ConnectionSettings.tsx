@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  TonConnectButton,
-  useTonConnectUI,
-  useTonWallet,
-} from '@tonconnect/ui-react'
+import { TonConnectButton, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../../services/ton'
 import useInterval from '../../hooks/useInterval'
 

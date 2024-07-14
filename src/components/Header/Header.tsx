@@ -4,31 +4,8 @@ import { ConnectionSettings } from '../Connect/ConnectionSettings'
 import { Navbar } from 'konsta/react'
 
 const Header: React.FC<{}> = () => {
-  const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
-  const menuBackgroundService = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
   const data = useLocation()
-
-  const onOpenMobileMenu = () => {
-    setIsOpenMobileMenu(!isOpenMobileMenu)
-  }
-
-  useEffect(() => {
-    function handleWindowResize() {
-      if (window.innerWidth >= 768) {
-        setIsOpenMobileMenu(false)
-      }
-    }
-    window.addEventListener('resize', handleWindowResize)
-    return () => {
-      window.removeEventListener('resize', handleWindowResize)
-    }
-  }, [])
-
-  const openInNewTab = (url: string) => {
-    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
-    if (newWindow) newWindow.opener = null
-  }
 
   return (
     <>

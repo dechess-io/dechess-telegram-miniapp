@@ -49,7 +49,7 @@ const Game: React.FC<{}> = () => {
   const [turn, setTurn] = useState('')
   const [player1, setPlayer1] = useState('')
   const [player2, setPlayer2] = useState('')
-  const [moveSquares, setMoveSquares] = useState({})
+  const [moveSquares] = useState({})
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
   const [currentPlayer, setCurrentPlayer] = useState('')
@@ -126,7 +126,7 @@ const Game: React.FC<{}> = () => {
     }
 
     if (!isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser) {
-      if (game && game.isGameOver()) return
+      if (game?.isGameOver?.()) return
       if (currentPlayer === player1 && player1Timer > 0) {
         intervalId = setInterval(() => {
           setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))

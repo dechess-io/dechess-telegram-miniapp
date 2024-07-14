@@ -53,6 +53,22 @@ function App() {
 
   const theme = isAndroid ? 'material' : 'ios'
 
+  const actionButtonsConfig = [
+    { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
+    { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
+    { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
+    { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/' },
+  ]
+
+  const createActionButton = (config: any) => (
+    <ActionButton
+      key={config.label}
+      label={config.label}
+      iconSrc={config.iconSrc}
+      onClick={() => navigate(config.navigateTo)}
+    />
+  )
+
   return (
     <>
       <KonstaApp theme={theme}>
@@ -100,26 +116,7 @@ function App() {
                     className="grid grid-cols-2 gap-2 pb-2"
                     style={{ background: 'transparent' }}
                   >
-                    <ActionButton
-                      label="Leaderboard"
-                      iconSrc="/Rank.svg"
-                      onClick={() => navigate('/')}
-                    />
-                    <ActionButton
-                      label="Quest"
-                      iconSrc="/layer.svg"
-                      onClick={() => navigate('/')}
-                    />
-                    <ActionButton
-                      label="Play Versus Bot"
-                      iconSrc="/ChessBoard.svg"
-                      onClick={() => navigate('/bot')}
-                    />
-                    <ActionButton
-                      label="Puzzles"
-                      iconSrc="/Piece.svg"
-                      onClick={() => navigate('/')}
-                    />
+                    {actionButtonsConfig.map(createActionButton)}
                   </div>
                   <Button
                     onClick={handlePlayClick}

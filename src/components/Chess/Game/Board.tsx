@@ -73,7 +73,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
     return {
       imageSrc: playerImage,
-      name: truncateSuiTx(playerName ? playerName : ''),
+      name: truncateSuiTx(playerName || ''),
       time: playerTime,
       timeBoxClass: isTop
         ? 'bg-grey-100 border-b-4 border-grey-200'

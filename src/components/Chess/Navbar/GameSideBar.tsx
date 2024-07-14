@@ -1,12 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useCallback } from 'react'
-import {
-  Actions,
-  ActionsButton,
-  ActionsGroup,
-  Dialog,
-  DialogButton,
-} from 'konsta/react'
+import { useState, useEffect, useCallback } from 'react'
+import { Actions, ActionsButton, ActionsGroup, Dialog, DialogButton } from 'konsta/react'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',

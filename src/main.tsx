@@ -5,7 +5,6 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import App from './App'
 import Game from './components/Chess/Game/Game'
 import Mode from './components/Mode/Mode'
-import PopupProvider from './components/Popup/PopupProvider'
 import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
 // import  Telegram from 'telegram-webapps'
@@ -37,11 +36,6 @@ WebApp.enableClosingConfirmation()
 
 const router = createBrowserRouter([
   {
-    element: (
-      <PopupProvider>
-        <Outlet />
-      </PopupProvider>
-    ),
     children: [
       {
         path: '/',
@@ -110,9 +104,7 @@ root.render(
           twaReturnUrl: 'https://t.me/dechess_bot',
         }}
       >
-        <PopupProvider>
-          <RouterProvider router={router}></RouterProvider>
-        </PopupProvider>
+        <RouterProvider router={router}></RouterProvider>
       </TonConnectUIProvider>
 
       {/* </WalletProvider>
