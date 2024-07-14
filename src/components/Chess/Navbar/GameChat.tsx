@@ -1,18 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
-import {
-  Page,
-  Navbar,
-  NavbarBackLink,
-  Messagebar,
-  Messages,
-  Message,
-  MessagesTitle,
-  Link,
-  Icon,
-  Button,
-} from 'konsta/react'
+import { useState } from 'react'
+import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react'
 import Header from '../../Header/Header'
-import { MdCameraAlt, MdClose, MdSend } from 'react-icons/md'
+import { MdClose, MdSend } from 'react-icons/md'
 
 interface GameChatProps {
   isChatVisible: boolean
@@ -29,7 +18,6 @@ export type Message = {
 }
 
 const GameChat: React.FC<GameChatProps> = ({
-  isChatVisible,
   setIsChatVisible,
   messages,
   setMessages,

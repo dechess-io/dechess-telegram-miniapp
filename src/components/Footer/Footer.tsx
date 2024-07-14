@@ -1,4 +1,4 @@
-import { Block, BlockFooter, Icon, List, Tabbar, TabbarLink } from 'konsta/react'
+import { Icon, Tabbar, TabbarLink } from 'konsta/react'
 
 const Footer: React.FC = () => {
   return (

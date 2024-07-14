@@ -4,7 +4,6 @@ import {
   Actions,
   ActionsButton,
   ActionsGroup,
-  ActionsLabel,
   Dialog,
   DialogButton,
 } from 'konsta/react'

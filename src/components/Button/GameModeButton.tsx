@@ -1,5 +1,4 @@
 import React from 'react'
-import { Block } from 'konsta/react'
 
 interface GameModeButtonProps {
   title: string

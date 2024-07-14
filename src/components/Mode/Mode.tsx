@@ -123,7 +123,7 @@ const Mode: React.FC<{}> = () => {
                   {loading && (
                     <>
                       <GameSpinner />
-                      <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 font-ibm  rounded-lg  ">
+                      <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 font-ibm rounded-lg">
                         <Block>
                           <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
 

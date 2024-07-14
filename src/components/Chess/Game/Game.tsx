@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState, useReducer } from 'react'
 import { Chess, Square } from 'chess.js'
 import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'

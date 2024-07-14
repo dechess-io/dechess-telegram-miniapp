@@ -1,9 +1,4 @@
-import {
-  Account,
-  ConnectAdditionalRequest,
-  SendTransactionRequest,
-  TonProofItemReplySuccess,
-} from '@tonconnect/ui-react'
+import { Account, ConnectAdditionalRequest, TonProofItemReplySuccess } from '@tonconnect/ui-react'
 import { setAuthToken } from '../utils/utils'
 
 // import './patch-local-storage-for-github-pages'

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './ProgressChart.scss'
-import { Block } from 'konsta/react'
 
 type Props = {
   totalGames: number

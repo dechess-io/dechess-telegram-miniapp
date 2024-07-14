@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  THEME,
   TonConnectButton,
-  TonConnectUIProvider,
   useTonConnectUI,
   useTonWallet,
 } from '@tonconnect/ui-react'

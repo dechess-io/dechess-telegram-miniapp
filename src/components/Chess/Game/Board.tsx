@@ -1,12 +1,10 @@
 import { Chess, Square } from 'chess.js'
-import { formatTime, getAvatarName, getTimeFromLocalStorage } from '../../../utils/utils'
+import { formatTime, getAvatarName } from '../../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
 import { truncateSuiTx } from '../../../services/address'
 import { useTonWallet } from '@tonconnect/ui-react'
 import MoveRecord from './MoveRecord'
-import GameOverPopUp from '../Popup/GameOverPopUp'
 import PlayerDisplay from './PlayerDisplay'
-import { socket } from '../../../services/socket'
 import { useState } from 'react'
 import { Block } from 'konsta/react'
 
