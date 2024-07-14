@@ -1,16 +1,15 @@
 import React from 'react'
 
-const GameSpinner: React.FC<{}> = () => {
+const GameSpinner: React.FC<object> = () => {
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[220px] grid  w-full place-items-center">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pb-[220px] w-full place-items-center">
         <svg
           className="w-[130px] h-[130px] animate-spin text-gray-900"
           viewBox="0 0 64 64"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
-          style={{ overflow: 'visible' }}
         >
           <defs>
             <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -43,9 +42,19 @@ const GameSpinner: React.FC<{}> = () => {
             height="22"
             transform="rotate(-40 20 30)"
           />
-          <image href="/Vector.svg" x="17" y="17" width="30" height="30" />
-          <image href="/Subtract.svg" x="22" y="22" width="20" height="20" />
         </svg>
+
+        <div className="absolute">
+          <div className="relative z-20">
+            <img src="/Vector.svg" width="60" height="60" />
+            <img
+              className="absolute left-1/2 top-1/2 -translate-x-[45%] -translate-y-1/2"
+              src="/Subtract.svg"
+              width="25"
+              height="25"
+            />
+          </div>
+        </div>
       </div>
     </>
   )
