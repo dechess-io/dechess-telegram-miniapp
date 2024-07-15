@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Dialog, DialogButton } from 'konsta/react'
+import ReactDialog from '../../Dialog/ReactDialog'
 
 type GameOverPopUpProps = {
   game: any
@@ -51,17 +52,16 @@ const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
 
   return (
     <>
-      <Dialog
-        opened={showPopup && (game.isGameOver() || game.isDraw() || isGameOver || isGameDraw)}
-        onBackdropClick={() => setShowPopup(false)}
-        title="Game Over"
+      <ReactDialog
+        className="min-w-[20rem]"
+        open={showPopup && (game.isGameOver() || game.isDraw() || isGameOver || isGameDraw)}
+        onHide={() => setShowPopup(false)}
+        onCancel={() => navigate('/')}
+        onOk={() => navigate('/mode')}
         content={renderMessage()}
-        buttons={
-          <>
-            <DialogButton onClick={() => navigate('/mode')}>New Game</DialogButton>
-            <DialogButton onClick={() => navigate('/')}>Game Overview</DialogButton>
-          </>
-        }
+        title="Game Over"
+        okContent="New Game"
+        cancelContent="Game Overview"
       />
     </>
   )

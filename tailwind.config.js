@@ -133,12 +133,12 @@ module.exports = konstaConfig({
         'blue-gradient': 'linear-gradient(to right, #67E4FF, #009ED0)',
         'black-gradient': 'linear-gradient(to right, #303030, #000000)',
         'blue-gradient-1': 'linear-gradient(25deg, #005f80 0%,#009ED0 100%)',
-
         'darkblue-gradient': 'linear-gradient(to bottom right, #1F2428, #2E3E5E)',
         'green-gradient': 'linear-gradient(to right, #98FF32, #EFFF38)',
       },
       boxShadow: {
         form: '87px 79px 47px rgba(0, 0, 0, 0.01), 49px 45px 40px rgba(0, 0, 0, 0.05), 22px 20px 29px rgba(0, 0, 0, 0.09), 5px 5px 16px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);',
+        'general': '0px -3px 0px 0px rgba(0, 0, 0, 0.20) inset',
       },
     },
     fontFamily: {

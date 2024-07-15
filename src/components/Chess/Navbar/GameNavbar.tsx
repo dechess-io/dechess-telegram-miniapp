@@ -50,6 +50,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   const toggleChat = () => setIsChatVisible((prev) => !prev)
   const toggleSidebar = () => setIsSidebarVisible((prev) => !prev)
 
+  console.log(messages)
   return (
     <>
       <Block component="div" className="h-[10px] fixed">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Actions, ActionsButton, ActionsGroup, Dialog, DialogButton } from 'konsta/react'
-import CloseIcn from '../../../assets/icons/close.svg'
+import ReactDialog from '../../Dialog/ReactDialog'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -121,32 +121,15 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
 
   const renderPopups = () => (
     <>
-      {['resign', 'draw', 'abort'].map((action) => (
-        <Dialog
-          key={action}
-          className="bg-black-linear"
-          opened={visiblePopup === action}
-          onBackdropClick={setVisiblePopup}
-          title={
-            <div className="relative">
-              <div className="capitalize">Game {action}</div>
-              <div className="absolute -top-2 -right-2">
-                <img
-                  src={CloseIcn}
-                  alt="close-icn"
-                  className="cursor-pointer"
-                  onClick={() => setVisiblePopup(null)}
-                />
-              </div>
-            </div>
-          }
+      {['resign', 'draw', 'abort'].map((action, index) => (
+        <ReactDialog
+          onHide={() => setVisiblePopup(null)}
+          onCancel={() => togglePopup(null)}
+          onOk={() => handlePopupAction(action)}
+          open={visiblePopup === action}
           content={`Do you want to ${action} the game?`}
-          buttons={
-            <>
-              <DialogButton onClick={() => handlePopupAction(action)}>Yes</DialogButton>
-              <DialogButton onClick={() => togglePopup(null)}>No</DialogButton>
-            </>
-          }
+          title={`Game ${action}`}
+          key={index}
         />
       ))}
 
@@ -163,18 +146,15 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
         }
       />
 
-      <Dialog
-        opened={drawRequest}
-        onBackdropClick={setDrawRequest}
-        title="Draw Request"
+      <ReactDialog
+        onHide={() => setDrawRequest(false)}
+        onCancel={() => setDrawRequest(false)}
+        onOk={handleConfirmDraw}
+        open={drawRequest}
         content="Your opponent requested a draw. Do you accept?"
-        buttons={
-          <>
-            <DialogButton onClick={handleConfirmDraw}>Yes</DialogButton>
-            <DialogButton onClick={() => setDrawRequest(false)}>No</DialogButton>
-          </>
-        }
+        title={'Draw Request'}
       />
+
       <Dialog
         opened={notificationPopup}
         onBackdropClick={() => setNotificationPopup((prev) => !prev)}
