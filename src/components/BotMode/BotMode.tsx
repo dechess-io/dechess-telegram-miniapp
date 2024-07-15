@@ -69,7 +69,6 @@ const BotMode: React.FC<{}> = () => {
 
   const onCreateGame = async () => {
     setLoading(true)
-
     navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
   }
 

@@ -71,6 +71,13 @@ const Mode: React.FC<{}> = () => {
     }, 1000)
   }
 
+  useEffect(() => {
+    if (totalSeconds > 30) {
+      navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
+      localStorage.removeItem('lastUpdateTime')
+    }
+  }, [totalSeconds])
+
   const handleCancel = () => {
     socket.emit('cancelCreateGame', (response: any) => {
       if (response.status === 200) {

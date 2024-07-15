@@ -23,6 +23,7 @@ const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists, currentMoveIndex }) 
       <div className="flex space-x-2 text-[12px]">
         {moveLists.map((move, index) => {
           if (index >= currentMoveIndex) return
+
           return (
             <span key={index} className="inline-block">{`${
               index % 2 === 0 ? index / 2 + 1 + '. ' : ''

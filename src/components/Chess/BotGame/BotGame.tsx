@@ -10,7 +10,7 @@ import {
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
-import GameNavbar from '../Navbar/GameNavbar'
+import GameNavbar from './BotGameNavbar'
 import GameBoard from '../Game/Board'
 import {
   gameReducer,
@@ -23,6 +23,7 @@ import { App, Block, Page } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { engine } from '../../../services/worker'
 import { useLocation, useParams } from 'react-router-dom'
+import { socket } from '../../../services/socket'
 
 const BotGame: React.FC<{}> = () => {
   const [
@@ -292,7 +293,7 @@ const BotGame: React.FC<{}> = () => {
 
     gameDispatch({ type: 'ADD_MOVES', payload: `${foundMove.san}` })
     gameDispatch({ type: 'ADD_GAME_HISTORY', payload: gameCopy.fen() })
-    gameDispatch({ type: 'SET_CURRENT_MOVE_INDEX', payload: currentMoveIndex + 1 })
+    setCurrentMoveIndex((prevIndex) => prevIndex + 1)
     gameDispatch({ type: 'SET_GAME', payload: gameCopy })
     gameDispatch({ type: 'SET_GAME_OVER', payload: gameCopy.isGameOver() })
     gameDispatch({ type: 'RESET_MOVE_SELECTION' })
@@ -378,40 +379,51 @@ const BotGame: React.FC<{}> = () => {
     return <LoadingGame />
   } else {
     return (
-      <>
-        <App theme={theme}>
-          <Header />
-          <GameBoard
-            player1={player1}
-            player2={player2}
-            moveLists={moves}
-            game={game}
-            onSquareClick={onSquareClick}
-            onSquareRightClick={onSquareRightClick}
-            onPromotionPieceSelect={onPromotionPieceSelect}
-            showPromotionDialog={showPromotionDialog}
-            moveSquares={moveSquares}
-            optionSquares={optionSquares}
-            rightClickedSquares={rightClickedSquares}
-            moveTo={moveTo}
-            player1Timer={player1Timer}
-            player2Timer={player2Timer}
-            currentMoveIndex={currentMoveIndex}
-          />
-          <GameOverPopUp
-            setShowPopup={setShowPopup}
-            showPopup={showPopup && !isPopupDismissed}
-            isWinner={isWinner}
-            isLoser={isLoser}
-            game={game}
-            isGameOver={isGameOver}
-            isGameDraw={isGameDraw}
-            player1={player1}
-            player2={player2}
-            wallet={wallet}
-          />
-        </App>
-      </>
+      <App theme={theme}>
+        <Header />
+        <GameBoard
+          player1={player1}
+          player2={player2}
+          moveLists={moves}
+          game={game}
+          onSquareClick={onSquareClick}
+          onSquareRightClick={onSquareRightClick}
+          onPromotionPieceSelect={onPromotionPieceSelect}
+          showPromotionDialog={showPromotionDialog}
+          moveSquares={moveSquares}
+          optionSquares={optionSquares}
+          rightClickedSquares={rightClickedSquares}
+          moveTo={moveTo}
+          player1Timer={player1Timer}
+          player2Timer={player2Timer}
+          currentMoveIndex={currentMoveIndex}
+        />
+        <GameNavbar
+          user={wallet?.account.address ? wallet?.account.address : 'player1'}
+          opponent={wallet?.account.address === player1 ? player2 : player1}
+          toggleGameDraw={() => toggleGameDraw(isGameDraw, gameDispatch)}
+          toggleGameOver={() => toggleGameOver(isGameOver, gameDispatch)}
+          handlePreviousMove={handlePreviousMove}
+          handleNextMove={handleNextMove}
+          socket={socket}
+          game={game}
+          isMoved={moves.length !== 0}
+          isWhite={player1 === wallet?.account.address}
+          toggleIsLoser={() => gameDispatch({ type: 'SET_LOSER', payload: true })}
+        />
+        <GameOverPopUp
+          setShowPopup={setShowPopup}
+          showPopup={showPopup && !isPopupDismissed}
+          isWinner={isWinner}
+          isLoser={isLoser}
+          game={game}
+          isGameOver={isGameOver}
+          isGameDraw={isGameDraw}
+          player1={player1}
+          player2={player2}
+          wallet={wallet}
+        />
+      </App>
     )
   }
 }
