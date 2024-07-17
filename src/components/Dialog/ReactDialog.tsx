@@ -26,30 +26,30 @@ const ReactDialog = ({
   return (
     <Dialog
       className={cn(
-        'react-dialog min-w-[20rem] bg-black-linear border border-gray-800 shadow-general pb-4 px-4 font-ibm',
+        'react-dialog min-w-[20rem] bg-black-linear border border-gray-800 shadow-general py-4 px-4 font-ibm',
         className
       )}
       opened={open}
       onBackdropClick={onHide}
       title={
         <div className="relative">
-          <div className="capitalize">{title}</div>
-          <div className="absolute -top-2 -right-6">
+          <div className="capitalize text-lg text-center ios:font-bold material:font-bold">{title}</div>
+          <div className="absolute ios:-top-2 ios:-right-6 material:-top-1 material:right-0">
             <img src={CloseIcn} alt="close-icn" className="cursor-pointer" onClick={onHide} />
           </div>
         </div>
       }
-      content={<div className="py-2">{content}</div>}
+      content={<div className="py-2 text-center ios:text-white material:text-white">{content}</div>}
       buttons={
         <div className="flex items-center w-full gap-2">
           <DialogButton
-            className="bg-blue-gradient rounded-xl after:hidden h-9 text-black font-medium shadow-general"
+            className="bg-blue-gradient w-full rounded-xl after:hidden h-9 ios:text-black material:text-black font-medium shadow-general"
             onClick={onOk}
           >
             {okContent || 'Yes'}
           </DialogButton>
           <DialogButton
-            className="bg-gray-800 rounded-xl h-9 font-medium shadow-general"
+            className="bg-gray-800 w-full ios:text-white material:text-white rounded-xl h-9 shadow-general"
             onClick={onCancel}
           >
             {cancelContent || 'No'}

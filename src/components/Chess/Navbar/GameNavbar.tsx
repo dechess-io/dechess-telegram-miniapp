@@ -47,14 +47,17 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
 
   useEffect(() => {
     const onMessage = (data: Message) => {
-      setMessages((prev) => [...prev, data])
+      setMessages((prev) => [
+        ...prev,
+        isChatVisible ? { ...data, viewedAt: new Date().toISOString() } : data,
+      ])
     }
 
     socket.on('message', onMessage)
     return () => {
       socket.off('message', onMessage)
     }
-  }, [])
+  }, [isChatVisible])
 
   const toggleChat = () => setIsChatVisible((prev) => !prev)
   const toggleSidebar = () => setIsSidebarVisible((prev) => !prev)
