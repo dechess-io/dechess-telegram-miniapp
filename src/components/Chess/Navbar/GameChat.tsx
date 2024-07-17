@@ -81,6 +81,13 @@ const GameChat: React.FC<GameChatProps> = ({
             type={message.sender === userId ? 'sent' : 'received'}
             // name={message.name}
             text={message.message}
+            colors={{
+              bubbleSentIos: 'bg-blue-gradient shadow-general',
+              bubbleSentMd: 'bg-blue-gradient shadow-general',
+              bubbleReceivedIos: 'bg-gray-800 shadow-general',
+              bubbleReceivedMd: 'bg-gray-800 shadow-general',
+            }}
+            className="font-medium font-ibm"
             // avatar={
             //   message.type === 'received' && (
             //     <img
