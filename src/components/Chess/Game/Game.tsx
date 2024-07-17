@@ -363,6 +363,7 @@ const Game: React.FC<{}> = () => {
           currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
       },
       san: foundMove.san,
+      lastMove: Date.now(),
     })
     sendPositionToEngine(gameCopy.fen())
   }

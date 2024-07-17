@@ -32,7 +32,11 @@ const buttonsData = {
   ],
 }
 
-const Mode: React.FC<{}> = () => {
+type ModeProps = {
+  isBotMode: boolean
+}
+
+const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [totalSeconds, setTotalSeconds] = useState(0)
@@ -72,9 +76,9 @@ const Mode: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    if (totalSeconds > 30) {
+    if (totalSeconds > 30 && !isBotMode) {
+      removeLocalStorage()
       navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
-      localStorage.removeItem('lastUpdateTime')
     }
   }, [totalSeconds])
 
@@ -87,27 +91,39 @@ const Mode: React.FC<{}> = () => {
     })
   }
 
+  const removeLocalStorage = () => {
+    localStorage.removeItem('lastUpdateTime')
+    localStorage.removeItem('player1Timer')
+    localStorage.removeItem('player2Timer')
+  }
+
   const onCreateGame = async () => {
     setLoading(true)
+    if (isBotMode) {
+      removeLocalStorage()
+      navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
+    } else {
+      socket.emit('createGame', { timeStep, additionTimePerMove }, (response: any) => {
+        if (response.status === 200) {
+          setLoading(false)
+          removeLocalStorage()
+          navigate(`/game/${response.board.game_id}`)
+        } else if (response.status === 202) {
+          console.log('Waiting for an opponent...')
+        } else {
+          setLoading(false)
+          console.error('Failed to create game')
+        }
+      })
 
-    socket.emit('createGame', { timeStep, additionTimePerMove }, (response: any) => {
-      if (response.status === 200) {
-        setLoading(false)
-        navigate(`/game/${response.board.game_id}`)
-      } else if (response.status === 202) {
-        console.log('Waiting for an opponent...')
-      } else {
-        setLoading(false)
-        console.error('Failed to create game')
-      }
-    })
-
-    socket.on('createGame', async function (data) {
-      if (data.status === 200) {
-        setLoading(false)
-        navigate(`/game/${data.board.game_id}`)
-      }
-    })
+      socket.on('createGame', async function (data) {
+        if (data.status === 200) {
+          setLoading(false)
+          removeLocalStorage()
+          navigate(`/game/${data.board.game_id}`)
+        }
+      })
+    }
   }
 
   const handleButtonClick = (buttonId: any, timeStep: number, additionTime: number) => {

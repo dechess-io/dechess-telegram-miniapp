@@ -33,7 +33,9 @@ const ReactDialog = ({
       onBackdropClick={onHide}
       title={
         <div className="relative">
-          <div className="capitalize text-lg text-center ios:font-bold material:font-bold">{title}</div>
+          <div className="capitalize text-lg text-center ios:font-bold material:font-bold">
+            {title}
+          </div>
           <div className="absolute ios:-top-2 ios:-right-6 material:-top-1 material:right-0">
             <img src={CloseIcn} alt="close-icn" className="cursor-pointer" onClick={onHide} />
           </div>
