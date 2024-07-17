@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react'
 import Header from '../../Header/Header'
 import { MdClose, MdSend } from 'react-icons/md'
@@ -15,9 +15,11 @@ interface GameChatProps {
 export type Message = {
   sender: string
   message: string
+  viewedAt: string
 }
 
 const GameChat: React.FC<GameChatProps> = ({
+  isChatVisible,
   setIsChatVisible,
   messages,
   setMessages,
@@ -25,13 +27,15 @@ const GameChat: React.FC<GameChatProps> = ({
   socket,
 }) => {
   const handleSendClick = () => {
-    setMessages((prev) => [
-      ...prev,
-      { sender: userId, message: messageText.replace('g', '<br>').trim() },
-    ])
+    const newMessage = {
+      sender: userId,
+      message: messageText.replace('g', '<br>').trim(),
+      viewedAt: null,
+    }
+    setMessages((prev: Message[]) => [...prev, newMessage] as Message[])
     socket.emit('message', {
       game_id: location.pathname.split('/')[2],
-      message: { sender: userId, message: messageText.replace('g', '<br>').trim() },
+      message: newMessage,
     })
     setMessageText('')
   }
@@ -56,6 +60,15 @@ const GameChat: React.FC<GameChatProps> = ({
       }
       return part.value
     })
+
+  useEffect(() => {
+    isChatVisible &&
+      setMessages(
+        messages.map((message) =>
+          message.sender !== userId ? { ...message, viewedAt: new Date().toISOString() } : message
+        )
+      )
+  }, [])
 
   return (
     <Page component="div" className="z-50 fixed hide-scrollbar space-y-[50px]">
