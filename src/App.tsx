@@ -5,12 +5,13 @@ import { hasJWT } from './utils/utils'
 import Footer from './components/Footer/Footer.tsx'
 import { useEffect, useState } from 'react'
 import { socket } from './services/socket.ts'
-import { Dialog, DialogButton, List, ListGroup, ListItem, App as MyApp, Page } from 'konsta/react'
+import { Page } from 'konsta/react'
 import './index.css'
-import { KonstaProvider, Button, Block, Card, App as KonstaApp } from 'konsta/react'
+import { Button, Block, App as KonstaApp } from 'konsta/react'
 import ActionButton from './components/Button/ActionButton.tsx'
 import GameModeButton from './components/Button/GameModeButton.tsx'
 import { isAndroid } from 'react-device-detect'
+import ReactDialog from './components/Dialog/ReactDialog.tsx'
 
 function App() {
   const navigate = useNavigate()
@@ -74,17 +75,13 @@ function App() {
       <KonstaApp theme={theme}>
         <Page className="overflow-auto hide-scrollbar">
           <Header />
-          <Dialog
-            opened={showPopup}
-            onBackdropClick={setShowPopup}
+          <ReactDialog
+            open={showPopup}
+            onHide={() => setShowPopup(false)}
             title=""
             content="You have an unfinished game. Do you want to rejoin?"
-            buttons={
-              <>
-                <DialogButton onClick={handleRejoin}>Yes</DialogButton>
-                <DialogButton onClick={handleCancel}>No</DialogButton>
-              </>
-            }
+            onOk={handleRejoin}
+            onCancel={handleCancel}
           />
           <Block
             className="bg-[#041d21] flex flex-col pb-[20px]"

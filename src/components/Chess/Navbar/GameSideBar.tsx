@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Actions, ActionsButton, ActionsGroup, Dialog, DialogButton } from 'konsta/react'
+import { Actions, ActionsButton, ActionsGroup } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
 
 const SOCKET_EVENTS = {
@@ -133,17 +133,13 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
         />
       ))}
 
-      <Dialog
-        opened={opponentAction ? true : false}
-        onBackdropClick={setOpponentAction}
-        title="Opponent Action"
+      <ReactDialog
+        open={opponentAction ? true : false}
+        onHide={() => setOpponentAction(null)}
+        onCancel={() => setOpponentAction(null)}
+        onOk={() => setOpponentAction(null)}
         content={opponentAction}
-        buttons={
-          <>
-            <DialogButton onClick={() => setOpponentAction(null)}>Yes</DialogButton>
-            <DialogButton onClick={() => setOpponentAction(null)}>No</DialogButton>
-          </>
-        }
+        title="Opponent Action"
       />
 
       <ReactDialog
@@ -155,11 +151,13 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
         title={'Draw Request'}
       />
 
-      <Dialog
-        opened={notificationPopup}
-        onBackdropClick={() => setNotificationPopup((prev) => !prev)}
+      <ReactDialog
+        open={notificationPopup}
+        onHide={() => setNotificationPopup((prev) => !prev)}
+        onCancel={() => setOpponentAction(null)}
+        onOk={() => setOpponentAction(null)}
+        content={'Can not abort the game because you already make your move'}
         title=""
-        content="Can not abort the game because you already make your move"
       />
     </>
   )
