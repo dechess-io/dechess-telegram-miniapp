@@ -33,7 +33,7 @@ const ReactDialog = ({
       onBackdropClick={onHide}
       title={
         <div className="relative">
-          <div className="capitalize text-lg text-center ios:font-bold material:font-bold">
+          <div className="capitalize text-lg text-center ios:font-bold material:font-boldm ios:text-white material:text-white">
             {title}
           </div>
           <div className="absolute ios:-top-2 ios:-right-6 material:-top-1 material:right-0">
