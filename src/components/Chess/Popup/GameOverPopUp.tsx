@@ -53,7 +53,7 @@ const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
   return (
     <>
       <ReactDialog
-        className="min-w-[20rem]"
+        className="min-w-[23rem]"
         open={showPopup && (game.isGameOver() || game.isDraw() || isGameOver || isGameDraw)}
         onHide={() => setShowPopup(false)}
         onCancel={() => navigate('/')}
