@@ -22,7 +22,7 @@ import {
   toggleGameDraw,
   toggleGameOver,
 } from '../../../redux/game/game_state.reducer'
-import { App, Block, Page } from 'konsta/react'
+import { App, Block, Notification, Page } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { engine } from '../../../services/worker'
 
@@ -57,6 +57,7 @@ const Game: React.FC<{}> = () => {
   const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+  const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   engine.onmessage = function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
       console.log(event.data)
@@ -183,6 +184,7 @@ const Game: React.FC<{}> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
+          console.log(data)
           setTurn(data.turn_player)
           gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
           setPlayer1(data.player_1)
@@ -232,10 +234,24 @@ const Game: React.FC<{}> = () => {
         setIsStartGame(true)
       }
     }
+
+    let notificationTimeoutId: any
+
+    function onOpponentDisconnect() {
+      console.log('7s200:opponentDisconnect')
+      setNotificationCloseOnClick(true)
+      // Clear existing timeout to avoid multiple timeouts running simultaneously
+      clearTimeout(notificationTimeoutId)
+      notificationTimeoutId = setTimeout(() => {
+        setNotificationCloseOnClick(false)
+      }, 3000)
+    }
+
     socket.connect()
     socket.on('connection', onConnect)
     socket.on('newmove', onNewMove)
     socket.on('start', onStart)
+    socket.on('opponentDisconnect', onOpponentDisconnect)
 
     socket.emit('joinGame', { game_id: location.pathname.split('/')[2] })
 
@@ -243,6 +259,9 @@ const Game: React.FC<{}> = () => {
       socket.off('connection', onConnect)
       socket.off('newmove', onNewMove)
       socket.off('start', onStart)
+      socket.off('opponentDisconnect', onOpponentDisconnect)
+      // Clear the timeout when the component unmounts
+      clearTimeout(notificationTimeoutId)
     }
   }, [])
 
@@ -484,6 +503,14 @@ const Game: React.FC<{}> = () => {
             game={game}
             isMoved={moves.length !== 0}
             isWhite={player1 === wallet?.account.address}
+          />
+          <Notification
+            opened={notificationCloseOnClick}
+            icon={<img src="/Logo.svg" className="h-4 w-4" />}
+            title="Dechess"
+            titleRightText="now"
+            subtitle="Your opponent has disconnected"
+            onClick={() => setNotificationCloseOnClick(false)}
           />
           <GameOverPopUp
             setShowPopup={setShowPopup}
