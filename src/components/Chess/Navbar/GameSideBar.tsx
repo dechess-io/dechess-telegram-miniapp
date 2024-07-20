@@ -158,6 +158,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
         onOk={() => setOpponentAction(null)}
         content={'Can not abort the game because you already make your move'}
         title=""
+        buttons={<></>}
       />
     </>
   )

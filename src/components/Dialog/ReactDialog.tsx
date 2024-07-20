@@ -12,6 +12,7 @@ const ReactDialog = ({
   onCancel,
   okContent,
   cancelContent,
+  buttons,
 }: {
   title: string
   className?: string
@@ -22,6 +23,7 @@ const ReactDialog = ({
   onCancel: () => void
   okContent?: string
   cancelContent?: string
+  buttons?: React.ReactNode
 }) => {
   return (
     <Dialog
@@ -43,20 +45,24 @@ const ReactDialog = ({
       }
       content={<div className="py-2 text-center ios:text-white material:text-white">{content}</div>}
       buttons={
-        <div className="flex items-center w-full gap-2">
-          <DialogButton
-            className="bg-blue-gradient w-full rounded-xl after:hidden h-9 ios:text-black material:text-black shadow-general text-sm font-medium"
-            onClick={onOk}
-          >
-            {okContent || 'Yes'}
-          </DialogButton>
-          <DialogButton
-            className="bg-gray-800 w-full ios:text-white material:text-white rounded-xl h-9 shadow-general text-sm font-medium"
-            onClick={onCancel}
-          >
-            {cancelContent || 'No'}
-          </DialogButton>
-        </div>
+        buttons ? (
+          buttons
+        ) : (
+          <div className="flex items-center w-full gap-2">
+            <DialogButton
+              className="bg-blue-gradient w-full rounded-xl after:hidden h-9 ios:text-black material:text-black shadow-general text-sm font-medium"
+              onClick={onOk}
+            >
+              {okContent || 'Yes'}
+            </DialogButton>
+            <DialogButton
+              className="bg-gray-800 w-full ios:text-white material:text-white rounded-xl h-9 shadow-general text-sm font-medium"
+              onClick={onCancel}
+            >
+              {cancelContent || 'No'}
+            </DialogButton>
+          </div>
+        )
       }
     />
   )
