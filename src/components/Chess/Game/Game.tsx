@@ -6,7 +6,6 @@ import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import {
   convertToFigurineSan,
-  getLastUpdateTime,
   getTimeFromLocalStorage,
   isThreefoldRepetition,
 } from '../../../utils/utils'
@@ -24,7 +23,6 @@ import {
 } from '../../../redux/game/game_state.reducer'
 import { App, Block, Notification, Page } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
-import { engine } from '../../../services/worker'
 
 const Game: React.FC<{}> = () => {
   const [
@@ -58,16 +56,9 @@ const Game: React.FC<{}> = () => {
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
-  engine.onmessage = function (event) {
-    if (event.data.split(' ')[0] === 'bestmove') {
-      console.log(event.data)
-    }
-  }
-
-  const sendPositionToEngine = (position: any) => {
-    engine.postMessage(`position fen ${position}`)
-    engine.postMessage('go depth 5')
-  }
+  const [startTime, setStartTime] = useState(0)
+  const [timer1, setTimer1] = useState(0)
+  const [timer2, setTimer2] = useState(0)
 
   const [player1Timer, setPlayer1Timer] = useState(() =>
     getTimeFromLocalStorage('player1Timer', -1)
@@ -99,20 +90,6 @@ const Game: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    const lastUpdateTime = getLastUpdateTime()
-    const currentTime = Date.now()
-    const elapsedTime = Math.floor((currentTime - lastUpdateTime) / 1000 + 0.5)
-
-    if (currentPlayer === player1) {
-      setPlayer1Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
-      localStorage.setItem('lastUpdateTime', Date.now().toString())
-    } else {
-      setPlayer2Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
-      localStorage.setItem('lastUpdateTime', Date.now().toString())
-    }
-  }, [])
-
-  useEffect(() => {
     localStorage.setItem('player1Timer', player1Timer.toString())
   }, [player1Timer])
 
@@ -128,17 +105,23 @@ const Game: React.FC<{}> = () => {
 
     if (!isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser) {
       if (game?.isGameOver?.()) return
-      if (currentPlayer === player1 && player1Timer > 0) {
+      if (
+        currentPlayer === player1 &&
+        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
+      ) {
         intervalId = setInterval(() => {
-          setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
+          setPlayer1Timer(Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0))
           updateTime()
         }, 1000)
-      } else if (currentPlayer === player2 && player2Timer > 0) {
+      } else if (
+        currentPlayer === player2 &&
+        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
+      ) {
         intervalId = setInterval(() => {
-          setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
+          setPlayer2Timer(Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0))
           updateTime()
         }, 1000)
-      } else if (isPlayerTimeout()) {
+      } else if (isPlayerTimeout() && !isGameOver) {
         gameDispatch({ type: 'SET_GAME_OVER', payload: true })
         emitGameOver()
       }
@@ -149,8 +132,10 @@ const Game: React.FC<{}> = () => {
 
   function isPlayerTimeout() {
     return (
-      (currentPlayer === player1 && player1Timer === 0) ||
-      (currentPlayer === player2 && player2Timer === 0)
+      (currentPlayer === player1 &&
+        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) === 0) ||
+      (currentPlayer === player2 &&
+        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) === 0)
     )
   }
 
@@ -184,8 +169,8 @@ const Game: React.FC<{}> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
-          console.log(data)
           setTurn(data.turn_player)
+          setStartTime(data.startTime)
           gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
           setPlayer1(data.player_1)
           setPlayer2(data.player_2)
@@ -197,6 +182,8 @@ const Game: React.FC<{}> = () => {
           if (data.loser && localStorage.getItem('address') === data.loser) {
             gameDispatch({ type: 'SET_LOSER', payload: true })
           }
+          setTimer1(data.timers.player1Timer)
+          setTimer2(data.timers.player2Timer)
           if (data.move_number === 1 && data.turn_player === 'w') {
             setPlayer1Timer(data.timers.player1Timer)
             setPlayer2Timer(data.timers.player2Timer)
@@ -211,7 +198,7 @@ const Game: React.FC<{}> = () => {
         }
       })
       .catch((err) => {})
-  }, [turn, isGameOver])
+  }, [turn])
 
   useEffect(() => {
     function onConnect() {}
@@ -226,6 +213,7 @@ const Game: React.FC<{}> = () => {
         setPlayer2Timer(room.timers.player2Timer)
         gameDispatch({ type: 'ADD_GAME_HISTORY', payload: room.fen })
         setCurrentMoveIndex((prevIndex) => prevIndex + 1)
+        setStartTime(room.startTime)
       }
     }
 
@@ -336,6 +324,7 @@ const Game: React.FC<{}> = () => {
   }
 
   function makeMove(foundMove: any, square: Square) {
+    setStartTime(Date.now())
     setIsStartGame(true)
     let gameCopy = game
     const move = gameCopy.move({
@@ -383,8 +372,8 @@ const Game: React.FC<{}> = () => {
       },
       san: foundMove.san,
       lastMove: Date.now(),
+      startTime: Date.now(),
     })
-    sendPositionToEngine(gameCopy.fen())
   }
 
   function onSquareClick(square: Square) {

@@ -95,6 +95,9 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
     localStorage.removeItem('lastUpdateTime')
     localStorage.removeItem('player1Timer')
     localStorage.removeItem('player2Timer')
+    localStorage.removeItem('timer1')
+    localStorage.removeItem('timer2')
+    localStorage.removeItem('startTime')
   }
 
   const onCreateGame = async () => {

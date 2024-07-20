@@ -74,28 +74,55 @@ const BotGame: React.FC<{}> = () => {
     wallet?.account.address ? wallet.account.address : 'player1'
   )
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
-  const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
+  const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+  const [startTime, setStartTime] = useState(
+    Number(localStorage.getItem('startTime'))
+      ? Number(localStorage.getItem('startTime'))
+      : Date.now()
+  )
+  const [timer1, setTimer1] = useState(
+    Number(localStorage.getItem('timer1'))
+      ? Number(localStorage.getItem('timer1'))
+      : Number(queryParams.get('time')) * 60
+  )
+  const [timer2, setTimer2] = useState(
+    Number(localStorage.getItem('timer2'))
+      ? Number(localStorage.getItem('timer2'))
+      : Number(queryParams.get('time')) * 60
+  )
+  const [player1Timer, setPlayer1Timer] = useState(
+    Number(localStorage.getItem('player1Timer'))
+      ? Number(localStorage.getItem('player1Timer'))
+      : Number(queryParams.get('time')) * 60
+  )
+  const [player2Timer, setPlayer2Timer] = useState(
+    Number(localStorage.getItem('player2Timer'))
+      ? Number(localStorage.getItem('player2Timer'))
+      : Number(queryParams.get('time')) * 60
+  )
 
   engine.onmessage = function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
       const data = event.data.split(' ')
       let gameCopy = game
-      const move = gameCopy.move({
-        from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
-        to: data[1].substring(2, 4),
-      })
       setTimeout(() => {
+        gameCopy.move({
+          from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
+          to: data[1].substring(2, 4),
+        })
+        setStartTime(Date.now() - additionTimePerMove)
+        localStorage.setItem('startTime', startTime.toString())
+        setTimer2(timer2 - Math.floor((Date.now() - startTime) / 1000))
         gameDispatch({ type: 'SET_GAME', payload: gameCopy })
         gameDispatch({ type: 'RESET_MOVE_SELECTION' })
         gameDispatch({ type: 'ADD_MOVES', payload: convertToFigurineSan(data[1], 'b') })
         gameDispatch({ type: 'ADD_GAME_HISTORY', payload: gameCopy.fen() })
-        setPlayer2Timer((prevTimer) => prevTimer + additionTimePerMove)
         gameDispatch({ type: 'SET_GAME_OVER', payload: gameCopy.isGameOver() })
         setCurrentMoveIndex((prevIndex) => prevIndex + 1)
         handleSwitchTurn()
-      }, 1500)
+      }, 4500)
     }
   }
 
@@ -104,8 +131,18 @@ const BotGame: React.FC<{}> = () => {
     engine.postMessage('go depth 5')
   }
 
-  const [player1Timer, setPlayer1Timer] = useState(Number(queryParams.get('time')) * 60)
-  const [player2Timer, setPlayer2Timer] = useState(Number(queryParams.get('time')) * 60)
+  useEffect(() => {
+    localStorage.setItem('timer1', timer1.toString())
+    localStorage.setItem('timer2', timer2.toString())
+  }, [timer1, timer2])
+
+  useEffect(() => {
+    localStorage.setItem('player1Timer', player1Timer.toString())
+  }, [player1Timer])
+
+  useEffect(() => {
+    localStorage.setItem('player2Timer', player2Timer.toString())
+  }, [player2Timer])
 
   useEffect(() => {
     if (isThreefoldRepetition(gameHistory)) {
@@ -130,46 +167,27 @@ const BotGame: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    const lastUpdateTime = getLastUpdateTime()
-    const currentTime = Date.now()
-    const elapsedTime = Math.floor((currentTime - lastUpdateTime) / 1000 + 0.5)
-
-    if (currentPlayer === player1) {
-      setPlayer1Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
-      localStorage.setItem('lastUpdateTime', Date.now().toString())
-    } else {
-      setPlayer2Timer((prevTimer) => Math.max(prevTimer - elapsedTime, 0))
-      localStorage.setItem('lastUpdateTime', Date.now().toString())
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem('player1Timer', player1Timer.toString())
-  }, [player1Timer])
-
-  useEffect(() => {
-    localStorage.setItem('player2Timer', player2Timer.toString())
-  }, [player2Timer])
-
-  useEffect(() => {
     let intervalId: any
-    const updateTime = () => {
-      localStorage.setItem('lastUpdateTime', Date.now().toString())
-    }
+
+    console.log(player1Timer)
 
     if (!isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser) {
-      if (game && game.isGameOver()) return
-      if (currentPlayer === player1 && player1Timer > 0) {
+      if (game?.isGameOver?.()) return
+      if (
+        currentPlayer === player1 &&
+        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
+      ) {
         intervalId = setInterval(() => {
-          setPlayer1Timer((prevTimer) => Math.max(prevTimer - 1, 0))
-          updateTime()
+          setPlayer1Timer(Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0))
         }, 1000)
-      } else if (currentPlayer === player2 && player2Timer > 0) {
+      } else if (
+        currentPlayer === player2 &&
+        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
+      ) {
         intervalId = setInterval(() => {
-          setPlayer2Timer((prevTimer) => Math.max(prevTimer - 1, 0))
-          updateTime()
+          setPlayer2Timer(Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0))
         }, 1000)
-      } else if (isPlayerTimeout()) {
+      } else if (isPlayerTimeout() && !isGameOver) {
         gameDispatch({ type: 'SET_GAME_OVER', payload: true })
         emitGameOver()
       }
@@ -180,8 +198,10 @@ const BotGame: React.FC<{}> = () => {
 
   function isPlayerTimeout() {
     return (
-      (currentPlayer === player1 && player1Timer === 0) ||
-      (currentPlayer === player2 && player2Timer === 0)
+      (currentPlayer === player1 &&
+        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) === 0) ||
+      (currentPlayer === player2 &&
+        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) === 0)
     )
   }
 
@@ -191,14 +211,6 @@ const BotGame: React.FC<{}> = () => {
 
   const handleSwitchTurn = () => {
     setCurrentPlayer((prev) => (prev === player1 ? player2 : player1))
-  }
-
-  const currentPlayerTurn = () => {
-    const orientation = isOrientation(wallet?.account.address, player1)
-    if (orientation === 'white') {
-      return turn === 'w' ? player1 : player2
-    }
-    return turn === 'b' ? player2 : player1
   }
 
   function getMoveOptions(square: Square) {
@@ -273,6 +285,9 @@ const BotGame: React.FC<{}> = () => {
 
   function makeMove(foundMove: any, square: Square) {
     setIsStartGame(true)
+    setStartTime(Date.now() - additionTimePerMove)
+    localStorage.setItem('startTime', startTime.toString())
+    setTimer1(timer1 - Math.floor((Date.now() - startTime) / 1000))
     let gameCopy = game
     const move = gameCopy.move({
       from: moveFrom ? moveFrom : '',
