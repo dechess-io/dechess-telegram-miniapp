@@ -21,7 +21,7 @@ import {
   toggleGameDraw,
   toggleGameOver,
 } from '../../../redux/game/game_state.reducer'
-import { App, Block, Notification, Page } from 'konsta/react'
+import { App, Block, Dialog, Notification, Page } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 
 const Game: React.FC<{}> = () => {
@@ -57,8 +57,18 @@ const Game: React.FC<{}> = () => {
   const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   const [startTime, setStartTime] = useState(0)
-  const [timer1, setTimer1] = useState(0)
-  const [timer2, setTimer2] = useState(0)
+  const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60))
+  const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
+
+  console.log(timer1)
+  console.log(timer2)
+
+  useEffect(() => {
+    localStorage.setItem('timer1', timer1?.toString())
+    localStorage.setItem('timer2', timer2?.toString())
+  }, [timer1, timer2])
+
+  const [opponentDisconnect, setOpponentDisconnect] = useState(false)
 
   const [player1Timer, setPlayer1Timer] = useState(() =>
     getTimeFromLocalStorage('player1Timer', -1)
@@ -182,9 +192,14 @@ const Game: React.FC<{}> = () => {
           if (data.loser && localStorage.getItem('address') === data.loser) {
             gameDispatch({ type: 'SET_LOSER', payload: true })
           }
-          setTimer1(data.timers.player1Timer)
-          setTimer2(data.timers.player2Timer)
+
+          console.log(data)
+
+          setTimer1(data.timer1)
+          setTimer2(data.timer2)
           if (data.move_number === 1 && data.turn_player === 'w') {
+            setTimer1(data.timers.player1Timer)
+            setTimer2(data.timers.player2Timer)
             setPlayer1Timer(data.timers.player1Timer)
             setPlayer2Timer(data.timers.player2Timer)
             setAdditionTimePerMove(data.timePerMove)
@@ -214,6 +229,8 @@ const Game: React.FC<{}> = () => {
         gameDispatch({ type: 'ADD_GAME_HISTORY', payload: room.fen })
         setCurrentMoveIndex((prevIndex) => prevIndex + 1)
         setStartTime(room.startTime)
+        setTimer1(room.timer1)
+        setTimer2(room.timer2)
       }
     }
 
@@ -227,8 +244,22 @@ const Game: React.FC<{}> = () => {
 
     function onOpponentDisconnect() {
       console.log('7s200:opponentDisconnect')
+      let opponentTimer = wallet?.account.address === player1 ? player2Timer : player1Timer
+
+      if (opponentTimer < 30) {
+        gameDispatch({ type: 'SET_GAME_OVER', payload: true })
+        socket.emit('resign', {
+          game_id: location.pathname.split('/')[2],
+          isGameOver: true,
+          isGameDraw: false,
+          winner: wallet?.account.address === player1 ? player1 : player2,
+          loser: wallet?.account.address === player1 ? player2 : player1,
+        })
+      } else {
+        setOpponentDisconnect(true)
+      }
+
       setNotificationCloseOnClick(true)
-      // Clear existing timeout to avoid multiple timeouts running simultaneously
       clearTimeout(notificationTimeoutId)
       notificationTimeoutId = setTimeout(() => {
         setNotificationCloseOnClick(false)
@@ -373,6 +404,14 @@ const Game: React.FC<{}> = () => {
       san: foundMove.san,
       lastMove: Date.now(),
       startTime: Date.now(),
+      timer1:
+        currentPlayerTurn() === player1
+          ? Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0)
+          : timer1,
+      timer2:
+        currentPlayerTurn() === player2
+          ? Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0)
+          : timer2,
     })
   }
 
@@ -415,6 +454,8 @@ const Game: React.FC<{}> = () => {
             player2Timer:
               currentPlayerTurn() === player2 ? player2Timer + additionTimePerMove : player2Timer,
           },
+          timer1: Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0),
+          timer2: Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0),
         })
         handleSwitchTurn()
       }
@@ -500,6 +541,11 @@ const Game: React.FC<{}> = () => {
             titleRightText="now"
             subtitle="Your opponent has disconnected"
             onClick={() => setNotificationCloseOnClick(false)}
+          />
+          <Dialog
+            opened={opponentDisconnect}
+            title="Opponent Disconnected"
+            content={`Your opponent has disconnected. Please wait ${player1Timer} seconds to win the game.`}
           />
           <GameOverPopUp
             setShowPopup={setShowPopup}
