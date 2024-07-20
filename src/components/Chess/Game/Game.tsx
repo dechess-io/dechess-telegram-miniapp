@@ -21,7 +21,7 @@ import {
   toggleGameDraw,
   toggleGameOver,
 } from '../../../redux/game/game_state.reducer'
-import { App, Block, Dialog, Notification, Page } from 'konsta/react'
+import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 
 const Game: React.FC<object> = () => {
@@ -60,9 +60,6 @@ const Game: React.FC<object> = () => {
   const [startTime, setStartTime] = useState(0)
   const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60))
   const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
-
-  console.log(timer1)
-  console.log(timer2)
 
   useEffect(() => {
     localStorage.setItem('timer1', timer1?.toString())
@@ -407,8 +404,6 @@ const Game: React.FC<object> = () => {
           if (data.loser && localStorage.getItem('address') === data.loser) {
             gameDispatch({ type: 'SET_LOSER', payload: true })
           }
-
-          console.log(data)
 
           setTimer1(data.timer1)
           setTimer2(data.timer2)
