@@ -5,7 +5,7 @@ import { truncateSuiTx } from '../../../services/address'
 import { useTonWallet } from '@tonconnect/ui-react'
 import MoveRecord from './MoveRecord'
 import PlayerDisplay from './PlayerDisplay'
-import { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Block } from 'konsta/react'
 
 interface GameBoardProps {
@@ -26,7 +26,7 @@ interface GameBoardProps {
   currentMoveIndex: any
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({
+const GameBoardOriginal: React.FC<GameBoardProps> = ({
   player1,
   player2,
   moveLists,
@@ -48,18 +48,15 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   const wallet = useTonWallet()
 
-  const isOrientation = () => {
-    if (wallet?.account.address === player1) {
-      return 'white'
-    } else {
-      return 'black'
-    }
-  }
+  const isOrientation = useMemo(
+    () => (wallet?.account.address === player1 ? 'white' : 'black'),
+    [player1, wallet?.account.address]
+  )
 
   const getPlayerDisplayProps = (isTop: boolean) => {
     const isPlayer1 = wallet?.account.address === player1
     const isPlayer2 = wallet?.account.address === player2
-    const isWhite = isOrientation() === 'white'
+    const isWhite = isOrientation === 'white'
     let playerName, playerImage, playerTime
     if (isTop) {
       playerName = isPlayer2 ? player1 : player2
@@ -94,7 +91,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
                 <PlayerDisplay {...getPlayerDisplayProps(true)} />
                 <div className="relative border-8 border-white rounded-lg">
                   <Board
-                    boardOrientation={isOrientation()}
+                    boardOrientation={isOrientation}
                     position={game.fen()}
                     id="ClickToMove"
                     animationDuration={200}
@@ -131,4 +128,5 @@ const GameBoard: React.FC<GameBoardProps> = ({
   )
 }
 
+const GameBoard = React.memo(GameBoardOriginal)
 export default GameBoard

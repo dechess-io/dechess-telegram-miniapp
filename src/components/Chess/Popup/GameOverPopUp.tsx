@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Dialog, DialogButton } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
 
@@ -16,7 +16,7 @@ type GameOverPopUpProps = {
   setShowPopup: any
 }
 
-const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
+const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
   game,
   isGameOver,
   isGameDraw,
@@ -67,4 +67,5 @@ const GameOverPopUp: React.FC<GameOverPopUpProps> = ({
   )
 }
 
+const GameOverPopUp = React.memo(GameOverPopUpOriginal)
 export default GameOverPopUp
