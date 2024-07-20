@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import GameSidebar from './GameSideBar'
 import GameChat, { Message } from './GameChat'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -18,7 +18,7 @@ interface GameNavbarProps {
   isWhite: boolean
 }
 
-const GameNavbar: React.FC<GameNavbarProps> = ({
+const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
   handleNextMove,
   handlePreviousMove,
   socket,
@@ -135,4 +135,5 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   )
 }
 
+const GameNavbar = React.memo(GameNavbarOriginal)
 export default GameNavbar
