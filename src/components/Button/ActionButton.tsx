@@ -1,10 +1,10 @@
-import React from 'react'
-import { Button, Icon } from 'konsta/react'
+import React from 'react';
+import { Button, Icon } from 'konsta/react';
 
 interface ActionButtonProps {
-  label: string
-  iconSrc: string
-  onClick: any
+  label: string;
+  iconSrc: string;
+  onClick: any;
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({ label, iconSrc, onClick }) => (
@@ -22,6 +22,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ label, iconSrc, onClick }) 
       </div>
     </div>
   </Button>
-)
+);
 
-export default ActionButton
+export default ActionButton;

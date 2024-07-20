@@ -1,26 +1,26 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { Provider } from 'react-redux'
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
-import App from './App'
-import Game from './components/Chess/Game/Game'
-import Mode from './components/Mode/Mode'
-import WebApp from '@twa-dev/sdk'
-import { store } from './redux/store'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
+import App from './App';
+import Game from './components/Chess/Game/Game';
+import Mode from './components/Mode/Mode';
+import WebApp from '@twa-dev/sdk';
+import { store } from './redux/store';
 // import  Telegram from 'telegram-webapps'
 // import './styles/main.scss'
 
 // import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
 // import { getFullnodeUrl } from '@mysten/sui/client'
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
-import BotGame from './components/Chess/BotGame/BotGame'
+import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react';
+import BotGame from './components/Chess/BotGame/BotGame';
 // import './index.css'
 
-WebApp.ready()
-WebApp.expand()
-WebApp.MainButton.enable()
-WebApp.enableClosingConfirmation()
+WebApp.ready();
+WebApp.expand();
+WebApp.MainButton.enable();
+WebApp.enableClosingConfirmation();
 // (Telegram as any).disableVerticalSwipes();
 
 // const networkConfig = {
@@ -48,9 +48,9 @@ const router = createBrowserRouter([
       // { path: "/tournament", element: <Tournament2 /> },
     ],
   },
-])
+]);
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
   <React.StrictMode>
@@ -111,4 +111,4 @@ root.render(
       </QueryClientProvider> */}
     </Provider>
   </React.StrictMode>
-)
+);

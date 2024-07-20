@@ -1,17 +1,17 @@
-import { SpinnerIos } from '@styled-icons/fluentui-system-regular'
-import React, { PropsWithChildren } from 'react'
-import cn from '../../services/cn'
+import { SpinnerIos } from '@styled-icons/fluentui-system-regular';
+import React, { PropsWithChildren } from 'react';
+import cn from '../../services/cn';
 
 const Button: React.FC<
   PropsWithChildren<{
-    onClick?: () => void
-    className?: string
-    disabled?: boolean
-    hide?: boolean
-    type?: 'button' | 'submit' | 'reset'
-    kind?: 'normal' | 'success' | 'confirm'
-    loading?: boolean
-    size?: 'normal' | 'small'
+    onClick?: () => void;
+    className?: string;
+    disabled?: boolean;
+    hide?: boolean;
+    type?: 'button' | 'submit' | 'reset';
+    kind?: 'normal' | 'success' | 'confirm';
+    loading?: boolean;
+    size?: 'normal' | 'small';
   }>
 > = ({
   children,
@@ -25,7 +25,7 @@ const Button: React.FC<
   size = 'normal',
 }) => {
   if (hide) {
-    return null
+    return null;
   }
   return (
     <button
@@ -63,7 +63,7 @@ const Button: React.FC<
     >
       {loading ? <SpinnerIos className="animate-spin" size={20} /> : null} {children}
     </button>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;

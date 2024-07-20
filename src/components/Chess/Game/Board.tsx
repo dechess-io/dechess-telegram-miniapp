@@ -1,29 +1,29 @@
-import { Chess, Square } from 'chess.js'
-import { formatTime, getAvatarName } from '../../../utils/utils'
-import { Chessboard as Board } from 'react-chessboard'
-import { truncateSuiTx } from '../../../services/address'
-import { useTonWallet } from '@tonconnect/ui-react'
-import MoveRecord from './MoveRecord'
-import PlayerDisplay from './PlayerDisplay'
-import React, { useMemo, useState } from 'react'
-import { Block } from 'konsta/react'
+import { Chess, Square } from 'chess.js';
+import { formatTime, getAvatarName } from '../../../utils/utils';
+import { Chessboard as Board } from 'react-chessboard';
+import { truncateSuiTx } from '../../../services/address';
+import { useTonWallet } from '@tonconnect/ui-react';
+import MoveRecord from './MoveRecord';
+import PlayerDisplay from './PlayerDisplay';
+import React, { useMemo, useState } from 'react';
+import { Block } from 'konsta/react';
 
 interface GameBoardProps {
-  player1: string
-  player2: string
-  moveLists: string[]
-  game: Chess | any
-  onSquareClick: (square: Square) => void
-  onSquareRightClick: (square: Square) => void
-  onPromotionPieceSelect: any
-  showPromotionDialog: boolean
-  moveSquares: Record<string, any>
-  optionSquares: Record<string, any>
-  rightClickedSquares: Record<string, any>
-  moveTo: any
-  player1Timer: any
-  player2Timer: any
-  currentMoveIndex: any
+  player1: string;
+  player2: string;
+  moveLists: string[];
+  game: Chess | any;
+  onSquareClick: (square: Square) => void;
+  onSquareRightClick: (square: Square) => void;
+  onPromotionPieceSelect: any;
+  showPromotionDialog: boolean;
+  moveSquares: Record<string, any>;
+  optionSquares: Record<string, any>;
+  rightClickedSquares: Record<string, any>;
+  moveTo: any;
+  player1Timer: any;
+  player2Timer: any;
+  currentMoveIndex: any;
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
@@ -43,29 +43,29 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   player2Timer,
   currentMoveIndex,
 }) => {
-  const [name1] = useState(getAvatarName())
-  const [name2] = useState(getAvatarName())
+  const [name1] = useState(getAvatarName());
+  const [name2] = useState(getAvatarName());
 
-  const wallet = useTonWallet()
+  const wallet = useTonWallet();
 
   const isOrientation = useMemo(
     () => (wallet?.account.address === player1 ? 'white' : 'black'),
     [player1, wallet?.account.address]
-  )
+  );
 
   const getPlayerDisplayProps = (isTop: boolean) => {
-    const isPlayer1 = wallet?.account.address === player1
-    const isPlayer2 = wallet?.account.address === player2
-    const isWhite = isOrientation === 'white'
-    let playerName, playerImage, playerTime
+    const isPlayer1 = wallet?.account.address === player1;
+    const isPlayer2 = wallet?.account.address === player2;
+    const isWhite = isOrientation === 'white';
+    let playerName, playerImage, playerTime;
     if (isTop) {
-      playerName = isPlayer2 ? player1 : player2
-      playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`
-      playerTime = isWhite ? formatTime(player2Timer) : formatTime(player1Timer)
+      playerName = isPlayer2 ? player1 : player2;
+      playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name1}`;
+      playerTime = isWhite ? formatTime(player2Timer) : formatTime(player1Timer);
     } else {
-      playerName = isPlayer1 || !isPlayer2 ? player1 : player2
-      playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`
-      playerTime = isWhite ? formatTime(player1Timer) : formatTime(player2Timer)
+      playerName = isPlayer1 || !isPlayer2 ? player1 : player2;
+      playerImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name2}`;
+      playerTime = isWhite ? formatTime(player1Timer) : formatTime(player2Timer);
     }
 
     return {
@@ -77,8 +77,8 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
         : 'bg-blue-gradient border-b-4 border-blue-200',
       clockIconSrc: isTop ? '/clock-stopwatch-white.svg' : '/clock-stopwatch-black.svg',
       textColor: 'text-white',
-    }
-  }
+    };
+  };
 
   return (
     <>
@@ -125,8 +125,8 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
         </div>
       </Block>
     </>
-  )
-}
+  );
+};
 
-const GameBoard = React.memo(GameBoardOriginal)
-export default GameBoard
+const GameBoard = React.memo(GameBoardOriginal);
+export default GameBoard;

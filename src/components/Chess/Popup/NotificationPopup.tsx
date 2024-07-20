@@ -1,11 +1,11 @@
-import React from 'react'
-import Popup from '../../Popup/Popup'
+import React from 'react';
+import Popup from '../../Popup/Popup';
 
 interface GamePopupProps {
-  title: string
-  message: string
-  showPopup: boolean
-  setShowPopup: any
+  title: string;
+  message: string;
+  showPopup: boolean;
+  setShowPopup: any;
 }
 
 const NotificationPopup: React.FC<GamePopupProps> = ({
@@ -14,7 +14,7 @@ const NotificationPopup: React.FC<GamePopupProps> = ({
   showPopup,
   setShowPopup,
 }) => {
-  if (!showPopup) return null
+  if (!showPopup) return null;
 
   return (
     <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
@@ -30,7 +30,7 @@ const NotificationPopup: React.FC<GamePopupProps> = ({
         </h1>
       </Popup>
     </div>
-  )
-}
+  );
+};
 
-export default NotificationPopup
+export default NotificationPopup;

@@ -1,13 +1,13 @@
-import React from 'react'
-import Popup from '../../Popup/Popup'
+import React from 'react';
+import Popup from '../../Popup/Popup';
 
 interface GamePopupProps {
-  title: string
-  message: string
-  onConfirm: () => void
-  onCancel: () => void
-  showPopup: boolean
-  setShowPopup: any
+  title: string;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  showPopup: boolean;
+  setShowPopup: any;
 }
 
 const GamePopup: React.FC<GamePopupProps> = ({
@@ -18,7 +18,7 @@ const GamePopup: React.FC<GamePopupProps> = ({
   showPopup,
   setShowPopup,
 }) => {
-  if (!showPopup) return null
+  if (!showPopup) return null;
 
   return (
     <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50`}>
@@ -52,7 +52,7 @@ const GamePopup: React.FC<GamePopupProps> = ({
         </h1>
       </Popup>
     </div>
-  )
-}
+  );
+};
 
-export default GamePopup
+export default GamePopup;

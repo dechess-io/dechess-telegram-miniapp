@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
-import './ProgressChart.scss'
+import { useEffect, useState } from 'react';
+import './ProgressChart.scss';
 
 type Props = {
-  totalGames: number
-  wins: number
-  losses: number
-}
+  totalGames: number;
+  wins: number;
+  losses: number;
+};
 const Progress = ({ totalGames, wins, losses }: Props) => {
-  const [rotateDeg, setRotateDeg] = useState<number | null>(null)
+  const [rotateDeg, setRotateDeg] = useState<number | null>(null);
 
   useEffect(() => {
-    const winPercentage = (wins / totalGames) * 100
+    const winPercentage = (wins / totalGames) * 100;
     // -45 is the initial rotation angle ~ 0 win
-    const calculatedRotateDeg = 360 + 45 - winPercentage * 1.8
-    setRotateDeg(calculatedRotateDeg)
-  }, [totalGames, wins, losses])
+    const calculatedRotateDeg = 360 + 45 - winPercentage * 1.8;
+    setRotateDeg(calculatedRotateDeg);
+  }, [totalGames, wins, losses]);
   return (
     <div className="vertical-semi-circle-progress-chart">
       <div className="chart-and-labels gap-2">
@@ -37,7 +37,7 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Progress
+export default Progress;

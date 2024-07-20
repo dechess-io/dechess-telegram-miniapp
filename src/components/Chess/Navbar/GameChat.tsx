@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react'
-import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react'
-import Header from '../../Header/Header'
-import { MdClose, MdSend } from 'react-icons/md'
+import { useEffect, useState } from 'react';
+import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react';
+import Header from '../../Header/Header';
+import { MdClose, MdSend } from 'react-icons/md';
 
 interface GameChatProps {
-  isChatVisible: boolean
-  setIsChatVisible: any
-  messages: Message[]
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>
-  userId: string
-  socket: any
+  isChatVisible: boolean;
+  setIsChatVisible: any;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  userId: string;
+  socket: any;
 }
 
 export type Message = {
-  sender: string
-  message: string
-  viewedAt: string
-}
+  sender: string;
+  message: string;
+  viewedAt: string;
+};
 
 const GameChat: React.FC<GameChatProps> = ({
   isChatVisible,
@@ -31,19 +31,19 @@ const GameChat: React.FC<GameChatProps> = ({
       sender: userId,
       message: messageText.replace('g', '<br>').trim(),
       viewedAt: null,
-    }
-    setMessages((prev: Message[]) => [...prev, newMessage] as Message[])
+    };
+    setMessages((prev: Message[]) => [...prev, newMessage] as Message[]);
     socket.emit('message', {
       game_id: location.pathname.split('/')[2],
       message: newMessage,
-    })
-    setMessageText('')
-  }
+    });
+    setMessageText('');
+  };
 
-  const [messageText, setMessageText] = useState('')
+  const [messageText, setMessageText] = useState('');
 
-  const inputOpacity = messageText ? 1 : 0.3
-  const isClickable = messageText.trim().length > 0
+  const inputOpacity = messageText ? 1 : 0.3;
+  const isClickable = messageText.trim().length > 0;
 
   const currentDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
@@ -56,10 +56,10 @@ const GameChat: React.FC<GameChatProps> = ({
     .formatToParts(new Date())
     .map((part) => {
       if (['weekday', 'month', 'day'].includes(part.type)) {
-        return <b key={part.type}>{part.value}</b>
+        return <b key={part.type}>{part.value}</b>;
       }
-      return part.value
-    })
+      return part.value;
+    });
 
   useEffect(() => {
     isChatVisible &&
@@ -67,8 +67,8 @@ const GameChat: React.FC<GameChatProps> = ({
         messages.map((message) =>
           message.sender !== userId ? { ...message, viewedAt: new Date().toISOString() } : message
         )
-      )
-  }, [])
+      );
+  }, []);
 
   return (
     <Page component="div" className="z-50 fixed hide-scrollbar space-y-[50px]">
@@ -136,7 +136,7 @@ const GameChat: React.FC<GameChatProps> = ({
         }
       />
     </Page>
-  )
-}
+  );
+};
 
-export default GameChat
+export default GameChat;

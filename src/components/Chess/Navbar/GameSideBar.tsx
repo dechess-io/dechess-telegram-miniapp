@@ -1,25 +1,25 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Actions, ActionsButton, ActionsGroup } from 'konsta/react'
-import ReactDialog from '../../Dialog/ReactDialog'
+import { useState, useEffect, useCallback } from 'react';
+import { Actions, ActionsButton, ActionsGroup } from 'konsta/react';
+import ReactDialog from '../../Dialog/ReactDialog';
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
   OPPONENT_RESIGN: 'opponentResign',
   OPPONENT_DRAW_REQUEST: 'opponentDrawRequest',
   DRAW_CONFIRMED: 'drawConfirmed',
-}
+};
 
 interface GameSidebarProps {
-  isSidebarVisible: boolean
-  toggleSidebar: any
-  game: any
-  socket: any
-  toggleGameDraw: any
-  toggleGameOver: any
-  user: string
-  opponent: string
-  isMoved: boolean
-  isWhite: boolean
+  isSidebarVisible: boolean;
+  toggleSidebar: any;
+  game: any;
+  socket: any;
+  toggleGameDraw: any;
+  toggleGameOver: any;
+  user: string;
+  opponent: string;
+  isMoved: boolean;
+  isWhite: boolean;
 }
 
 const GameSidebar: React.FC<GameSidebarProps> = ({
@@ -34,52 +34,52 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   isMoved,
   isWhite,
 }) => {
-  const [visiblePopup, setVisiblePopup] = useState<string | null>(null)
-  const gameId = location.pathname.split('/')[2]
-  const [opponentAction, setOpponentAction] = useState<string | null>(null)
-  const [drawRequest, setDrawRequest] = useState<boolean>(false)
-  const [notificationPopup, setNotificationPopup] = useState(false)
+  const [visiblePopup, setVisiblePopup] = useState<string | null>(null);
+  const gameId = location.pathname.split('/')[2];
+  const [opponentAction, setOpponentAction] = useState<string | null>(null);
+  const [drawRequest, setDrawRequest] = useState<boolean>(false);
+  const [notificationPopup, setNotificationPopup] = useState(false);
   const togglePopup = (popup: string | null) => {
     setVisiblePopup((prev) => {
       if (prev === popup) {
-        return null
+        return null;
       } else {
-        return popup
+        return popup;
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
-    const handleOpponentAbort = () => toggleGameOver()
-    const handleOpponentResign = () => toggleGameOver()
-    const handleOpponentDrawRequest = () => setDrawRequest(true)
+    const handleOpponentAbort = () => toggleGameOver();
+    const handleOpponentResign = () => toggleGameOver();
+    const handleOpponentDrawRequest = () => setDrawRequest(true);
     const handleDrawConfirmed = () => {
-      toggleGameOver()
-      toggleGameDraw()
-    }
+      toggleGameOver();
+      toggleGameDraw();
+    };
 
-    socket.on(SOCKET_EVENTS.OPPONENT_ABORT, handleOpponentAbort)
-    socket.on(SOCKET_EVENTS.OPPONENT_RESIGN, handleOpponentResign)
-    socket.on(SOCKET_EVENTS.OPPONENT_DRAW_REQUEST, handleOpponentDrawRequest)
-    socket.on(SOCKET_EVENTS.DRAW_CONFIRMED, handleDrawConfirmed)
+    socket.on(SOCKET_EVENTS.OPPONENT_ABORT, handleOpponentAbort);
+    socket.on(SOCKET_EVENTS.OPPONENT_RESIGN, handleOpponentResign);
+    socket.on(SOCKET_EVENTS.OPPONENT_DRAW_REQUEST, handleOpponentDrawRequest);
+    socket.on(SOCKET_EVENTS.DRAW_CONFIRMED, handleDrawConfirmed);
 
     return () => {
-      socket.off(SOCKET_EVENTS.OPPONENT_ABORT, handleOpponentAbort)
-      socket.off(SOCKET_EVENTS.OPPONENT_RESIGN, handleOpponentResign)
-      socket.off(SOCKET_EVENTS.OPPONENT_DRAW_REQUEST, handleOpponentDrawRequest)
-      socket.off(SOCKET_EVENTS.DRAW_CONFIRMED, handleDrawConfirmed)
-    }
-  }, [socket, toggleGameOver, toggleGameDraw])
+      socket.off(SOCKET_EVENTS.OPPONENT_ABORT, handleOpponentAbort);
+      socket.off(SOCKET_EVENTS.OPPONENT_RESIGN, handleOpponentResign);
+      socket.off(SOCKET_EVENTS.OPPONENT_DRAW_REQUEST, handleOpponentDrawRequest);
+      socket.off(SOCKET_EVENTS.DRAW_CONFIRMED, handleDrawConfirmed);
+    };
+  }, [socket, toggleGameOver, toggleGameDraw]);
 
   const handlePopupAction = (actionType: string) => {
     const actions: Record<string, () => void> = {
       abort: () => {
-        socket.emit('abort', { game_id: gameId, isGameOver: true, winner: opponent, loser: user })
-        toggleGameOver()
+        socket.emit('abort', { game_id: gameId, isGameOver: true, winner: opponent, loser: user });
+        toggleGameOver();
       },
       draw: () => {
-        socket.emit('drawRequest', { game_id: gameId })
-        setVisiblePopup(null)
+        socket.emit('drawRequest', { game_id: gameId });
+        setVisiblePopup(null);
       },
       resign: () => {
         socket.emit('resign', {
@@ -88,35 +88,35 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
           isGameDraw: false,
           winner: opponent,
           loser: user,
-        })
-        toggleGameOver()
+        });
+        toggleGameOver();
       },
-    }
+    };
 
-    actions[actionType]?.()
-    setVisiblePopup(null)
-  }
+    actions[actionType]?.();
+    setVisiblePopup(null);
+  };
 
   const handleConfirmDraw = useCallback(() => {
-    socket.emit('confirmDraw', { game_id: gameId })
-    setDrawRequest(false)
-  }, [socket, gameId])
+    socket.emit('confirmDraw', { game_id: gameId });
+    setDrawRequest(false);
+  }, [socket, gameId]);
 
   const handleAbort = () => {
     if (isAbortAllow()) {
-      togglePopup('abort')
-      return
+      togglePopup('abort');
+      return;
     }
 
-    setNotificationPopup(true)
-    toggleSidebar()
-  }
+    setNotificationPopup(true);
+    toggleSidebar();
+  };
 
   function isAbortAllow() {
     return (
       (game._moveNumber === 1 && game._turn === 'b' && isMoved && !isWhite) ||
       (game._moveNumber === 1 && game._turn === 'w' && !isMoved)
-    )
+    );
   }
 
   const renderPopups = () => (
@@ -161,7 +161,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
         buttons={<></>}
       />
     </>
-  )
+  );
 
   return (
     <>
@@ -177,7 +177,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
         </ActionsGroup>
       </Actions>
     </>
-  )
-}
+  );
+};
 
-export default GameSidebar
+export default GameSidebar;

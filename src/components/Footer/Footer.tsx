@@ -1,4 +1,4 @@
-import { Icon, Tabbar, TabbarLink } from 'konsta/react'
+import { Icon, Tabbar, TabbarLink } from 'konsta/react';
 
 const Footer: React.FC = () => {
   return (
@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
         label="Wallet"
       />
     </Tabbar>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

@@ -1,19 +1,19 @@
-import { Chess, Square } from 'chess.js'
+import { Chess, Square } from 'chess.js';
 
 export type GameState = {
-  optionSquares: { [key: string]: any }
-  moveFrom: Square | undefined
-  moveTo: Square | undefined
-  showPromotionDialog: boolean
-  isGameOver: boolean
-  isGameDraw: boolean
-  game: Chess
-  gameHistory: string[]
-  currentMoveIndex: number
-  moves: string[]
-  isWinner: boolean
-  isLoser: boolean
-}
+  optionSquares: { [key: string]: any };
+  moveFrom: Square | undefined;
+  moveTo: Square | undefined;
+  showPromotionDialog: boolean;
+  isGameOver: boolean;
+  isGameDraw: boolean;
+  game: Chess;
+  gameHistory: string[];
+  currentMoveIndex: number;
+  moves: string[];
+  isWinner: boolean;
+  isLoser: boolean;
+};
 
 export const initialGameState: GameState = {
   optionSquares: {},
@@ -28,7 +28,7 @@ export const initialGameState: GameState = {
   game: new Chess(),
   isWinner: false,
   isLoser: false,
-}
+};
 
 export type GameAction =
   | { type: 'SET_OPTION_SQUARES'; payload: { [key: string]: any } }
@@ -45,57 +45,57 @@ export type GameAction =
   | { type: 'ADD_GAME_HISTORY'; payload: string }
   | { type: 'SET_WINNER'; payload: boolean }
   | { type: 'SET_LOSER'; payload: boolean }
-  | { type: 'SET_CURRENT_MOVE_INDEX'; payload: number }
+  | { type: 'SET_CURRENT_MOVE_INDEX'; payload: number };
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SET_OPTION_SQUARES':
-      return { ...state, optionSquares: action.payload }
+      return { ...state, optionSquares: action.payload };
     case 'SET_MOVE_FROM':
-      return { ...state, moveFrom: action.payload, moveTo: undefined }
+      return { ...state, moveFrom: action.payload, moveTo: undefined };
     case 'SET_MOVE_TO':
-      return { ...state, moveTo: action.payload }
+      return { ...state, moveTo: action.payload };
     case 'SET_CURRENT_MOVE_INDEX':
-      return { ...state, currentMoveIndex: action.payload }
+      return { ...state, currentMoveIndex: action.payload };
     case 'SHOW_PROMOTION_DIALOG':
-      return { ...state, showPromotionDialog: action.payload }
+      return { ...state, showPromotionDialog: action.payload };
     case 'RESET_MOVE_SELECTION':
-      return { ...state, moveFrom: undefined, moveTo: undefined, optionSquares: {} }
+      return { ...state, moveFrom: undefined, moveTo: undefined, optionSquares: {} };
     case 'SET_GAME':
-      return { ...state, game: action.payload }
+      return { ...state, game: action.payload };
     case 'SET_GAME_HISTORY':
-      return { ...state, gameHistory: action.payload }
+      return { ...state, gameHistory: action.payload };
     case 'ADD_GAME_HISTORY':
-      return { ...state, gameHistory: [...state.gameHistory, action.payload] }
+      return { ...state, gameHistory: [...state.gameHistory, action.payload] };
     case 'SET_MOVES':
-      return { ...state, moves: action.payload }
+      return { ...state, moves: action.payload };
     case 'ADD_MOVES':
-      return { ...state, moves: [...state.moves, action.payload] }
+      return { ...state, moves: [...state.moves, action.payload] };
     case 'SET_GAME_OVER':
-      return { ...state, isGameOver: action.payload }
+      return { ...state, isGameOver: action.payload };
     case 'SET_GAME_DRAW':
-      return { ...state, isGameDraw: action.payload }
+      return { ...state, isGameDraw: action.payload };
     case 'SET_WINNER':
-      return { ...state, isWinner: action.payload }
+      return { ...state, isWinner: action.payload };
     case 'SET_LOSER':
-      return { ...state, isLoser: action.payload }
+      return { ...state, isLoser: action.payload };
     default:
-      return state
+      return state;
   }
 }
 
 export const toggleGameDraw = (isGameDraw: boolean, gameDispatch: any) => {
-  gameDispatch({ type: 'SET_GAME_DRAW', payload: !isGameDraw })
-}
+  gameDispatch({ type: 'SET_GAME_DRAW', payload: !isGameDraw });
+};
 
 export const toggleGameOver = (isGameOver: boolean, gameDispatch: any) => {
-  gameDispatch({ type: 'SET_GAME_OVER', payload: !isGameOver })
-}
+  gameDispatch({ type: 'SET_GAME_OVER', payload: !isGameOver });
+};
 
 export const isOrientation = (address: string | undefined, player1: string) => {
   if (address === player1) {
-    return 'white'
+    return 'white';
   } else {
-    return 'black'
+    return 'black';
   }
-}
+};

@@ -1,65 +1,65 @@
-import { useNavigate } from 'react-router-dom'
-import Header from './components/Header/Header'
-import Progress from './components/ProgressChart/Progress'
-import { hasJWT } from './utils/utils'
-import Footer from './components/Footer/Footer.tsx'
-import { useEffect, useState } from 'react'
-import { socket } from './services/socket.ts'
-import { Page } from 'konsta/react'
-import './index.css'
-import { Button, Block, App as KonstaApp } from 'konsta/react'
-import ActionButton from './components/Button/ActionButton.tsx'
-import GameModeButton from './components/Button/GameModeButton.tsx'
-import { isAndroid } from 'react-device-detect'
-import ReactDialog from './components/Dialog/ReactDialog.tsx'
+import { useNavigate } from 'react-router-dom';
+import Header from './components/Header/Header';
+import Progress from './components/ProgressChart/Progress';
+import { hasJWT } from './utils/utils';
+import Footer from './components/Footer/Footer.tsx';
+import { useEffect, useState } from 'react';
+import { socket } from './services/socket.ts';
+import { Page } from 'konsta/react';
+import './index.css';
+import { Button, Block, App as KonstaApp } from 'konsta/react';
+import ActionButton from './components/Button/ActionButton.tsx';
+import GameModeButton from './components/Button/GameModeButton.tsx';
+import { isAndroid } from 'react-device-detect';
+import ReactDialog from './components/Dialog/ReactDialog.tsx';
 
 function App() {
-  const navigate = useNavigate()
-  const [showPopup, setShowPopup] = useState(false)
-  const [data, setData] = useState<any>()
+  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+  const [data, setData] = useState<any>();
   const handlePlayClick = () => {
-    navigate('/mode')
-  }
+    navigate('/mode');
+  };
 
   useEffect(() => {
-    socket.emit('reconnect')
-  }, [])
+    socket.emit('reconnect');
+  }, []);
 
   useEffect(() => {
     socket.on('rejoinGame', (data) => {
       if (data.status === 200 && data.game_id) {
-        setData(data)
+        setData(data);
         setTimeout(() => {
-          setShowPopup(true)
-        }, 1500)
+          setShowPopup(true);
+        }, 1500);
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const handleRejoin = () => {
-    navigate('/game/' + data.game_id)
-    setShowPopup(false)
-  }
+    navigate('/game/' + data.game_id);
+    setShowPopup(false);
+  };
 
   const handleCancel = () => {
-    setShowPopup(false)
+    setShowPopup(false);
     socket.emit('resign', {
       game_id: data.game_id,
       isGameOver: true,
       isGameDraw: false,
       winner: data.opponent,
       loser: data.user,
-    })
-  }
+    });
+  };
 
-  const theme = isAndroid ? 'material' : 'ios'
+  const theme = isAndroid ? 'material' : 'ios';
 
   const actionButtonsConfig = [
     { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
     { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
     { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
     { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/' },
-  ]
+  ];
 
   const createActionButton = (config: any) => (
     <ActionButton
@@ -68,7 +68,7 @@ function App() {
       iconSrc={config.iconSrc}
       onClick={() => navigate(config.navigateTo)}
     />
-  )
+  );
 
   return (
     <>
@@ -131,7 +131,7 @@ function App() {
         </Page>
       </KonstaApp>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

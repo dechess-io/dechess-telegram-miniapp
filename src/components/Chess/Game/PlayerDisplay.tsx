@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
 
 interface PlayerDisplayProps {
-  imageSrc: string
-  name: string | null
-  time: string
-  timeBoxClass: string
-  clockIconSrc: string
-  textColor: string
+  imageSrc: string;
+  name: string | null;
+  time: string;
+  timeBoxClass: string;
+  clockIconSrc: string;
+  textColor: string;
 }
 
 const PlayerDisplay: React.FC<PlayerDisplayProps> = ({
@@ -30,7 +30,7 @@ const PlayerDisplay: React.FC<PlayerDisplayProps> = ({
         <div className={`font-ibm ${textColor}`}>{time}</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PlayerDisplay
+export default PlayerDisplay;

@@ -1,20 +1,20 @@
-import { useNavigate } from 'react-router-dom'
-import React, { useEffect } from 'react'
-import { Dialog, DialogButton } from 'konsta/react'
-import ReactDialog from '../../Dialog/ReactDialog'
+import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Dialog, DialogButton } from 'konsta/react';
+import ReactDialog from '../../Dialog/ReactDialog';
 
 type GameOverPopUpProps = {
-  game: any
-  isGameOver: boolean
-  isGameDraw: boolean
-  player1: string
-  player2: string
-  wallet: any
-  isWinner: boolean
-  isLoser: boolean
-  showPopup: boolean
-  setShowPopup: any
-}
+  game: any;
+  isGameOver: boolean;
+  isGameDraw: boolean;
+  player1: string;
+  player2: string;
+  wallet: any;
+  isWinner: boolean;
+  isLoser: boolean;
+  showPopup: boolean;
+  setShowPopup: any;
+};
 
 const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
   game,
@@ -28,27 +28,27 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
   showPopup,
   setShowPopup,
 }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     if (game.isGameOver() || isGameOver || game.isDraw() || isGameDraw) {
       setTimeout(() => {
-        setShowPopup(true)
-      }, 1000)
+        setShowPopup(true);
+      }, 1000);
     }
-  }, [game, isGameOver, isGameDraw])
+  }, [game, isGameOver, isGameDraw]);
 
   const renderMessage = () => {
-    if (isWinner) return 'You Win!'
-    if (isLoser) return 'You Lose!'
-    if (game.isDraw() || isGameDraw) return 'Draw!'
+    if (isWinner) return 'You Win!';
+    if (isLoser) return 'You Lose!';
+    if (game.isDraw() || isGameDraw) return 'Draw!';
     if (game.isGameOver() || isGameOver) {
       const playerWon =
         (player1 === wallet?.account.address && game._turn === 'b') ||
-        (player2 === wallet?.account.address && game._turn === 'w')
-      return playerWon ? 'You Win!' : 'You Lose!'
+        (player2 === wallet?.account.address && game._turn === 'w');
+      return playerWon ? 'You Win!' : 'You Lose!';
     }
-    return null
-  }
+    return null;
+  };
 
   return (
     <>
@@ -64,8 +64,8 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
         cancelContent="Game Overview"
       />
     </>
-  )
-}
+  );
+};
 
-const GameOverPopUp = React.memo(GameOverPopUpOriginal)
-export default GameOverPopUp
+const GameOverPopUp = React.memo(GameOverPopUpOriginal);
+export default GameOverPopUp;

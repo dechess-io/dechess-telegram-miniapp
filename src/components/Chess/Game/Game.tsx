@@ -1,30 +1,30 @@
-import { useEffect, useState, useReducer, useMemo, useCallback } from 'react'
-import { Chess, Square } from 'chess.js'
-import { useLocation } from 'react-router-dom'
-import { restApi } from '../../../services/api'
-import { socket } from '../../../services/socket'
-import GameOverPopUp from '../Popup/GameOverPopUp'
+import { useEffect, useState, useReducer, useMemo, useCallback } from 'react';
+import { Chess, Square } from 'chess.js';
+import { useLocation } from 'react-router-dom';
+import { restApi } from '../../../services/api';
+import { socket } from '../../../services/socket';
+import GameOverPopUp from '../Popup/GameOverPopUp';
 import {
   convertToFigurineSan,
   getRemainingTime,
   getTimeFromLocalStorage,
   isThreefoldRepetition,
   setLocalStorage,
-} from '../../../utils/utils'
-import LoadingGame from '../../Loading/Loading'
-import Header from '../../Header/Header'
-import { useTonWallet } from '@tonconnect/ui-react'
-import GameNavbar from '../Navbar/GameNavbar'
-import GameBoard from './Board'
+} from '../../../utils/utils';
+import LoadingGame from '../../Loading/Loading';
+import Header from '../../Header/Header';
+import { useTonWallet } from '@tonconnect/ui-react';
+import GameNavbar from '../Navbar/GameNavbar';
+import GameBoard from './Board';
 import {
   gameReducer,
   initialGameState,
   isOrientation,
   toggleGameDraw,
   toggleGameOver,
-} from '../../../redux/game/game_state.reducer'
-import { App, Notification } from 'konsta/react'
-import { isAndroid } from 'react-device-detect'
+} from '../../../redux/game/game_state.reducer';
+import { App, Notification } from 'konsta/react';
+import { isAndroid } from 'react-device-detect';
 
 const Game: React.FC<object> = () => {
   const [
@@ -42,41 +42,41 @@ const Game: React.FC<object> = () => {
       isLoser,
     },
     gameDispatch,
-  ] = useReducer(gameReducer, initialGameState)
-  const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
+  ] = useReducer(gameReducer, initialGameState);
+  const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), []);
 
-  const location = useLocation()
-  const wallet = useTonWallet()
-  const [turn, setTurn] = useState('')
-  const [player1, setPlayer1] = useState('')
-  const [player2, setPlayer2] = useState('')
-  const [moveSquares] = useState({})
-  const [showPopup, setShowPopup] = useState(false)
-  const [isStartGame, setIsStartGame] = useState(false)
-  const [currentPlayer, setCurrentPlayer] = useState('')
-  const [isPopupDismissed, setIsPopupDismissed] = useState(false)
-  const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
-  const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
-  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
-  const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
-  const [startTime, setStartTime] = useState(0)
-  const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60))
-  const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
+  const location = useLocation();
+  const wallet = useTonWallet();
+  const [turn, setTurn] = useState('');
+  const [player1, setPlayer1] = useState('');
+  const [player2, setPlayer2] = useState('');
+  const [moveSquares] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+  const [isStartGame, setIsStartGame] = useState(false);
+  const [currentPlayer, setCurrentPlayer] = useState('');
+  const [isPopupDismissed, setIsPopupDismissed] = useState(false);
+  const [additionTimePerMove, setAdditionTimePerMove] = useState(1);
+  const [rightClickedSquares, setRightClickedSquares] = useState<any>({});
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0);
+  const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false);
+  const [startTime, setStartTime] = useState(0);
+  const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60));
+  const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60));
 
   useEffect(() => {
-    setLocalStorage('timer1', timer1)
-    setLocalStorage('timer2', timer2)
-  }, [timer1, timer2])
+    setLocalStorage('timer1', timer1);
+    setLocalStorage('timer2', timer2);
+  }, [timer1, timer2]);
 
-  const [opponentDisconnect, setOpponentDisconnect] = useState(false)
+  const [opponentDisconnect, setOpponentDisconnect] = useState(false);
 
   const [player1Timer, setPlayer1Timer] = useState(() =>
     getTimeFromLocalStorage('player1Timer', -1)
-  )
+  );
 
   const [player2Timer, setPlayer2Timer] = useState(() =>
     getTimeFromLocalStorage('player2Timer', -1)
-  )
+  );
 
   useEffect(() => {
     restApi
@@ -87,84 +87,84 @@ const Game: React.FC<object> = () => {
       })
       .then(async (res) => {
         if (res.status === 200) {
-          const data = res.data.game
-          console.log(data)
-          setTurn(data.turn_player)
-          setStartTime(data.startTime)
-          gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
-          setPlayer1(data.player_1)
-          setPlayer2(data.player_2)
-          gameDispatch({ type: 'SET_GAME_DRAW', payload: data.isGameDraw })
-          gameDispatch({ type: 'SET_GAME_OVER', payload: data.isGameOver })
-          gameDispatch({ type: 'SET_GAME_HISTORY', payload: [...data.history] })
-          setCurrentMoveIndex(gameHistory.length)
+          const data = res.data.game;
+          console.log(data);
+          setTurn(data.turn_player);
+          setStartTime(data.startTime);
+          gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) });
+          setPlayer1(data.player_1);
+          setPlayer2(data.player_2);
+          gameDispatch({ type: 'SET_GAME_DRAW', payload: data.isGameDraw });
+          gameDispatch({ type: 'SET_GAME_OVER', payload: data.isGameOver });
+          gameDispatch({ type: 'SET_GAME_HISTORY', payload: [...data.history] });
+          setCurrentMoveIndex(gameHistory.length);
           if (data.winner && localStorage.getItem('address') === data.winner) {
-            gameDispatch({ type: 'SET_WINNER', payload: true })
+            gameDispatch({ type: 'SET_WINNER', payload: true });
           }
           if (data.loser && localStorage.getItem('address') === data.loser) {
-            gameDispatch({ type: 'SET_LOSER', payload: true })
+            gameDispatch({ type: 'SET_LOSER', payload: true });
           }
 
-          setTimer1(data.timer1)
-          setTimer2(data.timer2)
+          setTimer1(data.timer1);
+          setTimer2(data.timer2);
           if (data.move_number === 1 && data.turn_player === 'w') {
-            setTimer1(data.timers.player1Timer)
-            setTimer2(data.timers.player2Timer)
-            setPlayer1Timer(data.timers.player1Timer)
-            setPlayer2Timer(data.timers.player2Timer)
-            setAdditionTimePerMove(data.timePerMove)
+            setTimer1(data.timers.player1Timer);
+            setTimer2(data.timers.player2Timer);
+            setPlayer1Timer(data.timers.player1Timer);
+            setPlayer2Timer(data.timers.player2Timer);
+            setAdditionTimePerMove(data.timePerMove);
           }
 
           if (!(data.move_number === 1 && data.turn_player === 'w')) {
-            setIsStartGame(true)
+            setIsStartGame(true);
           }
 
-          setCurrentPlayer(currentPlayerTurn === player1 ? player1 : player2)
+          setCurrentPlayer(currentPlayerTurn === player1 ? player1 : player2);
         }
       })
-      .catch((err) => {})
-  }, [turn])
+      .catch((err) => {});
+  }, [turn]);
 
-  const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
+  const dismissPopup = useCallback(() => setIsPopupDismissed(true), []);
 
   const handleSwitchTurn = useCallback(
     () => setCurrentPlayer((prev) => (prev === player1 ? player2 : player1)),
     [player1, player2]
-  )
+  );
 
   const isPlayerTimeout = useMemo(() => {
     return (
       (currentPlayer === player1 && getRemainingTime(timer1, startTime) === 0) ||
       (currentPlayer === player2 && getRemainingTime(timer2, startTime) === 0)
-    )
-  }, [currentPlayer, player1, player2, timer1, timer2, startTime])
+    );
+  }, [currentPlayer, player1, player2, timer1, timer2, startTime]);
 
   const emitGameOver = () => {
     socket.emit('endGame', {
       game_id: location.pathname.split('/')[2],
       isGameOver: isGameOver,
       isGameDraw: isGameDraw,
-    })
-  }
+    });
+  };
 
   const currentPlayerTurn = useMemo(() => {
-    const orientation = isOrientation(wallet?.account.address, player1)
+    const orientation = isOrientation(wallet?.account.address, player1);
     if (orientation === 'white') {
-      return turn === 'w' ? player1 : player2
+      return turn === 'w' ? player1 : player2;
     }
-    return turn === 'b' ? player2 : player1
-  }, [wallet, player1, player2, turn])
+    return turn === 'b' ? player2 : player1;
+  }, [wallet, player1, player2, turn]);
 
   const getMoveOptions = useCallback(
     (square: Square) => {
-      const moves = game.moves({ square, verbose: true })
+      const moves = game.moves({ square, verbose: true });
 
       if (moves.length === 0) {
-        gameDispatch({ type: 'SET_OPTION_SQUARES', payload: {} })
-        return false
+        gameDispatch({ type: 'SET_OPTION_SQUARES', payload: {} });
+        return false;
       }
 
-      const newSquares: any = {}
+      const newSquares: any = {};
 
       moves.map((move: any) => {
         newSquares[move.to] = {
@@ -173,103 +173,103 @@ const Game: React.FC<object> = () => {
               ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
               : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
           borderRadius: '50%',
-        }
+        };
 
-        return move
-      })
+        return move;
+      });
 
       newSquares[square] = newSquares[square] = {
         background: 'rgba(123, 97, 255, 1)',
-      }
+      };
 
-      gameDispatch({ type: 'SET_OPTION_SQUARES', payload: newSquares })
-      return true
+      gameDispatch({ type: 'SET_OPTION_SQUARES', payload: newSquares });
+      return true;
     },
     [game]
-  )
+  );
 
   const isEligibleToPlay = useCallback(() => {
-    if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false
+    if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false;
 
-    if (currentMoveIndex < gameHistory.length - 1) return false
+    if (currentMoveIndex < gameHistory.length - 1) return false;
 
     const isPlayerTurn =
       (player1 === wallet?.account.address && (game as any)._turn === 'w') ||
-      (player2 === wallet?.account.address && (game as any)._turn === 'b')
-    return isPlayerTurn
-  }, [isGameDraw, isGameOver, game, gameHistory, currentMoveIndex, player1, player2, wallet])
+      (player2 === wallet?.account.address && (game as any)._turn === 'b');
+    return isPlayerTurn;
+  }, [isGameDraw, isGameOver, game, gameHistory, currentMoveIndex, player1, player2, wallet]);
 
   const handleMoveFromSelection = useCallback(
     (square: Square) => {
-      const hasMoveOptions = getMoveOptions(square)
-      if (hasMoveOptions) gameDispatch({ type: 'SET_MOVE_FROM', payload: square })
+      const hasMoveOptions = getMoveOptions(square);
+      if (hasMoveOptions) gameDispatch({ type: 'SET_MOVE_FROM', payload: square });
     },
     [getMoveOptions]
-  )
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
-    setStartTime(Date.now())
-    setIsStartGame(true)
-    const gameCopy = game
+    setStartTime(Date.now());
+    setIsStartGame(true);
+    const gameCopy = game;
     const move = gameCopy.move({
       from: moveFrom ? moveFrom : '',
       to: square,
       promotion: 'q',
-    })
+    });
 
-    foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
+    foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color);
 
     emitNewMove(socket, moveFrom, square, isPromotionMove(foundMove, square), foundMove, square, {
       san: foundMove.san,
       lastMove: Date.now(),
       startTime: Date.now(),
-    })
+    });
 
-    handleSwitchTurn()
+    handleSwitchTurn();
 
     if (!move) {
-      handleMoveFromSelection(square)
-      return
+      handleMoveFromSelection(square);
+      return;
     }
 
-    gameDispatch({ type: 'SET_GAME', payload: gameCopy })
-    gameDispatch({ type: 'RESET_MOVE_SELECTION' })
-  }
+    gameDispatch({ type: 'SET_GAME', payload: gameCopy });
+    gameDispatch({ type: 'RESET_MOVE_SELECTION' });
+  };
 
   const handleMoveToSelection = useCallback(
     (square: Square) => {
       const moves = game.moves({
         square: moveFrom,
         verbose: true,
-      })
+      });
 
-      const foundMove = moves.find((m: any) => m.from === moveFrom && m.to === square) as any
+      const foundMove = moves.find((m: any) => m.from === moveFrom && m.to === square) as any;
 
       if (!foundMove) {
-        const hasMoveOptions = getMoveOptions(square)
-        gameDispatch({ type: 'SET_MOVE_FROM', payload: hasMoveOptions ? square : undefined })
-        return
+        const hasMoveOptions = getMoveOptions(square);
+        gameDispatch({ type: 'SET_MOVE_FROM', payload: hasMoveOptions ? square : undefined });
+        return;
       }
 
-      gameDispatch({ type: 'SET_MOVE_TO', payload: square })
+      gameDispatch({ type: 'SET_MOVE_TO', payload: square });
 
       if (isPromotionMove(foundMove, square)) {
-        gameDispatch({ type: 'SHOW_PROMOTION_DIALOG', payload: true })
-        return
+        gameDispatch({ type: 'SHOW_PROMOTION_DIALOG', payload: true });
+        return;
       }
 
-      makeMove(foundMove, square)
+      makeMove(foundMove, square);
     },
     [game, getMoveOptions, makeMove, moveFrom]
-  )
+  );
 
   const isPromotionMove = (move: any, square: Square) => {
     return (
       (move.color === 'w' && move.piece === 'p' && square[1] === '8') ||
       (move.color === 'b' && move.piece === 'p' && square[1] === '1')
-    )
-  }
+    );
+  };
 
   function emitNewMove(
     socket: any,
@@ -280,9 +280,9 @@ const Game: React.FC<object> = () => {
     square: any,
     additionalProps = {}
   ) {
-    const game_id = location.pathname.split('/')[2]
-    const turn = game.turn()
-    const fen = game.fen()
+    const game_id = location.pathname.split('/')[2];
+    const turn = game.turn();
+    const fen = game.fen();
 
     socket.emit('move', {
       from,
@@ -301,160 +301,160 @@ const Game: React.FC<object> = () => {
       timer1: currentPlayerTurn === player1 ? getRemainingTime(timer1, startTime) : timer1,
       timer2: currentPlayerTurn === player2 ? getRemainingTime(timer2, startTime) : timer2,
       ...additionalProps,
-    })
+    });
   }
 
   const onSquareClick = useCallback(
     (square: Square) => {
-      if (!isEligibleToPlay()) return
-      setRightClickedSquares({})
+      if (!isEligibleToPlay()) return;
+      setRightClickedSquares({});
       if (!moveTo) {
         if (!moveFrom) {
-          handleMoveFromSelection(square)
-          return
+          handleMoveFromSelection(square);
+          return;
         } else {
-          handleMoveToSelection(square)
+          handleMoveToSelection(square);
         }
       }
     },
     [isEligibleToPlay, moveTo, moveFrom, handleMoveFromSelection, handleMoveToSelection]
-  )
+  );
 
   const onPromotionPieceSelect = (piece: any) => {
     if (piece) {
-      const gameCopy: any = game
+      const gameCopy: any = game;
       const newMove = gameCopy.move({
         from: moveFrom,
         to: moveTo,
         promotion: piece[1].toLowerCase() ?? 'q',
-      })
+      });
 
       if (newMove) {
-        gameDispatch({ type: 'SET_GAME', payload: gameCopy })
+        gameDispatch({ type: 'SET_GAME', payload: gameCopy });
         emitNewMove(socket, moveFrom, moveTo, true, null, null, {
           promotion: piece[1].toLowerCase() ?? 'q',
-        })
-        handleSwitchTurn()
+        });
+        handleSwitchTurn();
       }
     }
 
-    gameDispatch({ type: 'RESET_MOVE_SELECTION' })
-    gameDispatch({ type: 'SHOW_PROMOTION_DIALOG', payload: false })
-    return true
-  }
+    gameDispatch({ type: 'RESET_MOVE_SELECTION' });
+    gameDispatch({ type: 'SHOW_PROMOTION_DIALOG', payload: false });
+    return true;
+  };
 
   const onSquareRightClick = useCallback((square: any) => {
-    const colour = 'rgba(123, 97, 255, 1)'
+    const colour = 'rgba(123, 97, 255, 1)';
     setRightClickedSquares({
       ...rightClickedSquares,
       [square]:
         rightClickedSquares[square] && rightClickedSquares[square].backgroundColor === colour
           ? undefined
           : { backgroundColor: colour },
-    })
-  }, [])
+    });
+  }, []);
 
   const handlePreviousMove = useCallback(() => {
     if (currentMoveIndex > 0) {
-      const newGame = new Chess(gameHistory[currentMoveIndex - 1])
-      gameDispatch({ type: 'SET_GAME', payload: newGame })
-      setCurrentMoveIndex((prevIndex) => prevIndex - 1)
-      dismissPopup()
+      const newGame = new Chess(gameHistory[currentMoveIndex - 1]);
+      gameDispatch({ type: 'SET_GAME', payload: newGame });
+      setCurrentMoveIndex((prevIndex) => prevIndex - 1);
+      dismissPopup();
     }
-  }, [currentMoveIndex, gameHistory, gameDispatch, dismissPopup])
+  }, [currentMoveIndex, gameHistory, gameDispatch, dismissPopup]);
 
   const handleNextMove = useCallback(() => {
     if (currentMoveIndex < gameHistory.length - 1) {
-      const newGame = new Chess(gameHistory[currentMoveIndex + 1])
-      gameDispatch({ type: 'SET_GAME', payload: newGame })
-      setCurrentMoveIndex((prevIndex) => prevIndex + 1)
-      dismissPopup()
+      const newGame = new Chess(gameHistory[currentMoveIndex + 1]);
+      gameDispatch({ type: 'SET_GAME', payload: newGame });
+      setCurrentMoveIndex((prevIndex) => prevIndex + 1);
+      dismissPopup();
     }
-  }, [currentMoveIndex, gameHistory, gameDispatch, dismissPopup])
+  }, [currentMoveIndex, gameHistory, gameDispatch, dismissPopup]);
 
   useEffect(() => {
     if (isThreefoldRepetition(gameHistory)) {
-      socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
+      socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] });
     }
-  }, [gameHistory])
+  }, [gameHistory]);
 
   useEffect(() => {
     if (isGameOver || isGameDraw) {
-      setShowPopup(true)
+      setShowPopup(true);
     }
-  }, [isGameOver, isGameDraw])
+  }, [isGameOver, isGameDraw]);
 
   useEffect(() => {
     if (wallet) {
-      setLocalStorage('address', wallet.account?.address)
+      setLocalStorage('address', wallet.account?.address);
     }
-  }, [wallet])
+  }, [wallet]);
 
   useEffect(() => {
-    setLocalStorage('player1Timer', player1Timer)
-  }, [player1Timer])
+    setLocalStorage('player1Timer', player1Timer);
+  }, [player1Timer]);
 
   useEffect(() => {
-    setLocalStorage('player2Timer', player2Timer)
-  }, [player2Timer])
+    setLocalStorage('player2Timer', player2Timer);
+  }, [player2Timer]);
 
   useEffect(() => {
-    let intervalId: any
+    let intervalId: any;
     const updateTime = () => {
-      setLocalStorage('lastUpdateTime', Date.now())
-    }
+      setLocalStorage('lastUpdateTime', Date.now());
+    };
 
     if (GameOver()) {
-      if (game?.isGameOver?.()) return
+      if (game?.isGameOver?.()) return;
       if (currentPlayer === player1 && getRemainingTime(timer1, startTime) > 0) {
         intervalId = setInterval(() => {
-          setPlayer1Timer(getRemainingTime(timer1, startTime))
-          updateTime()
-        }, 1000)
+          setPlayer1Timer(getRemainingTime(timer1, startTime));
+          updateTime();
+        }, 1000);
       } else if (currentPlayer === player2 && getRemainingTime(timer2, startTime) > 0) {
         intervalId = setInterval(() => {
-          setPlayer2Timer(getRemainingTime(timer2, startTime))
-          updateTime()
-        }, 1000)
+          setPlayer2Timer(getRemainingTime(timer2, startTime));
+          updateTime();
+        }, 1000);
       } else if (isPlayerTimeout && !isGameOver) {
-        gameDispatch({ type: 'SET_GAME_OVER', payload: true })
-        emitGameOver()
+        gameDispatch({ type: 'SET_GAME_OVER', payload: true });
+        emitGameOver();
       }
     }
 
-    return () => clearInterval(intervalId)
-  }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver])
+    return () => clearInterval(intervalId);
+  }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver]);
 
   const GameOver = () => {
-    return !isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser
-  }
+    return !isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser;
+  };
 
   useEffect(() => {
-    const onConnect = () => {}
+    const onConnect = () => {};
 
     const onNewMove = (room: any) => {
-      gameDispatch({ type: 'ADD_MOVES', payload: `${room.san}` })
+      gameDispatch({ type: 'ADD_MOVES', payload: `${room.san}` });
       if (room.fen) {
-        setTurn(room.turn)
-        handleSwitchTurn()
-        gameDispatch({ type: 'SET_GAME', payload: new Chess(room.fen) })
-        gameDispatch({ type: 'SET_GAME_HISTORY', payload: room.history })
-        setPlayer1Timer(room.timers.player1Timer)
-        setPlayer2Timer(room.timers.player2Timer)
-        setCurrentMoveIndex(gameHistory.length)
-        setStartTime(room.startTime)
-        setTimer1(room.timer1)
-        setTimer2(room.timer2)
+        setTurn(room.turn);
+        handleSwitchTurn();
+        gameDispatch({ type: 'SET_GAME', payload: new Chess(room.fen) });
+        gameDispatch({ type: 'SET_GAME_HISTORY', payload: room.history });
+        setPlayer1Timer(room.timers.player1Timer);
+        setPlayer2Timer(room.timers.player2Timer);
+        setCurrentMoveIndex(gameHistory.length);
+        setStartTime(room.startTime);
+        setTimer1(room.timer1);
+        setTimer2(room.timer2);
       }
-    }
+    };
 
     const onStart = (data: any) => {
       if (data.start === true) {
-        setIsStartGame(true)
+        setIsStartGame(true);
       }
-    }
+    };
 
-    let notificationTimeoutId: any
+    let notificationTimeoutId: any;
 
     const onOpponentDisconnect = () => {
       // const opponentTimer = wallet?.account.address === player1 ? player2Timer : player1Timer
@@ -475,27 +475,27 @@ const Game: React.FC<object> = () => {
       // notificationTimeoutId = setTimeout(() => {
       //   setNotificationCloseOnClick(false)
       // }, 3000)
-    }
+    };
 
-    socket.connect()
-    socket.on('connection', onConnect)
-    socket.on('newmove', onNewMove)
-    socket.on('start', onStart)
-    socket.on('opponentDisconnect', onOpponentDisconnect)
+    socket.connect();
+    socket.on('connection', onConnect);
+    socket.on('newmove', onNewMove);
+    socket.on('start', onStart);
+    socket.on('opponentDisconnect', onOpponentDisconnect);
 
-    socket.emit('joinGame', { game_id: location.pathname.split('/')[2] })
+    socket.emit('joinGame', { game_id: location.pathname.split('/')[2] });
 
     return () => {
-      socket.off('connection', onConnect)
-      socket.off('newmove', onNewMove)
-      socket.off('start', onStart)
-      socket.off('opponentDisconnect', onOpponentDisconnect)
+      socket.off('connection', onConnect);
+      socket.off('newmove', onNewMove);
+      socket.off('start', onStart);
+      socket.off('opponentDisconnect', onOpponentDisconnect);
       // Clear the timeout when the component unmounts
-      clearTimeout(notificationTimeoutId)
-    }
-  }, [])
+      clearTimeout(notificationTimeoutId);
+    };
+  }, []);
 
-  if (!game) return <LoadingGame />
+  if (!game) return <LoadingGame />;
 
   return (
     <App theme={theme}>
@@ -550,7 +550,7 @@ const Game: React.FC<object> = () => {
         wallet={wallet}
       />
     </App>
-  )
-}
+  );
+};
 
-export default Game
+export default Game;

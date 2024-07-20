@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 interface GameModeButtonProps {
-  title: string
-  imageSrc: string
-  rating: number
+  title: string;
+  imageSrc: string;
+  rating: number;
 }
 
 const GameModeButton: React.FC<GameModeButtonProps> = ({ title, imageSrc, rating }) => (
@@ -14,6 +14,6 @@ const GameModeButton: React.FC<GameModeButtonProps> = ({ title, imageSrc, rating
       <span className="text-white font-ibm text-sm md:text-base lg:text-lg">{rating}</span>
     </div>
   </div>
-)
+);
 
-export default GameModeButton
+export default GameModeButton;

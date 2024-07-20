@@ -1,6 +1,6 @@
-import { Dialog, DialogButton } from 'konsta/react'
-import CloseIcn from '../../assets/icons/close.svg'
-import cn from '../../services/cn'
+import { Dialog, DialogButton } from 'konsta/react';
+import CloseIcn from '../../assets/icons/close.svg';
+import cn from '../../services/cn';
 
 const ReactDialog = ({
   title,
@@ -14,16 +14,16 @@ const ReactDialog = ({
   cancelContent,
   buttons,
 }: {
-  title: string
-  className?: string
-  open: boolean
-  content: string | number | React.ReactNode
-  onHide: (e: unknown) => void
-  onOk: () => void
-  onCancel: () => void
-  okContent?: string
-  cancelContent?: string
-  buttons?: React.ReactNode
+  title: string;
+  className?: string;
+  open: boolean;
+  content: string | number | React.ReactNode;
+  onHide: (e: unknown) => void;
+  onOk: () => void;
+  onCancel: () => void;
+  okContent?: string;
+  cancelContent?: string;
+  buttons?: React.ReactNode;
 }) => {
   return (
     <Dialog
@@ -65,7 +65,7 @@ const ReactDialog = ({
         )
       }
     />
-  )
-}
+  );
+};
 
-export default ReactDialog
+export default ReactDialog;

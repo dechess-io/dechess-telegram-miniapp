@@ -1,22 +1,22 @@
-import React, { forwardRef } from 'react'
-import cn from '../../services/cn'
+import React, { forwardRef } from 'react';
+import cn from '../../services/cn';
 
 export interface FormInputProps {
-  name: string
-  placeholder: string
-  type?: string
-  hasError?: boolean
-  hasWarning?: boolean
-  hasHelp?: boolean
-  autoComplete?: string
-  defaultValue?: string
-  className?: string
-  required?: boolean
-  isError?: boolean
-  readOnly?: boolean
-  value?: string
-  step?: number
-  ourOnChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  name: string;
+  placeholder: string;
+  type?: string;
+  hasError?: boolean;
+  hasWarning?: boolean;
+  hasHelp?: boolean;
+  autoComplete?: string;
+  defaultValue?: string;
+  className?: string;
+  required?: boolean;
+  isError?: boolean;
+  readOnly?: boolean;
+  value?: string;
+  step?: number;
+  ourOnChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: React.ForwardRefExoticComponent<
@@ -72,14 +72,14 @@ const Input: React.ForwardRefExoticComponent<
         ref={ref}
         step={step}
         onChange={(e) => {
-          if (onChange) onChange(e)
-          if (ourOnChange) ourOnChange(e)
+          if (onChange) onChange(e);
+          if (ourOnChange) ourOnChange(e);
         }}
         {...props}
         lang="en"
       />
-    )
+    );
   }
-)
+);
 
-export default Input
+export default Input;

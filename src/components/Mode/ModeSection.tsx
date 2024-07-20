@@ -1,12 +1,12 @@
-import { Button } from 'konsta/react'
+import { Button } from 'konsta/react';
 
 type ModeSectionProps = {
-  imgSrc: string
-  title: string
-  buttons: any
-  activeButton: string | null
-  handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
-}
+  imgSrc: string;
+  title: string;
+  buttons: any;
+  activeButton: string | null;
+  handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void;
+};
 
 const renderButton = (
   buttonId: string,
@@ -31,8 +31,8 @@ const renderButton = (
         </span>
       </Button>
     </div>
-  )
-}
+  );
+};
 
 const ModeSection: React.FC<ModeSectionProps> = ({
   imgSrc,
@@ -60,7 +60,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ModeSection
+export default ModeSection;

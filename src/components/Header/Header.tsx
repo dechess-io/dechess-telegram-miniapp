@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { ConnectionSettings } from '../Connect/ConnectionSettings'
-import { Navbar } from 'konsta/react'
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ConnectionSettings } from '../Connect/ConnectionSettings';
+import { Navbar } from 'konsta/react';
 
 const Header: React.FC<{}> = () => {
-  const navigate = useNavigate()
-  const data = useLocation()
+  const navigate = useNavigate();
+  const data = useLocation();
 
   return (
     <>
@@ -41,7 +41,7 @@ const Header: React.FC<{}> = () => {
             <div
               className="flex-1 flex justify-end"
               onClick={() => {
-                navigate('/')
+                navigate('/');
               }}
             >
               <img
@@ -54,7 +54,7 @@ const Header: React.FC<{}> = () => {
         }
       ></Navbar>
     </>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

@@ -1,1 +1,1 @@
-export const engine = new Worker('/stockfish.js')
+export const engine = new Worker('/stockfish.js');

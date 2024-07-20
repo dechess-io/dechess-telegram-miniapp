@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react'
-import GameSidebar from './BotGameSidebar'
-import GameChat, { Message } from '../Navbar/GameChat'
-import { useTonWallet } from '@tonconnect/ui-react'
-import { Chess } from 'chess.js'
-import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react'
+import { useState, useEffect } from 'react';
+import GameSidebar from './BotGameSidebar';
+import GameChat, { Message } from '../Navbar/GameChat';
+import { useTonWallet } from '@tonconnect/ui-react';
+import { Chess } from 'chess.js';
+import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react';
 
 interface GameNavbarProps {
-  handlePreviousMove: any
-  handleNextMove: any
-  socket: any
-  game: Chess | any
-  toggleGameDraw: any
-  toggleGameOver: any
-  user: string
-  opponent: string
-  isMoved: boolean
-  isWhite: boolean
-  toggleIsLoser: any
+  handlePreviousMove: any;
+  handleNextMove: any;
+  socket: any;
+  game: Chess | any;
+  toggleGameDraw: any;
+  toggleGameOver: any;
+  user: string;
+  opponent: string;
+  isMoved: boolean;
+  isWhite: boolean;
+  toggleIsLoser: any;
 }
 
 const GameNavbar: React.FC<GameNavbarProps> = ({
@@ -32,25 +32,25 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   isWhite,
   toggleIsLoser,
 }) => {
-  const wallet = useTonWallet()
+  const wallet = useTonWallet();
 
-  const [messages, setMessages] = useState<Message[]>([])
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false)
-  const [isChatVisible, setIsChatVisible] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isChatVisible, setIsChatVisible] = useState(false);
 
   useEffect(() => {
     const onMessage = (data: Message) => {
-      setMessages((prev) => [...prev, data])
-    }
+      setMessages((prev) => [...prev, data]);
+    };
 
-    socket.on('message', onMessage)
+    socket.on('message', onMessage);
     return () => {
-      socket.off('message', onMessage)
-    }
-  }, [])
+      socket.off('message', onMessage);
+    };
+  }, []);
 
-  const toggleChat = () => setIsChatVisible((prev) => !prev)
-  const toggleSidebar = () => setIsSidebarVisible((prev) => !prev)
+  const toggleChat = () => setIsChatVisible((prev) => !prev);
+  const toggleSidebar = () => setIsSidebarVisible((prev) => !prev);
 
   return (
     <>
@@ -121,7 +121,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default GameNavbar
+export default GameNavbar;

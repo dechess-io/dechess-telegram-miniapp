@@ -1,4 +1,4 @@
-const konstaConfig = require('konsta/config')
+const konstaConfig = require('konsta/config');
 
 module.exports = konstaConfig({
   mode: 'jit',
@@ -147,4 +147,4 @@ module.exports = konstaConfig({
     },
   },
   plugins: [],
-})
+});

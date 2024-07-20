@@ -1,21 +1,21 @@
-import { Account, ConnectAdditionalRequest, TonProofItemReplySuccess } from '@tonconnect/ui-react'
-import { setAuthToken } from '../utils/utils'
+import { Account, ConnectAdditionalRequest, TonProofItemReplySuccess } from '@tonconnect/ui-react';
+import { setAuthToken } from '../utils/utils';
 
 // import './patch-local-storage-for-github-pages'
 
 class TonProofDemoApiService {
-  private localStorageKey = 'token'
+  private localStorageKey = 'token';
 
-  private host = 'https://api.dechess.io'
-  public accessToken: string | null = null
+  private host = 'https://api.dechess.io';
+  public accessToken: string | null = null;
 
-  public readonly refreshIntervalMs = 9 * 60 * 1000
+  public readonly refreshIntervalMs = 9 * 60 * 1000;
 
   constructor() {
-    this.accessToken = localStorage.getItem(this.localStorageKey)
+    this.accessToken = localStorage.getItem(this.localStorageKey);
 
     if (!this.accessToken) {
-      this.generatePayload()
+      this.generatePayload();
     }
   }
 
@@ -25,15 +25,15 @@ class TonProofDemoApiService {
         await fetch(`${this.host}/generate_payload`, {
           method: 'POST',
         })
-      ).json()
-      return { tonProof: response.data as string }
+      ).json();
+      return { tonProof: response.data as string };
     } catch (error) {
-      return null
+      return null;
     }
   }
 
   async checkProof(proof: TonProofItemReplySuccess['proof'], account: Account): Promise<void> {
-    console.log('7s200:checkproof')
+    console.log('7s200:checkproof');
     try {
       const reqBody = {
         address: account.address,
@@ -43,26 +43,26 @@ class TonProofDemoApiService {
           ...proof,
           state_init: account.walletStateInit,
         },
-      }
-      console.log('7s200:req.body', reqBody)
+      };
+      console.log('7s200:req.body', reqBody);
 
       const response = await (
         await fetch(`${this.host}/check_proof`, {
           method: 'POST',
           body: JSON.stringify(reqBody),
         })
-      ).json()
-      console.log('7s200:checkproof', response)
+      ).json();
+      console.log('7s200:checkproof', response);
       if (response?.data) {
         // console.log(1)
-        localStorage.setItem(this.localStorageKey, response.data)
-        setAuthToken(response.data)
+        localStorage.setItem(this.localStorageKey, response.data);
+        setAuthToken(response.data);
         // console.log(2, localStorage.getItem(this.localStorageKey))
-        this.accessToken = response.data
+        this.accessToken = response.data;
         // console.log(3, this.accessToken)
       }
     } catch (e) {
-      console.log('checkProof error:', e)
+      console.log('checkProof error:', e);
     }
   }
 
@@ -74,9 +74,9 @@ class TonProofDemoApiService {
           'Content-Type': 'application/json',
         },
       })
-    ).json()
+    ).json();
 
-    return response as {}
+    return response as {};
   }
 
   // reset() {
@@ -86,4 +86,4 @@ class TonProofDemoApiService {
   // }
 }
 
-export const TonProofDemoApi = new TonProofDemoApiService()
+export const TonProofDemoApi = new TonProofDemoApiService();

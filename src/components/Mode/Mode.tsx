@@ -1,13 +1,13 @@
-import Header from '../Header/Header'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { socket } from '../../services/socket'
-import { formatTime, hasJWT } from '../../utils/utils'
-import GameSpinner from '../Loading/Spinner'
-import ModeSection from './ModeSection'
-import { App, Block, Button, Page } from 'konsta/react'
-import Footer from '../Footer/Footer'
-import { isAndroid } from 'react-device-detect'
+import Header from '../Header/Header';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { socket } from '../../services/socket';
+import { formatTime, hasJWT } from '../../utils/utils';
+import GameSpinner from '../Loading/Spinner';
+import ModeSection from './ModeSection';
+import { App, Block, Button, Page } from 'konsta/react';
+import Footer from '../Footer/Footer';
+import { isAndroid } from 'react-device-detect';
 
 const buttonsData = {
   bullet: [
@@ -30,112 +30,112 @@ const buttonsData = {
     { id: 'daily-2', label: '15|10', time: 15, increment: 10 },
     { id: 'daily-3', label: '30 min', time: 30, increment: 0 },
   ],
-}
+};
 
 type ModeProps = {
-  isBotMode: boolean
-}
+  isBotMode: boolean;
+};
 
 const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [totalSeconds, setTotalSeconds] = useState(0)
-  const [activeButton, setActiveButton] = useState(null)
-  const [timeStep, setTimestep] = useState(0)
-  const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [activeButton, setActiveButton] = useState(null);
+  const [timeStep, setTimestep] = useState(0);
+  const [additionTimePerMove, setAdditionTimePerMove] = useState(0);
 
-  let timerInterval: any
+  let timerInterval: any;
 
   useEffect(() => {
     function onConnect() {}
     function onDisconnect() {}
 
-    socket.on('connection', onConnect)
-    socket.on('disconnect', onDisconnect)
+    socket.on('connection', onConnect);
+    socket.on('disconnect', onDisconnect);
 
     return () => {
-      socket.off('connection', onConnect)
-      socket.off('disconnect', onDisconnect)
-    }
-  }, [])
+      socket.off('connection', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, []);
 
   useEffect(() => {
     if (loading) {
-      startTimer()
+      startTimer();
     } else {
-      clearInterval(timerInterval)
+      clearInterval(timerInterval);
     }
 
-    return () => clearInterval(timerInterval)
-  }, [loading])
+    return () => clearInterval(timerInterval);
+  }, [loading]);
 
   const startTimer = () => {
     timerInterval = setInterval(() => {
-      setTotalSeconds((prevSeconds) => prevSeconds + 1)
-    }, 1000)
-  }
+      setTotalSeconds((prevSeconds) => prevSeconds + 1);
+    }, 1000);
+  };
 
   useEffect(() => {
     if (totalSeconds > 30 && !isBotMode) {
-      removeLocalStorage()
-      navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
+      removeLocalStorage();
+      navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`);
     }
-  }, [totalSeconds])
+  }, [totalSeconds]);
 
   const handleCancel = () => {
     socket.emit('cancelCreateGame', (response: any) => {
       if (response.status === 200) {
-        setLoading(false)
-        setTotalSeconds(0)
+        setLoading(false);
+        setTotalSeconds(0);
       }
-    })
-  }
+    });
+  };
 
   const removeLocalStorage = () => {
-    localStorage.removeItem('lastUpdateTime')
-    localStorage.removeItem('player1Timer')
-    localStorage.removeItem('player2Timer')
-    localStorage.removeItem('timer1')
-    localStorage.removeItem('timer2')
-    localStorage.removeItem('startTime')
-  }
+    localStorage.removeItem('lastUpdateTime');
+    localStorage.removeItem('player1Timer');
+    localStorage.removeItem('player2Timer');
+    localStorage.removeItem('timer1');
+    localStorage.removeItem('timer2');
+    localStorage.removeItem('startTime');
+  };
 
   const onCreateGame = async () => {
-    setLoading(true)
+    setLoading(true);
     if (isBotMode) {
-      removeLocalStorage()
-      navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
+      removeLocalStorage();
+      navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`);
     } else {
       socket.emit('createGame', { timeStep, additionTimePerMove }, (response: any) => {
         if (response.status === 200) {
-          setLoading(false)
-          removeLocalStorage()
-          navigate(`/game/${response.board.game_id}`)
+          setLoading(false);
+          removeLocalStorage();
+          navigate(`/game/${response.board.game_id}`);
         } else if (response.status === 202) {
-          console.log('Waiting for an opponent...')
+          console.log('Waiting for an opponent...');
         } else {
-          setLoading(false)
-          console.error('Failed to create game')
+          setLoading(false);
+          console.error('Failed to create game');
         }
-      })
+      });
 
       socket.on('createGame', async function (data) {
         if (data.status === 200) {
-          setLoading(false)
-          removeLocalStorage()
-          navigate(`/game/${data.board.game_id}`)
+          setLoading(false);
+          removeLocalStorage();
+          navigate(`/game/${data.board.game_id}`);
         }
-      })
+      });
     }
-  }
+  };
 
   const handleButtonClick = (buttonId: any, timeStep: number, additionTime: number) => {
-    setActiveButton(buttonId)
-    setTimestep(timeStep)
-    setAdditionTimePerMove(additionTime)
-  }
+    setActiveButton(buttonId);
+    setTimestep(timeStep);
+    setAdditionTimePerMove(additionTime);
+  };
 
-  const theme = isAndroid ? 'material' : 'ios'
+  const theme = isAndroid ? 'material' : 'ios';
 
   return (
     <>
@@ -204,7 +204,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
         </Page>
       </App>
     </>
-  )
-}
+  );
+};
 
-export default Mode
+export default Mode;

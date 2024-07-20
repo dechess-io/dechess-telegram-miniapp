@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 export function TransferDialog() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -26,26 +26,26 @@ export function TransferDialog() {
         </article>
       </dialog>
     </>
-  )
+  );
 }
 
 interface TransferDialogFormProps {
-  onCloseDialog: () => void
+  onCloseDialog: () => void;
 }
 function TransferDialogForm({ onCloseDialog }: TransferDialogFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      onCloseDialog()
+      onCloseDialog();
     } catch (e) {
-      console.error(e)
+      console.error(e);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -84,5 +84,5 @@ function TransferDialogForm({ onCloseDialog }: TransferDialogFormProps) {
         </button>
       </div>
     </>
-  )
+  );
 }

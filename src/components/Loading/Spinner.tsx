@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const GameSpinner: React.FC<object> = () => {
   return (
@@ -57,7 +57,7 @@ const GameSpinner: React.FC<object> = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default GameSpinner
+export default GameSpinner;

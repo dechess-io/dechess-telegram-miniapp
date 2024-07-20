@@ -1,18 +1,18 @@
-import { createAsyncThunk, createReducer } from '@reduxjs/toolkit'
-import { RootState } from '../store'
+import { createAsyncThunk, createReducer } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 export const getTournaments = createAsyncThunk(
   'tournament/get',
   async ({}: {}, { getState, dispatch }) => {
     try {
-      getState
-      return ''
+      getState;
+      return '';
     } catch (error) {
-      console.log('7s200:err', error)
-      return null
+      console.log('7s200:err', error);
+      return null;
     }
   }
-)
+);
 export const createTournament = createAsyncThunk(
   'tournament/create',
   async (
@@ -25,14 +25,14 @@ export const createTournament = createAsyncThunk(
     {}
   ) => {
     try {
-      activeAccount
-      return ''
+      activeAccount;
+      return '';
     } catch (error) {
-      console.log('7s200:createTournament:err', error)
-      return
+      console.log('7s200:createTournament:err', error);
+      return;
     }
   }
-)
+);
 export const updateTournamentStatus = createAsyncThunk(
   'tournament/update',
   async (
@@ -43,23 +43,23 @@ export const updateTournamentStatus = createAsyncThunk(
       isStart,
       isEnd,
     }: {
-      activeSigner: any
-      activeAccount: any
-      tournamentIndex: number
-      isStart: boolean
-      isEnd: boolean
+      activeSigner: any;
+      activeAccount: any;
+      tournamentIndex: number;
+      isStart: boolean;
+      isEnd: boolean;
     },
     {}
   ) => {
     try {
-      activeAccount
-      return ''
+      activeAccount;
+      return '';
     } catch (error) {
-      console.log('7s200:updateTournamentStatus:err', error)
-      return
+      console.log('7s200:updateTournamentStatus:err', error);
+      return;
     }
   }
-)
+);
 export const registerTournament = createAsyncThunk(
   'tournament/register',
   async (
@@ -69,23 +69,23 @@ export const registerTournament = createAsyncThunk(
       tournamentIndex,
       cb,
     }: {
-      activeSigner: any
-      activeAccount: any
-      tournamentIndex: number
-      cb: (status: boolean) => void
+      activeSigner: any;
+      activeAccount: any;
+      tournamentIndex: number;
+      cb: (status: boolean) => void;
     },
     {}
   ) => {
     try {
-      return ''
+      return '';
     } catch (error) {
-      console.log('7s200:registerTournament:err', error)
-      cb(false)
+      console.log('7s200:registerTournament:err', error);
+      cb(false);
 
-      return
+      return;
     }
   }
-)
+);
 export const claimReward = createAsyncThunk(
   'tournament/claim',
   async (
@@ -97,37 +97,37 @@ export const claimReward = createAsyncThunk(
     {}
   ) => {
     try {
-      activeAccount
+      activeAccount;
 
-      return ''
+      return '';
     } catch (error) {
-      console.log('7s200:claimReward:err', error)
-      return
+      console.log('7s200:claimReward:err', error);
+      return;
     }
   }
-)
+);
 
 export type TournamentReducer = {
-  loading: boolean
-  tournament: any
-}
+  loading: boolean;
+  tournament: any;
+};
 
 export const defaultTournamentReducer: TournamentReducer = {
   loading: false,
   tournament: null,
-}
+};
 
 const tournamentReducer = createReducer(defaultTournamentReducer, (builder) => {
   builder
     .addCase(getTournaments.pending, (state) => {
-      state.loading = true
+      state.loading = true;
     })
     .addCase(getTournaments.fulfilled, (state, action) => {
-      state.tournament = action.payload
-      state.loading = false
-    })
-})
+      state.tournament = action.payload;
+      state.loading = false;
+    });
+});
 
-export const selectTournament = (state: RootState) => state.tournament
+export const selectTournament = (state: RootState) => state.tournament;
 
-export default tournamentReducer
+export default tournamentReducer;

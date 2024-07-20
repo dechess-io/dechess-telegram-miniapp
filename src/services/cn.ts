@@ -1,7 +1,7 @@
-import classnames from '@sindresorhus/class-names'
+import classnames from '@sindresorhus/class-names';
 
-const cn = classnames
+const cn = classnames;
 
-export type ClassNames = string | [] | {}
+export type ClassNames = string | [] | {};
 
-export default cn
+export default cn;

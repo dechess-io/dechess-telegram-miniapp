@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import GameSidebar from './GameSideBar'
-import GameChat, { Message } from './GameChat'
-import { useTonWallet } from '@tonconnect/ui-react'
-import { Chess } from 'chess.js'
-import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react'
+import React, { useState, useEffect, useMemo } from 'react';
+import GameSidebar from './GameSideBar';
+import GameChat, { Message } from './GameChat';
+import { useTonWallet } from '@tonconnect/ui-react';
+import { Chess } from 'chess.js';
+import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react';
 
 interface GameNavbarProps {
-  handlePreviousMove: any
-  handleNextMove: any
-  socket: any
-  game: Chess | any
-  toggleGameDraw: any
-  toggleGameOver: any
-  user: string
-  opponent: string
-  isMoved: boolean
-  isWhite: boolean
+  handlePreviousMove: any;
+  handleNextMove: any;
+  socket: any;
+  game: Chess | any;
+  toggleGameDraw: any;
+  toggleGameOver: any;
+  user: string;
+  opponent: string;
+  isMoved: boolean;
+  isWhite: boolean;
 }
 
 const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
@@ -30,11 +30,11 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
   isMoved,
   isWhite,
 }) => {
-  const wallet = useTonWallet()
+  const wallet = useTonWallet();
 
-  const [messages, setMessages] = useState<Message[]>([])
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false)
-  const [isChatVisible, setIsChatVisible] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isChatVisible, setIsChatVisible] = useState(false);
 
   const badge = useMemo(
     () =>
@@ -43,24 +43,24 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
           undefined
         : undefined,
     [messages, wallet?.account?.address]
-  )
+  );
 
   useEffect(() => {
     const onMessage = (data: Message) => {
       setMessages((prev) => [
         ...prev,
         isChatVisible ? { ...data, viewedAt: new Date().toISOString() } : data,
-      ])
-    }
+      ]);
+    };
 
-    socket.on('message', onMessage)
+    socket.on('message', onMessage);
     return () => {
-      socket.off('message', onMessage)
-    }
-  }, [isChatVisible])
+      socket.off('message', onMessage);
+    };
+  }, [isChatVisible]);
 
-  const toggleChat = () => setIsChatVisible((prev) => !prev)
-  const toggleSidebar = () => setIsSidebarVisible((prev) => !prev)
+  const toggleChat = () => setIsChatVisible((prev) => !prev);
+  const toggleSidebar = () => setIsSidebarVisible((prev) => !prev);
 
   return (
     <>
@@ -132,8 +132,8 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
         />
       )}
     </>
-  )
-}
+  );
+};
 
-const GameNavbar = React.memo(GameNavbarOriginal)
-export default GameNavbar
+const GameNavbar = React.memo(GameNavbarOriginal);
+export default GameNavbar;
