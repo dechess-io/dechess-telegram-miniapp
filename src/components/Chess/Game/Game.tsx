@@ -6,8 +6,10 @@ import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import {
   convertToFigurineSan,
+  getRemainingTime,
   getTimeFromLocalStorage,
   isThreefoldRepetition,
+  setLocalStorage,
 } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
@@ -62,8 +64,8 @@ const Game: React.FC<object> = () => {
   const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
 
   useEffect(() => {
-    localStorage.setItem('timer1', timer1?.toString())
-    localStorage.setItem('timer2', timer2?.toString())
+    setLocalStorage('timer1', timer1)
+    setLocalStorage('timer2', timer2)
   }, [timer1, timer2])
 
   const [opponentDisconnect, setOpponentDisconnect] = useState(false)
@@ -76,6 +78,53 @@ const Game: React.FC<object> = () => {
     getTimeFromLocalStorage('player2Timer', -1)
   )
 
+  useEffect(() => {
+    restApi
+      .get('/load-game-v2', {
+        params: {
+          game_id: location.pathname.split('/')[2],
+        },
+      })
+      .then(async (res) => {
+        if (res.status === 200) {
+          const data = res.data.game
+          console.log(data)
+          setTurn(data.turn_player)
+          setStartTime(data.startTime)
+          gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
+          setPlayer1(data.player_1)
+          setPlayer2(data.player_2)
+          gameDispatch({ type: 'SET_GAME_DRAW', payload: data.isGameDraw })
+          gameDispatch({ type: 'SET_GAME_OVER', payload: data.isGameOver })
+          gameDispatch({ type: 'SET_GAME_HISTORY', payload: [...data.history] })
+          setCurrentMoveIndex(gameHistory.length)
+          if (data.winner && localStorage.getItem('address') === data.winner) {
+            gameDispatch({ type: 'SET_WINNER', payload: true })
+          }
+          if (data.loser && localStorage.getItem('address') === data.loser) {
+            gameDispatch({ type: 'SET_LOSER', payload: true })
+          }
+
+          setTimer1(data.timer1)
+          setTimer2(data.timer2)
+          if (data.move_number === 1 && data.turn_player === 'w') {
+            setTimer1(data.timers.player1Timer)
+            setTimer2(data.timers.player2Timer)
+            setPlayer1Timer(data.timers.player1Timer)
+            setPlayer2Timer(data.timers.player2Timer)
+            setAdditionTimePerMove(data.timePerMove)
+          }
+
+          if (!(data.move_number === 1 && data.turn_player === 'w')) {
+            setIsStartGame(true)
+          }
+
+          setCurrentPlayer(currentPlayerTurn === player1 ? player1 : player2)
+        }
+      })
+      .catch((err) => {})
+  }, [turn])
+
   const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
 
   const handleSwitchTurn = useCallback(
@@ -85,10 +134,8 @@ const Game: React.FC<object> = () => {
 
   const isPlayerTimeout = useMemo(() => {
     return (
-      (currentPlayer === player1 &&
-        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) === 0) ||
-      (currentPlayer === player2 &&
-        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) === 0)
+      (currentPlayer === player1 && getRemainingTime(timer1, startTime) === 0) ||
+      (currentPlayer === player2 && getRemainingTime(timer2, startTime) === 0)
     )
   }, [currentPlayer, player1, player2, timer1, timer2, startTime])
 
@@ -173,7 +220,11 @@ const Game: React.FC<object> = () => {
 
     foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
 
-    emitMove(foundMove, square, gameCopy)
+    emitNewMove(socket, moveFrom, square, isPromotionMove(foundMove, square), foundMove, square, {
+      san: foundMove.san,
+      lastMove: Date.now(),
+      startTime: Date.now(),
+    })
 
     handleSwitchTurn()
 
@@ -220,24 +271,36 @@ const Game: React.FC<object> = () => {
     )
   }
 
-  const emitMove = (foundMove: any, square: Square, gameCopy: any) => {
+  function emitNewMove(
+    socket: any,
+    from: any,
+    to: any,
+    isPromotionMove: any,
+    foundMove: any,
+    square: any,
+    additionalProps = {}
+  ) {
+    const game_id = location.pathname.split('/')[2]
+    const turn = game.turn()
+    const fen = game.fen()
+
     socket.emit('move', {
-      from: moveFrom,
-      to: square,
-      game_id: location.pathname.split('/')[2],
-      turn: game.turn(),
+      from,
+      to,
+      game_id,
+      turn,
       address: '',
-      fen: game.fen(),
-      isPromotion: isPromotionMove(foundMove, square),
+      fen,
+      isPromotion: isPromotionMove,
       timers: {
         player1Timer:
           currentPlayerTurn === player1 ? player1Timer + additionTimePerMove : player1Timer,
         player2Timer:
           currentPlayerTurn === player2 ? player2Timer + additionTimePerMove : player2Timer,
       },
-      san: foundMove.san,
-      lastMove: Date.now(),
-      startTime: Date.now(),
+      timer1: currentPlayerTurn === player1 ? getRemainingTime(timer1, startTime) : timer1,
+      timer2: currentPlayerTurn === player2 ? getRemainingTime(timer2, startTime) : timer2,
+      ...additionalProps,
     })
   }
 
@@ -268,21 +331,8 @@ const Game: React.FC<object> = () => {
 
       if (newMove) {
         gameDispatch({ type: 'SET_GAME', payload: gameCopy })
-        socket.emit('move', {
-          from: moveFrom,
-          to: moveTo,
-          game_id: location.pathname.split('/')[2],
-          turn: game.turn(),
-          address: '',
-          fen: game.fen(),
-          isPromotion: true,
+        emitNewMove(socket, moveFrom, moveTo, true, null, null, {
           promotion: piece[1].toLowerCase() ?? 'q',
-          timers: {
-            player1Timer:
-              currentPlayerTurn === player1 ? player1Timer + additionTimePerMove : player1Timer,
-            player2Timer:
-              currentPlayerTurn === player2 ? player2Timer + additionTimePerMove : player2Timer,
-          },
         })
         handleSwitchTurn()
       }
@@ -336,40 +386,34 @@ const Game: React.FC<object> = () => {
 
   useEffect(() => {
     if (wallet) {
-      localStorage.setItem('address', wallet.account?.address)
+      setLocalStorage('address', wallet.account?.address)
     }
   }, [wallet])
 
   useEffect(() => {
-    localStorage.setItem('player1Timer', player1Timer.toString())
+    setLocalStorage('player1Timer', player1Timer)
   }, [player1Timer])
 
   useEffect(() => {
-    localStorage.setItem('player2Timer', player2Timer.toString())
+    setLocalStorage('player2Timer', player2Timer)
   }, [player2Timer])
 
   useEffect(() => {
     let intervalId: any
     const updateTime = () => {
-      localStorage.setItem('lastUpdateTime', Date.now().toString())
+      setLocalStorage('lastUpdateTime', Date.now())
     }
 
-    if (!isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser) {
+    if (GameOver()) {
       if (game?.isGameOver?.()) return
-      if (
-        currentPlayer === player1 &&
-        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
-      ) {
+      if (currentPlayer === player1 && getRemainingTime(timer1, startTime) > 0) {
         intervalId = setInterval(() => {
-          setPlayer1Timer(Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0))
+          setPlayer1Timer(getRemainingTime(timer1, startTime))
           updateTime()
         }, 1000)
-      } else if (
-        currentPlayer === player2 &&
-        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
-      ) {
+      } else if (currentPlayer === player2 && getRemainingTime(timer2, startTime) > 0) {
         intervalId = setInterval(() => {
-          setPlayer2Timer(Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0))
+          setPlayer2Timer(getRemainingTime(timer2, startTime))
           updateTime()
         }, 1000)
       } else if (isPlayerTimeout && !isGameOver) {
@@ -381,49 +425,9 @@ const Game: React.FC<object> = () => {
     return () => clearInterval(intervalId)
   }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver])
 
-  useEffect(() => {
-    restApi
-      .get('/load-game-v2', {
-        params: {
-          game_id: location.pathname.split('/')[2],
-        },
-      })
-      .then(async (res) => {
-        if (res.status === 200) {
-          const data = res.data.game
-          setTurn(data.turn_player)
-          setStartTime(data.startTime)
-          gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
-          setPlayer1(data.player_1)
-          setPlayer2(data.player_2)
-          gameDispatch({ type: 'SET_GAME_DRAW', payload: data.isGameDraw })
-          gameDispatch({ type: 'SET_GAME_OVER', payload: data.isGameOver })
-          if (data.winner && localStorage.getItem('address') === data.winner) {
-            gameDispatch({ type: 'SET_WINNER', payload: true })
-          }
-          if (data.loser && localStorage.getItem('address') === data.loser) {
-            gameDispatch({ type: 'SET_LOSER', payload: true })
-          }
-
-          setTimer1(data.timer1)
-          setTimer2(data.timer2)
-          if (data.move_number === 1 && data.turn_player === 'w') {
-            setTimer1(data.timers.player1Timer)
-            setTimer2(data.timers.player2Timer)
-            setPlayer1Timer(data.timers.player1Timer)
-            setPlayer2Timer(data.timers.player2Timer)
-            setAdditionTimePerMove(data.timePerMove)
-          }
-
-          if (!(data.move_number === 1 && data.turn_player === 'w')) {
-            setIsStartGame(true)
-          }
-
-          setCurrentPlayer(currentPlayerTurn() === player1 ? player1 : player2)
-        }
-      })
-      .catch((err) => {})
-  }, [turn])
+  const GameOver = () => {
+    return !isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser
+  }
 
   useEffect(() => {
     const onConnect = () => {}
@@ -434,10 +438,10 @@ const Game: React.FC<object> = () => {
         setTurn(room.turn)
         handleSwitchTurn()
         gameDispatch({ type: 'SET_GAME', payload: new Chess(room.fen) })
+        gameDispatch({ type: 'SET_GAME_HISTORY', payload: room.history })
         setPlayer1Timer(room.timers.player1Timer)
         setPlayer2Timer(room.timers.player2Timer)
-        gameDispatch({ type: 'ADD_GAME_HISTORY', payload: room.fen })
-        setCurrentMoveIndex((prevIndex) => prevIndex + 1)
+        setCurrentMoveIndex(gameHistory.length)
         setStartTime(room.startTime)
         setTimer1(room.timer1)
         setTimer2(room.timer2)
@@ -453,26 +457,24 @@ const Game: React.FC<object> = () => {
     let notificationTimeoutId: any
 
     const onOpponentDisconnect = () => {
-      const opponentTimer = wallet?.account.address === player1 ? player2Timer : player1Timer
-
-      if (opponentTimer < 30) {
-        gameDispatch({ type: 'SET_GAME_OVER', payload: true })
-        socket.emit('resign', {
-          game_id: location.pathname.split('/')[2],
-          isGameOver: true,
-          isGameDraw: false,
-          winner: wallet?.account.address === player1 ? player1 : player2,
-          loser: wallet?.account.address === player1 ? player2 : player1,
-        })
-      } else {
-        setOpponentDisconnect(true)
-      }
-
-      setNotificationCloseOnClick(true)
-      clearTimeout(notificationTimeoutId)
-      notificationTimeoutId = setTimeout(() => {
-        setNotificationCloseOnClick(false)
-      }, 3000)
+      // const opponentTimer = wallet?.account.address === player1 ? player2Timer : player1Timer
+      // if (opponentTimer < 30) {
+      //   gameDispatch({ type: 'SET_GAME_OVER', payload: true })
+      //   socket.emit('resign', {
+      //     game_id: location.pathname.split('/')[2],
+      //     isGameOver: true,
+      //     isGameDraw: false,
+      //     winner: wallet?.account.address === player1 ? player1 : player2,
+      //     loser: wallet?.account.address === player1 ? player2 : player1,
+      //   })
+      // } else {
+      //   setOpponentDisconnect(true)
+      // }
+      // setNotificationCloseOnClick(true)
+      // clearTimeout(notificationTimeoutId)
+      // notificationTimeoutId = setTimeout(() => {
+      //   setNotificationCloseOnClick(false)
+      // }, 3000)
     }
 
     socket.connect()

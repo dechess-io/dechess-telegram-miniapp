@@ -106,3 +106,14 @@ export const isThreefoldRepetition = (fens: string[]): boolean => {
   const lastFen = fens[fens.length - 1]
   return positionHistory[normalizeFEN(lastFen)] >= 3
 }
+
+export const getRemainingTime = (timer: any, startTime: any) => {
+  // timer remain of a player is the total left time minus the time passed (current time - start time of that user) in seconds (minus 500 for prevent round up)
+  return Math.max(timer - Math.floor((Date.now() - startTime - 500) / 1000), 0)
+}
+
+export const setLocalStorage = (key: any, value: any) => {
+  if (value !== undefined && value !== null) {
+    localStorage.setItem(key, value.toString())
+  }
+}
