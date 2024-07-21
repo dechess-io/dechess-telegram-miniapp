@@ -7,6 +7,7 @@ import GameOverPopUp from '../Popup/GameOverPopUp'
 import {
   convertToFigurineSan,
   getRemainingTime,
+  getTimeFromLocalStorage,
   isThreefoldRepetition,
   setLocalStorage,
 } from '../../../utils/utils'
@@ -501,6 +502,14 @@ const Game: React.FC<object> = () => {
       // Clear the timeout when the component unmounts
       clearTimeout(notificationTimeoutId)
     }
+  }, [])
+
+  useEffect(() => {
+    dispatch(setTimer1(getTimeFromLocalStorage('timer1', 60)))
+    dispatch(setTimer2(getTimeFromLocalStorage('timer1', 60)))
+
+    dispatch(setPlayer1Timer(getTimeFromLocalStorage('player1Timer', -1)))
+    dispatch(setPlayer2Timer(getTimeFromLocalStorage('player2Timer', -1)))
   }, [])
 
   if (!gameState.board) return <LoadingGame />
