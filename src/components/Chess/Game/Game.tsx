@@ -25,58 +25,28 @@ import {
 } from '../../../redux/game/game_state.reducer'
 import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
+import { useAppDispatch, useAppSelector } from '../../../redux/store'
+import { selectTimer } from '../../../redux/timer/reducer'
+import { setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from '../../../redux/timer/action'
 
 const Game: React.FC<object> = () => {
-  const [
-    {
-      optionSquares,
-      moveFrom,
-      moveTo,
-      showPromotionDialog,
-      isGameOver,
-      isGameDraw,
-      game,
-      gameHistory,
-      moves,
-      isWinner,
-      isLoser,
-    },
-    gameDispatch,
-  ] = useReducer(gameReducer, initialGameState)
+  const [gameState, gameDispatch] = useReducer(gameReducer, initialGameState)
+  const { timer1, timer2, player1Timer, player2Timer } = useAppSelector(selectTimer)
+  const timerDispatch = useAppDispatch()
   const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
 
   const location = useLocation()
   const wallet = useTonWallet()
-  const [turn, setTurn] = useState('')
-  const [player1, setPlayer1] = useState('')
-  const [player2, setPlayer2] = useState('')
   const [moveSquares] = useState({})
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
-  const [currentPlayer, setCurrentPlayer] = useState('')
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
-  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   const [startTime, setStartTime] = useState(0)
-  const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60))
-  const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
 
-  useEffect(() => {
-    setLocalStorage('timer1', timer1)
-    setLocalStorage('timer2', timer2)
-  }, [timer1, timer2])
-
-  const [opponentDisconnect, setOpponentDisconnect] = useState(false)
-
-  const [player1Timer, setPlayer1Timer] = useState(() =>
-    getTimeFromLocalStorage('player1Timer', -1)
-  )
-
-  const [player2Timer, setPlayer2Timer] = useState(() =>
-    getTimeFromLocalStorage('player2Timer', -1)
-  )
+  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
 
   useEffect(() => {
     restApi
@@ -88,76 +58,62 @@ const Game: React.FC<object> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
-          console.log(data)
-          setTurn(data.turn_player)
+          console.log(res)
           setStartTime(data.startTime)
-          gameDispatch({ type: 'SET_GAME', payload: new Chess(data.fen) })
-          setPlayer1(data.player_1)
-          setPlayer2(data.player_2)
-          gameDispatch({ type: 'SET_GAME_DRAW', payload: data.isGameDraw })
-          gameDispatch({ type: 'SET_GAME_OVER', payload: data.isGameOver })
-          gameDispatch({ type: 'SET_GAME_HISTORY', payload: [...data.history] })
-          setCurrentMoveIndex(gameHistory.length)
-          if (data.winner && localStorage.getItem('address') === data.winner) {
-            gameDispatch({ type: 'SET_WINNER', payload: true })
-          }
-          if (data.loser && localStorage.getItem('address') === data.loser) {
-            gameDispatch({ type: 'SET_LOSER', payload: true })
-          }
-
-          setTimer1(data.timer1)
-          setTimer2(data.timer2)
+          gameDispatch({ type: 'LOAD_GAME', payload: data })
+          timerDispatch(setTimer1(data.timer1))
+          timerDispatch(setTimer2(data.timer2))
           if (data.move_number === 1 && data.turn_player === 'w') {
-            setTimer1(data.timers.player1Timer)
-            setTimer2(data.timers.player2Timer)
-            setPlayer1Timer(data.timers.player1Timer)
-            setPlayer2Timer(data.timers.player2Timer)
+            timerDispatch(setTimer1(data.timers.player1Timer))
+            timerDispatch(setTimer2(data.timers.player2Timer))
+            timerDispatch(setPlayer1Timer(data.timers.player1Timer))
+            timerDispatch(setPlayer2Timer(data.timers.player2Timer))
             setAdditionTimePerMove(data.timePerMove)
           }
 
           if (!(data.move_number === 1 && data.turn_player === 'w')) {
             setIsStartGame(true)
           }
-
-          setCurrentPlayer(currentPlayerTurn === player1 ? player1 : player2)
         }
       })
-      .catch((err) => {})
-  }, [turn])
+  }, [gameState.turn])
 
   const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
 
   const handleSwitchTurn = useCallback(
-    () => setCurrentPlayer((prev) => (prev === player1 ? player2 : player1)),
-    [player1, player2]
+    () =>
+      gameDispatch({
+        type: 'SWITCH_PLAYER_TURN',
+      }),
+    [gameState.player1, gameState.player2]
   )
 
   const isPlayerTimeout = useMemo(() => {
     return (
-      (currentPlayer === player1 && getRemainingTime(timer1, startTime) === 0) ||
-      (currentPlayer === player2 && getRemainingTime(timer2, startTime) === 0)
+      (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) === 0) ||
+      (gameState.playerTurn === gameState.player2 && getRemainingTime(timer2, startTime) === 0)
     )
-  }, [currentPlayer, player1, player2, timer1, timer2, startTime])
+  }, [gameState.playerTurn, gameState.player1, gameState.player2, timer1, timer2, startTime])
 
   const emitGameOver = () => {
     socket.emit('endGame', {
       game_id: location.pathname.split('/')[2],
-      isGameOver: isGameOver,
-      isGameDraw: isGameDraw,
+      isGameOver: gameState.isGameOver,
+      isGameDraw: gameState.isGameDraw,
     })
   }
 
   const currentPlayerTurn = useMemo(() => {
-    const orientation = isOrientation(wallet?.account.address, player1)
+    const orientation = isOrientation(wallet?.account.address, gameState.player1)
     if (orientation === 'white') {
-      return turn === 'w' ? player1 : player2
+      return gameState.turn === 'w' ? gameState.player1 : gameState.player2
     }
-    return turn === 'b' ? player2 : player1
-  }, [wallet, player1, player2, turn])
+    return gameState.turn === 'b' ? gameState.player2 : gameState.player1
+  }, [wallet, gameState.player1, gameState.player2, gameState.turn])
 
   const getMoveOptions = useCallback(
     (square: Square) => {
-      const moves = game.moves({ square, verbose: true })
+      const moves = gameState.board.moves({ square, verbose: true })
 
       if (moves.length === 0) {
         gameDispatch({ type: 'SET_OPTION_SQUARES', payload: {} })
@@ -169,7 +125,8 @@ const Game: React.FC<object> = () => {
       moves.map((move: any) => {
         newSquares[move.to] = {
           background:
-            game.get(move.to) && game.get(move.to).color !== game.get(square).color
+            gameState.board.get(move.to) &&
+            gameState.board.get(move.to).color !== gameState.board.get(square).color
               ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
               : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
           borderRadius: '50%',
@@ -185,19 +142,34 @@ const Game: React.FC<object> = () => {
       gameDispatch({ type: 'SET_OPTION_SQUARES', payload: newSquares })
       return true
     },
-    [game]
+    [gameState.board]
   )
 
   const isEligibleToPlay = useCallback(() => {
-    if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false
+    if (
+      gameState.isGameDraw ||
+      gameState.isGameOver ||
+      gameState.board.isDraw() ||
+      gameState.board.isGameOver()
+    )
+      return false
 
-    if (currentMoveIndex < gameHistory.length - 1) return false
+    // if (currentMoveIndex < gameState.history.length) return false
 
     const isPlayerTurn =
-      (player1 === wallet?.account.address && (game as any)._turn === 'w') ||
-      (player2 === wallet?.account.address && (game as any)._turn === 'b')
+      (gameState.player1 === wallet?.account.address && (gameState.board as any)._turn === 'w') ||
+      (gameState.player2 === wallet?.account.address && (gameState.board as any)._turn === 'b')
     return isPlayerTurn
-  }, [isGameDraw, isGameOver, game, gameHistory, currentMoveIndex, player1, player2, wallet])
+  }, [
+    gameState.isGameDraw,
+    gameState.isGameOver,
+    gameState.board,
+    gameState.history,
+    gameState.moveIndex,
+    gameState.player1,
+    gameState.player2,
+    wallet,
+  ])
 
   const handleMoveFromSelection = useCallback(
     (square: Square) => {
@@ -211,20 +183,28 @@ const Game: React.FC<object> = () => {
   const makeMove = (foundMove: any, square: Square) => {
     setStartTime(Date.now())
     setIsStartGame(true)
-    const gameCopy = game
+    const gameCopy = gameState.board
     const move = gameCopy.move({
-      from: moveFrom ? moveFrom : '',
+      from: gameState.moveFrom ? gameState.moveFrom : '',
       to: square,
       promotion: 'q',
     })
 
     foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
 
-    emitNewMove(socket, moveFrom, square, isPromotionMove(foundMove, square), foundMove, square, {
-      san: foundMove.san,
-      lastMove: Date.now(),
-      startTime: Date.now(),
-    })
+    emitNewMove(
+      socket,
+      gameState.moveFrom,
+      square,
+      isPromotionMove(foundMove, square),
+      foundMove,
+      square,
+      {
+        san: foundMove.san,
+        lastMove: Date.now(),
+        startTime: Date.now(),
+      }
+    )
 
     handleSwitchTurn()
 
@@ -239,12 +219,14 @@ const Game: React.FC<object> = () => {
 
   const handleMoveToSelection = useCallback(
     (square: Square) => {
-      const moves = game.moves({
-        square: moveFrom,
+      const moves = gameState.board.moves({
+        square: gameState.moveFrom,
         verbose: true,
       })
 
-      const foundMove = moves.find((m: any) => m.from === moveFrom && m.to === square) as any
+      const foundMove = moves.find(
+        (m: any) => m.from === gameState.moveFrom && m.to === square
+      ) as any
 
       if (!foundMove) {
         const hasMoveOptions = getMoveOptions(square)
@@ -261,7 +243,7 @@ const Game: React.FC<object> = () => {
 
       makeMove(foundMove, square)
     },
-    [game, getMoveOptions, makeMove, moveFrom]
+    [gameState.board, getMoveOptions, makeMove, gameState.moveFrom]
   )
 
   const isPromotionMove = (move: any, square: Square) => {
@@ -281,8 +263,8 @@ const Game: React.FC<object> = () => {
     additionalProps = {}
   ) {
     const game_id = location.pathname.split('/')[2]
-    const turn = game.turn()
-    const fen = game.fen()
+    const turn = gameState.board.turn()
+    const fen = gameState.board.fen()
 
     socket.emit('move', {
       from,
@@ -294,12 +276,18 @@ const Game: React.FC<object> = () => {
       isPromotion: isPromotionMove,
       timers: {
         player1Timer:
-          currentPlayerTurn === player1 ? player1Timer + additionTimePerMove : player1Timer,
+          currentPlayerTurn === gameState.player1
+            ? player1Timer + additionTimePerMove
+            : player1Timer,
         player2Timer:
-          currentPlayerTurn === player2 ? player2Timer + additionTimePerMove : player2Timer,
+          currentPlayerTurn === gameState.player2
+            ? player2Timer + additionTimePerMove
+            : player2Timer,
       },
-      timer1: currentPlayerTurn === player1 ? getRemainingTime(timer1, startTime) : timer1,
-      timer2: currentPlayerTurn === player2 ? getRemainingTime(timer2, startTime) : timer2,
+      timer1:
+        currentPlayerTurn === gameState.player1 ? getRemainingTime(timer1, startTime) : timer1,
+      timer2:
+        currentPlayerTurn === gameState.player2 ? getRemainingTime(timer2, startTime) : timer2,
       ...additionalProps,
     })
   }
@@ -308,8 +296,8 @@ const Game: React.FC<object> = () => {
     (square: Square) => {
       if (!isEligibleToPlay()) return
       setRightClickedSquares({})
-      if (!moveTo) {
-        if (!moveFrom) {
+      if (!gameState.moveTo) {
+        if (!gameState.moveFrom) {
           handleMoveFromSelection(square)
           return
         } else {
@@ -317,21 +305,27 @@ const Game: React.FC<object> = () => {
         }
       }
     },
-    [isEligibleToPlay, moveTo, moveFrom, handleMoveFromSelection, handleMoveToSelection]
+    [
+      isEligibleToPlay,
+      gameState.moveTo,
+      gameState.moveFrom,
+      handleMoveFromSelection,
+      handleMoveToSelection,
+    ]
   )
 
   const onPromotionPieceSelect = (piece: any) => {
     if (piece) {
-      const gameCopy: any = game
+      const gameCopy: any = gameState.board
       const newMove = gameCopy.move({
-        from: moveFrom,
-        to: moveTo,
+        from: gameState.moveFrom,
+        to: gameState.moveTo,
         promotion: piece[1].toLowerCase() ?? 'q',
       })
 
       if (newMove) {
         gameDispatch({ type: 'SET_GAME', payload: gameCopy })
-        emitNewMove(socket, moveFrom, moveTo, true, null, null, {
+        emitNewMove(socket, gameState.moveFrom, gameState.moveTo, true, null, null, {
           promotion: piece[1].toLowerCase() ?? 'q',
         })
         handleSwitchTurn()
@@ -355,34 +349,30 @@ const Game: React.FC<object> = () => {
   }, [])
 
   const handlePreviousMove = useCallback(() => {
-    if (currentMoveIndex > 0) {
-      const newGame = new Chess(gameHistory[currentMoveIndex - 1])
-      gameDispatch({ type: 'SET_GAME', payload: newGame })
-      setCurrentMoveIndex((prevIndex) => prevIndex - 1)
+    if (gameState.moveIndex > 0) {
+      gameDispatch({ type: 'SET_PREVIOUS_MOVE' })
       dismissPopup()
     }
-  }, [currentMoveIndex, gameHistory, gameDispatch, dismissPopup])
+  }, [gameState.moveIndex, gameState.history, gameDispatch, dismissPopup])
 
   const handleNextMove = useCallback(() => {
-    if (currentMoveIndex < gameHistory.length - 1) {
-      const newGame = new Chess(gameHistory[currentMoveIndex + 1])
-      gameDispatch({ type: 'SET_GAME', payload: newGame })
-      setCurrentMoveIndex((prevIndex) => prevIndex + 1)
+    if (gameState.moveIndex < gameState.history.length - 1) {
+      gameDispatch({ type: 'SET_NEXT_MOVE' })
       dismissPopup()
     }
-  }, [currentMoveIndex, gameHistory, gameDispatch, dismissPopup])
+  }, [gameState.moveIndex, gameState.history, gameDispatch, dismissPopup])
 
   useEffect(() => {
-    if (isThreefoldRepetition(gameHistory)) {
+    if (isThreefoldRepetition(gameState.history)) {
       socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
     }
-  }, [gameHistory])
+  }, [gameState.history])
 
   useEffect(() => {
-    if (isGameOver || isGameDraw) {
+    if (gameState.isGameOver || gameState.isGameDraw) {
       setShowPopup(true)
     }
-  }, [isGameOver, isGameDraw])
+  }, [gameState.isGameOver, gameState.isGameDraw])
 
   useEffect(() => {
     if (wallet) {
@@ -400,51 +390,50 @@ const Game: React.FC<object> = () => {
 
   useEffect(() => {
     let intervalId: any
-    const updateTime = () => {
-      setLocalStorage('lastUpdateTime', Date.now())
-    }
-
     if (GameOver()) {
-      if (game?.isGameOver?.()) return
-      if (currentPlayer === player1 && getRemainingTime(timer1, startTime) > 0) {
+      console.log(gameState.playerTurn)
+      if (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) > 0) {
         intervalId = setInterval(() => {
-          setPlayer1Timer(getRemainingTime(timer1, startTime))
-          updateTime()
+          timerDispatch(setPlayer1Timer(getRemainingTime(timer1, startTime)))
         }, 1000)
-      } else if (currentPlayer === player2 && getRemainingTime(timer2, startTime) > 0) {
+      } else if (
+        gameState.playerTurn === gameState.player2 &&
+        getRemainingTime(timer2, startTime) > 0
+      ) {
         intervalId = setInterval(() => {
-          setPlayer2Timer(getRemainingTime(timer2, startTime))
-          updateTime()
+          timerDispatch(setPlayer2Timer(getRemainingTime(timer2, startTime)))
         }, 1000)
-      } else if (isPlayerTimeout && !isGameOver) {
+      } else if (isPlayerTimeout && !gameState.isGameOver) {
         gameDispatch({ type: 'SET_GAME_OVER', payload: true })
         emitGameOver()
       }
     }
 
     return () => clearInterval(intervalId)
-  }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver])
+  }, [gameState.playerTurn, player1Timer, player2Timer, gameState.isGameDraw, gameState.isGameOver])
 
   const GameOver = () => {
-    return !isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser
+    return (
+      !gameState.isGameDraw &&
+      !gameState.isGameOver &&
+      isStartGame &&
+      !gameState.isWinner &&
+      !gameState.isLoser
+    )
   }
 
   useEffect(() => {
     const onConnect = () => {}
 
     const onNewMove = (room: any) => {
-      gameDispatch({ type: 'ADD_MOVES', payload: `${room.san}` })
       if (room.fen) {
-        setTurn(room.turn)
-        handleSwitchTurn()
-        gameDispatch({ type: 'SET_GAME', payload: new Chess(room.fen) })
-        gameDispatch({ type: 'SET_GAME_HISTORY', payload: room.history })
-        setPlayer1Timer(room.timers.player1Timer)
-        setPlayer2Timer(room.timers.player2Timer)
-        setCurrentMoveIndex(gameHistory.length)
+        gameDispatch({ type: 'SET_NEW_MOVE', payload: room })
+
+        timerDispatch(setPlayer1Timer(room.timers.player1Timer))
+        timerDispatch(setPlayer2Timer(room.timers.player2Timer))
         setStartTime(room.startTime)
-        setTimer1(room.timer1)
-        setTimer2(room.timer2)
+        timerDispatch(setTimer1(room.timer1))
+        timerDispatch(setTimer2(room.timer2))
       }
     }
 
@@ -495,39 +484,46 @@ const Game: React.FC<object> = () => {
     }
   }, [])
 
-  if (!game) return <LoadingGame />
+  useEffect(() => {
+    setLocalStorage('timer1', timer1)
+    setLocalStorage('timer2', timer2)
+  }, [timer1, timer2])
+
+  if (!gameState.board) return <LoadingGame />
 
   return (
     <App theme={theme}>
       <Header />
       <GameBoard
-        player1={player1}
-        player2={player2}
-        moveLists={moves}
-        game={game}
+        player1={gameState.player1}
+        player2={gameState.player2}
+        moveLists={gameState.moves}
+        game={gameState.board}
         onSquareClick={onSquareClick}
         onSquareRightClick={onSquareRightClick}
         onPromotionPieceSelect={onPromotionPieceSelect}
-        showPromotionDialog={showPromotionDialog}
+        showPromotionDialog={gameState.showPromotionDialog}
         moveSquares={moveSquares}
-        optionSquares={optionSquares}
+        optionSquares={gameState.optionSquares}
         rightClickedSquares={rightClickedSquares}
-        moveTo={moveTo}
+        moveTo={gameState.moveTo}
         player1Timer={player1Timer}
         player2Timer={player2Timer}
-        currentMoveIndex={currentMoveIndex}
+        currentMoveIndex={gameState.moveIndex}
       />
       <GameNavbar
         user={wallet?.account.address ? wallet?.account.address : ''}
-        opponent={wallet?.account.address === player1 ? player2 : player1}
-        toggleGameDraw={() => toggleGameDraw(isGameDraw, gameDispatch)}
-        toggleGameOver={() => toggleGameOver(isGameOver, gameDispatch)}
+        opponent={
+          wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1
+        }
+        toggleGameDraw={() => toggleGameDraw(gameState.isGameDraw, gameDispatch)}
+        toggleGameOver={() => toggleGameOver(gameState.isGameOver, gameDispatch)}
         handlePreviousMove={handlePreviousMove}
         handleNextMove={handleNextMove}
         socket={socket}
-        game={game}
-        isMoved={moves.length !== 0}
-        isWhite={player1 === wallet?.account.address}
+        game={gameState.board}
+        isMoved={gameState.moves.length !== 0}
+        isWhite={gameState.player1 === wallet?.account.address}
       />
       <Notification
         opened={notificationCloseOnClick}
@@ -540,13 +536,13 @@ const Game: React.FC<object> = () => {
       <GameOverPopUp
         setShowPopup={setShowPopup}
         showPopup={showPopup && !isPopupDismissed}
-        isWinner={isWinner}
-        isLoser={isLoser}
-        game={game}
-        isGameOver={isGameOver}
-        isGameDraw={isGameDraw}
-        player1={player1}
-        player2={player2}
+        isWinner={gameState.isWinner}
+        isLoser={gameState.isLoser}
+        game={gameState.board}
+        isGameOver={gameState.isGameOver}
+        isGameDraw={gameState.isGameDraw}
+        player1={gameState.player1}
+        player2={gameState.player2}
         wallet={wallet}
       />
     </App>
