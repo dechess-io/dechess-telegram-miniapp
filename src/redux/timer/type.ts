@@ -9,7 +9,7 @@ export interface TimerReducer {
 
 export const defaultTimerReducer: TimerReducer = {
   timer1: getTimeFromLocalStorage('timer1', 60),
-  timer2: getTimeFromLocalStorage('timer1', 60),
+  timer2: getTimeFromLocalStorage('timer2', 60),
   player1Timer: getTimeFromLocalStorage('player1Timer', -1),
-  player2Timer: getTimeFromLocalStorage('player1Timer', -1),
+  player2Timer: getTimeFromLocalStorage('player2Timer', -1),
 }
