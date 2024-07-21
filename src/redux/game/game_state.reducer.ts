@@ -7,12 +7,15 @@ export type GameState = {
   showPromotionDialog: boolean
   isGameOver: boolean
   isGameDraw: boolean
-  game: Chess
-  gameHistory: string[]
+  board: Chess
+  history: string[]
   currentMoveIndex: number
   moves: string[]
   isWinner: boolean
   isLoser: boolean
+  turn: 'w' | 'b'
+  player1: string
+  player2: string
 }
 
 export const initialGameState: GameState = {
@@ -22,12 +25,15 @@ export const initialGameState: GameState = {
   showPromotionDialog: false,
   isGameOver: false,
   isGameDraw: false,
-  gameHistory: [new Chess().fen()],
+  history: [new Chess().fen()],
   currentMoveIndex: 0,
   moves: [],
-  game: new Chess(),
+  board: new Chess(),
   isWinner: false,
   isLoser: false,
+  turn: 'w',
+  player1: '',
+  player2: '',
 }
 
 export type GameAction =
@@ -46,9 +52,38 @@ export type GameAction =
   | { type: 'SET_WINNER'; payload: boolean }
   | { type: 'SET_LOSER'; payload: boolean }
   | { type: 'SET_CURRENT_MOVE_INDEX'; payload: number }
+  | { type: 'SET_PLAYER_1'; payload: string }
+  | { type: 'SET_PLAYER_2'; payload: string }
+  | { type: 'SET_TURN'; payload: 'w' | 'b' }
+  | { type: 'LOAD_GAME'; payload: any }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'LOAD_GAME':
+      const {
+        turn_player,
+        fen,
+        player_1,
+        player_2,
+        isGameDraw,
+        isGameOver,
+        history,
+        winner,
+        loser,
+      } = action.payload
+      return {
+        ...state,
+        isGameOver: isGameOver,
+        isGameDraw: isGameDraw,
+        board: new Chess(fen),
+        history: [...history],
+        currentMoveIndex: history.length,
+        turn: turn_player,
+        isWinner: winner && localStorage.getItem('address') === winner ? true : false,
+        isLoser: loser && localStorage.getItem('address') === loser ? true : false,
+        player1: player_1,
+        player2: player_2,
+      }
     case 'SET_OPTION_SQUARES':
       return { ...state, optionSquares: action.payload }
     case 'SET_MOVE_FROM':
@@ -62,11 +97,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'RESET_MOVE_SELECTION':
       return { ...state, moveFrom: undefined, moveTo: undefined, optionSquares: {} }
     case 'SET_GAME':
-      return { ...state, game: action.payload }
+      return { ...state, board: action.payload }
     case 'SET_GAME_HISTORY':
-      return { ...state, gameHistory: action.payload }
+      return { ...state, history: action.payload }
     case 'ADD_GAME_HISTORY':
-      return { ...state, gameHistory: [...state.gameHistory, action.payload] }
+      return { ...state, history: [...state.history, action.payload] }
     case 'SET_MOVES':
       return { ...state, moves: action.payload }
     case 'ADD_MOVES':
@@ -79,6 +114,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, isWinner: action.payload }
     case 'SET_LOSER':
       return { ...state, isLoser: action.payload }
+    case 'SET_PLAYER_1':
+      return { ...state, player1: action.payload }
+    case 'SET_PLAYER_2':
+      return { ...state, player2: action.payload }
+    case 'SET_TURN':
+      return { ...state, turn: action.payload }
     default:
       return state
   }

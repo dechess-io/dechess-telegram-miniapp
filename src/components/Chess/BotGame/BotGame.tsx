@@ -34,8 +34,8 @@ const BotGame: React.FC<{}> = () => {
       showPromotionDialog,
       isGameOver,
       isGameDraw,
-      game,
-      gameHistory,
+      board,
+      history: history,
       moves,
       isWinner,
       isLoser,
@@ -48,12 +48,15 @@ const BotGame: React.FC<{}> = () => {
     showPromotionDialog: false,
     isGameOver: false,
     isGameDraw: false,
-    gameHistory: [new Chess().fen()],
+    history: [new Chess().fen()],
     currentMoveIndex: 0,
     moves: [],
-    game: new Chess(),
+    board: new Chess(),
     isWinner: false,
     isLoser: false,
+    turn: 'w',
+    player1: '',
+    player2: '',
   })
 
   const location = useLocation()
@@ -106,7 +109,7 @@ const BotGame: React.FC<{}> = () => {
   engine.onmessage = function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
       const data = event.data.split(' ')
-      let gameCopy = game
+      let gameCopy = board
       setTimeout(() => {
         gameCopy.move({
           from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
@@ -145,10 +148,10 @@ const BotGame: React.FC<{}> = () => {
   }, [player2Timer])
 
   useEffect(() => {
-    if (isThreefoldRepetition(gameHistory)) {
+    if (isThreefoldRepetition(history)) {
       gameDispatch({ type: 'SET_GAME_DRAW', payload: true })
     }
-  }, [gameHistory])
+  }, [history])
 
   useEffect(() => {
     if (isGameOver || isGameDraw) {
@@ -172,7 +175,7 @@ const BotGame: React.FC<{}> = () => {
     console.log(player1Timer)
 
     if (!isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser) {
-      if (game?.isGameOver?.()) return
+      if (board?.isGameOver?.()) return
       if (
         currentPlayer === player1 &&
         Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
@@ -214,7 +217,7 @@ const BotGame: React.FC<{}> = () => {
   }
 
   function getMoveOptions(square: Square) {
-    const moves = game.moves({ square, verbose: true })
+    const moves = board.moves({ square, verbose: true })
 
     if (moves.length === 0) {
       gameDispatch({ type: 'SET_OPTION_SQUARES', payload: {} })
@@ -226,7 +229,7 @@ const BotGame: React.FC<{}> = () => {
     moves.map((move: any) => {
       newSquares[move.to] = {
         background:
-          game.get(move.to) && game.get(move.to).color !== game.get(square).color
+          board.get(move.to) && board.get(move.to).color !== board.get(square).color
             ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
             : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
         borderRadius: '50%',
@@ -244,13 +247,13 @@ const BotGame: React.FC<{}> = () => {
   }
 
   function isEligibleToPlay() {
-    if (isGameDraw || isGameOver || game.isDraw() || game.isGameOver()) return false
+    if (isGameDraw || isGameOver || board.isDraw() || board.isGameOver()) return false
 
     // if (currentMoveIndex < gameHistory.length - 1) return false
 
     const isPlayerTurn =
-      (player1 === wallet?.account.address && (game as any)._turn === 'w') ||
-      (player2 === wallet?.account.address && (game as any)._turn === 'b')
+      (player1 === wallet?.account.address && (board as any)._turn === 'w') ||
+      (player2 === wallet?.account.address && (board as any)._turn === 'b')
     return isPlayerTurn
   }
 
@@ -260,7 +263,7 @@ const BotGame: React.FC<{}> = () => {
   }
 
   function handleMoveToSelection(square: Square) {
-    const moves = game.moves({
+    const moves = board.moves({
       square: moveFrom,
       verbose: true,
     })
@@ -288,7 +291,7 @@ const BotGame: React.FC<{}> = () => {
     setStartTime(Date.now() - additionTimePerMove)
     localStorage.setItem('startTime', startTime.toString())
     setTimer1(timer1 - Math.floor((Date.now() - startTime) / 1000))
-    let gameCopy = game
+    let gameCopy = board
     const move = gameCopy.move({
       from: moveFrom ? moveFrom : '',
       to: square,
@@ -340,7 +343,7 @@ const BotGame: React.FC<{}> = () => {
 
   function onPromotionPieceSelect(piece: any) {
     if (piece) {
-      let gameCopy: any = game
+      let gameCopy: any = board
       const newMove = gameCopy.move({
         from: moveFrom,
         to: moveTo,
@@ -372,7 +375,7 @@ const BotGame: React.FC<{}> = () => {
 
   function handlePreviousMove() {
     if (currentMoveIndex > 0) {
-      const newGame = new Chess(gameHistory[currentMoveIndex - 1])
+      const newGame = new Chess(history[currentMoveIndex - 1])
       gameDispatch({ type: 'SET_GAME', payload: newGame })
       setCurrentMoveIndex((prevIndex) => prevIndex - 1)
       dismissPopup()
@@ -380,8 +383,8 @@ const BotGame: React.FC<{}> = () => {
   }
 
   function handleNextMove() {
-    if (currentMoveIndex < gameHistory.length - 1) {
-      const newGame = new Chess(gameHistory[currentMoveIndex + 1])
+    if (currentMoveIndex < history.length - 1) {
+      const newGame = new Chess(history[currentMoveIndex + 1])
       gameDispatch({ type: 'SET_GAME', payload: newGame })
       setCurrentMoveIndex((prevIndex) => prevIndex + 1)
       dismissPopup()
@@ -390,7 +393,7 @@ const BotGame: React.FC<{}> = () => {
 
   const theme = isAndroid ? 'material' : 'ios'
 
-  if (!game) {
+  if (!board) {
     return <LoadingGame />
   } else {
     return (
@@ -400,7 +403,7 @@ const BotGame: React.FC<{}> = () => {
           player1={player1}
           player2={player2}
           moveLists={moves}
-          game={game}
+          game={board}
           onSquareClick={onSquareClick}
           onSquareRightClick={onSquareRightClick}
           onPromotionPieceSelect={onPromotionPieceSelect}
@@ -421,7 +424,7 @@ const BotGame: React.FC<{}> = () => {
           handlePreviousMove={handlePreviousMove}
           handleNextMove={handleNextMove}
           socket={socket}
-          game={game}
+          game={board}
           isMoved={moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
           toggleIsLoser={() => gameDispatch({ type: 'SET_LOSER', payload: true })}
@@ -431,7 +434,7 @@ const BotGame: React.FC<{}> = () => {
           showPopup={showPopup && !isPopupDismissed}
           isWinner={isWinner}
           isLoser={isLoser}
-          game={game}
+          game={board}
           isGameOver={isGameOver}
           isGameDraw={isGameDraw}
           player1={player1}
