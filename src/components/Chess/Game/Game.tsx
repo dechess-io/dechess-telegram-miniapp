@@ -27,10 +27,7 @@ import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 
 const Game: React.FC<object> = () => {
-  const [
-    gameState,
-    gameDispatch,
-  ] = useReducer(gameReducer, initialGameState)
+  const [gameState, gameDispatch] = useReducer(gameReducer, initialGameState)
   const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
 
   const location = useLocation()
@@ -38,7 +35,6 @@ const Game: React.FC<object> = () => {
   const [moveSquares] = useState({})
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
-  const [currentPlayer, setCurrentPlayer] = useState('')
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
@@ -46,8 +42,6 @@ const Game: React.FC<object> = () => {
   const [startTime, setStartTime] = useState(0)
   const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60))
   const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
-
-  console.log(gameState)
 
   useEffect(() => {
     setLocalStorage('timer1', timer1)
@@ -89,8 +83,6 @@ const Game: React.FC<object> = () => {
           if (!(data.move_number === 1 && data.turn_player === 'w')) {
             setIsStartGame(true)
           }
-
-          setCurrentPlayer(currentPlayerTurn === gameState.player1 ? gameState.player1 : gameState.player2)
         }
       })
       .catch((err) => {})
@@ -99,16 +91,19 @@ const Game: React.FC<object> = () => {
   const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
 
   const handleSwitchTurn = useCallback(
-    () => setCurrentPlayer((prev) => (prev === gameState.player1 ? gameState.player2 : gameState.player1)),
+    () =>
+      gameDispatch({
+        type: 'SWITCH_PLAYER_TURN',
+      }),
     [gameState.player1, gameState.player2]
   )
 
   const isPlayerTimeout = useMemo(() => {
     return (
-      (currentPlayer === gameState.player1 && getRemainingTime(timer1, startTime) === 0) ||
-      (currentPlayer === gameState.player2 && getRemainingTime(timer2, startTime) === 0)
+      (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) === 0) ||
+      (gameState.playerTurn === gameState.player2 && getRemainingTime(timer2, startTime) === 0)
     )
-  }, [currentPlayer, gameState.player1, gameState.player2, timer1, timer2, startTime])
+  }, [gameState.playerTurn, gameState.player1, gameState.player2, timer1, timer2, startTime])
 
   const emitGameOver = () => {
     socket.emit('endGame', {
@@ -140,7 +135,8 @@ const Game: React.FC<object> = () => {
       moves.map((move: any) => {
         newSquares[move.to] = {
           background:
-            gameState.board.get(move.to) && gameState.board.get(move.to).color !== gameState.board.get(square).color
+            gameState.board.get(move.to) &&
+            gameState.board.get(move.to).color !== gameState.board.get(square).color
               ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
               : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
           borderRadius: '50%',
@@ -160,7 +156,13 @@ const Game: React.FC<object> = () => {
   )
 
   const isEligibleToPlay = useCallback(() => {
-    if (gameState.isGameDraw || gameState.isGameOver || gameState.board.isDraw() || gameState.board.isGameOver()) return false
+    if (
+      gameState.isGameDraw ||
+      gameState.isGameOver ||
+      gameState.board.isDraw() ||
+      gameState.board.isGameOver()
+    )
+      return false
 
     // if (currentMoveIndex < gameState.history.length) return false
 
@@ -168,7 +170,16 @@ const Game: React.FC<object> = () => {
       (gameState.player1 === wallet?.account.address && (gameState.board as any)._turn === 'w') ||
       (gameState.player2 === wallet?.account.address && (gameState.board as any)._turn === 'b')
     return isPlayerTurn
-  }, [gameState.isGameDraw, gameState.isGameOver, gameState.board, gameState.history, gameState.currentMoveIndex, gameState.player1, gameState.player2, wallet])
+  }, [
+    gameState.isGameDraw,
+    gameState.isGameOver,
+    gameState.board,
+    gameState.history,
+    gameState.moveIndex,
+    gameState.player1,
+    gameState.player2,
+    wallet,
+  ])
 
   const handleMoveFromSelection = useCallback(
     (square: Square) => {
@@ -191,11 +202,19 @@ const Game: React.FC<object> = () => {
 
     foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
 
-    emitNewMove(socket, gameState.moveFrom, square, isPromotionMove(foundMove, square), foundMove, square, {
-      san: foundMove.san,
-      lastMove: Date.now(),
-      startTime: Date.now(),
-    })
+    emitNewMove(
+      socket,
+      gameState.moveFrom,
+      square,
+      isPromotionMove(foundMove, square),
+      foundMove,
+      square,
+      {
+        san: foundMove.san,
+        lastMove: Date.now(),
+        startTime: Date.now(),
+      }
+    )
 
     handleSwitchTurn()
 
@@ -215,7 +234,9 @@ const Game: React.FC<object> = () => {
         verbose: true,
       })
 
-      const foundMove = moves.find((m: any) => m.from === gameState.moveFrom && m.to === square) as any
+      const foundMove = moves.find(
+        (m: any) => m.from === gameState.moveFrom && m.to === square
+      ) as any
 
       if (!foundMove) {
         const hasMoveOptions = getMoveOptions(square)
@@ -265,12 +286,18 @@ const Game: React.FC<object> = () => {
       isPromotion: isPromotionMove,
       timers: {
         player1Timer:
-          currentPlayerTurn === gameState.player1 ? player1Timer + additionTimePerMove : player1Timer,
+          currentPlayerTurn === gameState.player1
+            ? player1Timer + additionTimePerMove
+            : player1Timer,
         player2Timer:
-          currentPlayerTurn === gameState.player2 ? player2Timer + additionTimePerMove : player2Timer,
+          currentPlayerTurn === gameState.player2
+            ? player2Timer + additionTimePerMove
+            : player2Timer,
       },
-      timer1: currentPlayerTurn === gameState.player1 ? getRemainingTime(timer1, startTime) : timer1,
-      timer2: currentPlayerTurn === gameState.player2 ? getRemainingTime(timer2, startTime) : timer2,
+      timer1:
+        currentPlayerTurn === gameState.player1 ? getRemainingTime(timer1, startTime) : timer1,
+      timer2:
+        currentPlayerTurn === gameState.player2 ? getRemainingTime(timer2, startTime) : timer2,
       ...additionalProps,
     })
   }
@@ -288,7 +315,13 @@ const Game: React.FC<object> = () => {
         }
       }
     },
-    [isEligibleToPlay, gameState.moveTo, gameState.moveFrom, handleMoveFromSelection, handleMoveToSelection]
+    [
+      isEligibleToPlay,
+      gameState.moveTo,
+      gameState.moveFrom,
+      handleMoveFromSelection,
+      handleMoveToSelection,
+    ]
   )
 
   const onPromotionPieceSelect = (piece: any) => {
@@ -326,22 +359,18 @@ const Game: React.FC<object> = () => {
   }, [])
 
   const handlePreviousMove = useCallback(() => {
-    if (gameState.currentMoveIndex > 0) {
-      const newGame = new Chess(gameState.history[gameState.currentMoveIndex - 1])
-      gameDispatch({ type: 'SET_GAME', payload: newGame })
-      gameDispatch({ type: 'SET_CURRENT_MOVE_INDEX', payload: gameState.currentMoveIndex - 1 })
+    if (gameState.moveIndex > 0) {
+      gameDispatch({ type: 'SET_PREVIOUS_MOVE' })
       dismissPopup()
     }
-  }, [gameState.currentMoveIndex, gameState.history, gameDispatch, dismissPopup])
+  }, [gameState.moveIndex, gameState.history, gameDispatch, dismissPopup])
 
   const handleNextMove = useCallback(() => {
-    if (gameState.currentMoveIndex < gameState.history.length - 1) {
-      const newGame = new Chess(gameState.history[gameState.currentMoveIndex + 1])
-      gameDispatch({ type: 'SET_GAME', payload: newGame })
-      gameDispatch({ type: 'SET_CURRENT_MOVE_INDEX', payload: gameState.currentMoveIndex - 1 })
+    if (gameState.moveIndex < gameState.history.length - 1) {
+      gameDispatch({ type: 'SET_NEXT_MOVE' })
       dismissPopup()
     }
-  }, [gameState.currentMoveIndex, gameState.history, gameDispatch, dismissPopup])
+  }, [gameState.moveIndex, gameState.history, gameDispatch, dismissPopup])
 
   useEffect(() => {
     if (isThreefoldRepetition(gameState.history)) {
@@ -371,21 +400,18 @@ const Game: React.FC<object> = () => {
 
   useEffect(() => {
     let intervalId: any
-    const updateTime = () => {
-      setLocalStorage('lastUpdateTime', Date.now())
-    }
-
     if (GameOver()) {
-      if (gameState.board?.isGameOver?.()) return
-      if (currentPlayer === gameState.player1 && getRemainingTime(timer1, startTime) > 0) {
+      console.log(gameState.playerTurn)
+      if (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) > 0) {
         intervalId = setInterval(() => {
           setPlayer1Timer(getRemainingTime(timer1, startTime))
-          updateTime()
         }, 1000)
-      } else if (currentPlayer === gameState.player2 && getRemainingTime(timer2, startTime) > 0) {
+      } else if (
+        gameState.playerTurn === gameState.player2 &&
+        getRemainingTime(timer2, startTime) > 0
+      ) {
         intervalId = setInterval(() => {
           setPlayer2Timer(getRemainingTime(timer2, startTime))
-          updateTime()
         }, 1000)
       } else if (isPlayerTimeout && !gameState.isGameOver) {
         gameDispatch({ type: 'SET_GAME_OVER', payload: true })
@@ -394,23 +420,20 @@ const Game: React.FC<object> = () => {
     }
 
     return () => clearInterval(intervalId)
-  }, [currentPlayer, player1Timer, player2Timer, gameState.isGameDraw, gameState.isGameOver])
+  }, [gameState.playerTurn, player1Timer, player2Timer, gameState.isGameDraw, gameState.isGameOver])
 
   const GameOver = () => {
-    return !gameState.isGameDraw && !gameState.isGameOver && isStartGame && !gameState.isWinner && !gameState.isLoser
+    return (
+      !gameState.isGameDraw && !gameState.isGameOver && !gameState.isWinner && !gameState.isLoser
+    )
   }
 
   useEffect(() => {
     const onConnect = () => {}
 
     const onNewMove = (room: any) => {
-      gameDispatch({ type: 'ADD_MOVES', payload: `${room.san}` })
       if (room.fen) {
-        gameDispatch({ type: 'SET_TURN', payload: room.turn })
-        handleSwitchTurn()
-        gameDispatch({ type: 'SET_GAME', payload: new Chess(room.fen) })
-        gameDispatch({ type: 'SET_GAME_HISTORY', payload: room.history })
-        gameDispatch({ type: 'SET_CURRENT_MOVE_INDEX', payload: room.history.length })
+        gameDispatch({ type: 'SET_NEW_MOVE', payload: room })
         setPlayer1Timer(room.timers.player1Timer)
         setPlayer2Timer(room.timers.player2Timer)
         setStartTime(room.startTime)
@@ -486,11 +509,13 @@ const Game: React.FC<object> = () => {
         moveTo={gameState.moveTo}
         player1Timer={player1Timer}
         player2Timer={player2Timer}
-        currentMoveIndex={gameState.currentMoveIndex}
+        currentMoveIndex={gameState.moveIndex}
       />
       <GameNavbar
         user={wallet?.account.address ? wallet?.account.address : ''}
-        opponent={wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1}
+        opponent={
+          wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1
+        }
         toggleGameDraw={() => toggleGameDraw(gameState.isGameDraw, gameDispatch)}
         toggleGameOver={() => toggleGameOver(gameState.isGameOver, gameDispatch)}
         handlePreviousMove={handlePreviousMove}

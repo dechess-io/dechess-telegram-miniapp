@@ -49,7 +49,7 @@ const BotGame: React.FC<{}> = () => {
     isGameOver: false,
     isGameDraw: false,
     history: [new Chess().fen()],
-    currentMoveIndex: 0,
+    moveIndex: 0,
     moves: [],
     board: new Chess(),
     isWinner: false,
@@ -57,6 +57,7 @@ const BotGame: React.FC<{}> = () => {
     turn: 'w',
     player1: '',
     player2: '',
+    playerTurn: '',
   })
 
   const location = useLocation()

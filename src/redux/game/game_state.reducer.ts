@@ -9,13 +9,14 @@ export type GameState = {
   isGameDraw: boolean
   board: Chess
   history: string[]
-  currentMoveIndex: number
+  moveIndex: number
   moves: string[]
   isWinner: boolean
   isLoser: boolean
   turn: 'w' | 'b'
   player1: string
   player2: string
+  playerTurn: string
 }
 
 export const initialGameState: GameState = {
@@ -26,7 +27,7 @@ export const initialGameState: GameState = {
   isGameOver: false,
   isGameDraw: false,
   history: [new Chess().fen()],
-  currentMoveIndex: 0,
+  moveIndex: 0,
   moves: [],
   board: new Chess(),
   isWinner: false,
@@ -34,6 +35,7 @@ export const initialGameState: GameState = {
   turn: 'w',
   player1: '',
   player2: '',
+  playerTurn: '',
 }
 
 export type GameAction =
@@ -56,6 +58,11 @@ export type GameAction =
   | { type: 'SET_PLAYER_2'; payload: string }
   | { type: 'SET_TURN'; payload: 'w' | 'b' }
   | { type: 'LOAD_GAME'; payload: any }
+  | { type: 'SET_PREVIOUS_MOVE' }
+  | { type: 'SET_NEXT_MOVE' }
+  | { type: 'SET_PLAYER_TURN'; payload: string }
+  | { type: 'SWITCH_PLAYER_TURN' }
+  | { type: 'SET_NEW_MOVE'; payload: any }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -77,12 +84,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         isGameDraw: isGameDraw,
         board: new Chess(fen),
         history: [...history],
-        currentMoveIndex: history.length,
+        moveIndex: history.length - 1,
         turn: turn_player,
         isWinner: winner && localStorage.getItem('address') === winner ? true : false,
         isLoser: loser && localStorage.getItem('address') === loser ? true : false,
         player1: player_1,
         player2: player_2,
+        playerTurn: turn_player === 'w' ? player_1 : player_2,
       }
     case 'SET_OPTION_SQUARES':
       return { ...state, optionSquares: action.payload }
@@ -91,7 +99,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'SET_MOVE_TO':
       return { ...state, moveTo: action.payload }
     case 'SET_CURRENT_MOVE_INDEX':
-      return { ...state, currentMoveIndex: action.payload }
+      return { ...state, moveIndex: action.payload }
     case 'SHOW_PROMOTION_DIALOG':
       return { ...state, showPromotionDialog: action.payload }
     case 'RESET_MOVE_SELECTION':
@@ -120,6 +128,35 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, player2: action.payload }
     case 'SET_TURN':
       return { ...state, turn: action.payload }
+    case 'SET_PREVIOUS_MOVE':
+      return {
+        ...state,
+        moveIndex: state.moveIndex - 1,
+        board: new Chess(state.history[state.moveIndex - 1]),
+      }
+    case 'SET_NEXT_MOVE':
+      return {
+        ...state,
+        moveIndex: state.moveIndex + 1,
+        board: new Chess(state.history[state.moveIndex + 1]),
+      }
+    case 'SET_PLAYER_TURN':
+      return { ...state, playerTurn: action.payload }
+    case 'SWITCH_PLAYER_TURN':
+      return {
+        ...state,
+        playerTurn: state.playerTurn === state.player1 ? state.player2 : state.player1,
+      }
+    case 'SET_NEW_MOVE':
+      return {
+        ...state,
+        moves: [...state.moves, action.payload.san],
+        turn: action.payload.turn,
+        playerTurn: state.playerTurn === state.player1 ? state.player2 : state.player1,
+        board: new Chess(action.payload.fen),
+        history: action.payload.history,
+        moveIndex: action.payload.history.length - 1,
+      }
     default:
       return state
   }
