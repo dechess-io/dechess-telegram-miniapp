@@ -3,6 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import accountReducer from './account/account.reducer'
 import gameReducer from './game/game.reducer'
 import tournamentReducer from './tournament/tournament.reducer'
+import timerReducer from './timer/reducer'
 // import toastReducer from "./reducers/toastReducer";
 
 const createStore = () => {
@@ -11,6 +12,7 @@ const createStore = () => {
       account: accountReducer,
       game: gameReducer,
       tournament: tournamentReducer,
+      timer: timerReducer,
     },
   })
 }
