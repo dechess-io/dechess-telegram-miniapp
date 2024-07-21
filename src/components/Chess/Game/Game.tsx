@@ -25,9 +25,14 @@ import {
 } from '../../../redux/game/game_state.reducer'
 import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
+import { useAppDispatch, useAppSelector } from '../../../redux/store'
+import { selectTimer } from '../../../redux/timer/reducer'
+import { setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from '../../../redux/timer/action'
 
 const Game: React.FC<object> = () => {
   const [gameState, gameDispatch] = useReducer(gameReducer, initialGameState)
+  const { timer1, timer2, player1Timer, player2Timer } = useAppSelector(selectTimer)
+  const timerDispatch = useAppDispatch()
   const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
 
   const location = useLocation()
@@ -40,23 +45,8 @@ const Game: React.FC<object> = () => {
   const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   const [startTime, setStartTime] = useState(0)
-  const [timer1, setTimer1] = useState(getTimeFromLocalStorage('timer1', 60))
-  const [timer2, setTimer2] = useState(getTimeFromLocalStorage('timer2', 60))
 
-  useEffect(() => {
-    setLocalStorage('timer1', timer1)
-    setLocalStorage('timer2', timer2)
-  }, [timer1, timer2])
-
-  const [opponentDisconnect, setOpponentDisconnect] = useState(false)
-
-  const [player1Timer, setPlayer1Timer] = useState(() =>
-    getTimeFromLocalStorage('player1Timer', -1)
-  )
-
-  const [player2Timer, setPlayer2Timer] = useState(() =>
-    getTimeFromLocalStorage('player2Timer', -1)
-  )
+  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
 
   useEffect(() => {
     restApi
@@ -68,15 +58,16 @@ const Game: React.FC<object> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
+          console.log(res)
           setStartTime(data.startTime)
           gameDispatch({ type: 'LOAD_GAME', payload: data })
-          setTimer1(data.timer1)
-          setTimer2(data.timer2)
+          timerDispatch(setTimer1(data.timer1))
+          timerDispatch(setTimer2(data.timer2))
           if (data.move_number === 1 && data.turn_player === 'w') {
-            setTimer1(data.timers.player1Timer)
-            setTimer2(data.timers.player2Timer)
-            setPlayer1Timer(data.timers.player1Timer)
-            setPlayer2Timer(data.timers.player2Timer)
+            timerDispatch(setTimer1(data.timers.player1Timer))
+            timerDispatch(setTimer2(data.timers.player2Timer))
+            timerDispatch(setPlayer1Timer(data.timers.player1Timer))
+            timerDispatch(setPlayer2Timer(data.timers.player2Timer))
             setAdditionTimePerMove(data.timePerMove)
           }
 
@@ -85,7 +76,6 @@ const Game: React.FC<object> = () => {
           }
         }
       })
-      .catch((err) => {})
   }, [gameState.turn])
 
   const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
@@ -404,14 +394,14 @@ const Game: React.FC<object> = () => {
       console.log(gameState.playerTurn)
       if (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) > 0) {
         intervalId = setInterval(() => {
-          setPlayer1Timer(getRemainingTime(timer1, startTime))
+          timerDispatch(setPlayer1Timer(getRemainingTime(timer1, startTime)))
         }, 1000)
       } else if (
         gameState.playerTurn === gameState.player2 &&
         getRemainingTime(timer2, startTime) > 0
       ) {
         intervalId = setInterval(() => {
-          setPlayer2Timer(getRemainingTime(timer2, startTime))
+          timerDispatch(setPlayer2Timer(getRemainingTime(timer2, startTime)))
         }, 1000)
       } else if (isPlayerTimeout && !gameState.isGameOver) {
         gameDispatch({ type: 'SET_GAME_OVER', payload: true })
@@ -424,7 +414,11 @@ const Game: React.FC<object> = () => {
 
   const GameOver = () => {
     return (
-      !gameState.isGameDraw && !gameState.isGameOver && !gameState.isWinner && !gameState.isLoser
+      !gameState.isGameDraw &&
+      !gameState.isGameOver &&
+      isStartGame &&
+      !gameState.isWinner &&
+      !gameState.isLoser
     )
   }
 
@@ -434,11 +428,12 @@ const Game: React.FC<object> = () => {
     const onNewMove = (room: any) => {
       if (room.fen) {
         gameDispatch({ type: 'SET_NEW_MOVE', payload: room })
-        setPlayer1Timer(room.timers.player1Timer)
-        setPlayer2Timer(room.timers.player2Timer)
+
+        timerDispatch(setPlayer1Timer(room.timers.player1Timer))
+        timerDispatch(setPlayer2Timer(room.timers.player2Timer))
         setStartTime(room.startTime)
-        setTimer1(room.timer1)
-        setTimer2(room.timer2)
+        timerDispatch(setTimer1(room.timer1))
+        timerDispatch(setTimer2(room.timer2))
       }
     }
 
@@ -488,6 +483,11 @@ const Game: React.FC<object> = () => {
       clearTimeout(notificationTimeoutId)
     }
   }, [])
+
+  useEffect(() => {
+    setLocalStorage('timer1', timer1)
+    setLocalStorage('timer2', timer2)
+  }, [timer1, timer2])
 
   if (!gameState.board) return <LoadingGame />
 
