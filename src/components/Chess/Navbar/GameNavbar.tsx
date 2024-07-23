@@ -9,9 +9,6 @@ interface GameNavbarProps {
   handlePreviousMove: any
   handleNextMove: any
   socket: any
-  game: Chess | any
-  toggleGameDraw: any
-  toggleGameOver: any
   user: string
   opponent: string
   isMoved: boolean
@@ -22,9 +19,6 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
   handleNextMove,
   handlePreviousMove,
   socket,
-  game,
-  toggleGameDraw,
-  toggleGameOver,
   user,
   opponent,
   isMoved,
@@ -112,7 +106,6 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
         isMoved={isMoved}
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
-        game={game}
         socket={socket}
         user={user}
         opponent={opponent}

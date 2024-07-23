@@ -108,8 +108,8 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         (state.history = [...history]),
         (state.moveIndex = history.length - 1),
         (state.turn = turn_player),
-        (state.isWinner = winner && localStorage.getItem('address') === winner ? true : false),
-        (state.isLoser = loser && localStorage.getItem('address') === loser ? true : false),
+        (state.isWinner = winner && localStorage.getItem('address') === winner),
+        (state.isLoser = loser && localStorage.getItem('address') === loser),
         (state.player1 = player_1),
         (state.player2 = player_2),
         (state.playerTurn = turn_player === 'w' ? player_1 : player_2)
@@ -137,7 +137,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         (state.moveIndex = action.payload.history.length - 1)
     })
     .addCase(resetGame, (state: GameReducer) => {
-      state = defaultGameReducer
+      Object.assign(state, defaultGameReducer)
     })
 })
 

@@ -18,7 +18,7 @@ const timerReducer = createReducer(defaultTimerReducer, (builder: any) => {
     state.player2Timer = action.payload
   })
   builder.addCase(resetTimer, (state: TimerReducer) => {
-    state = defaultTimerReducer
+    Object.assign(state, defaultTimerReducer)
   })
 })
 

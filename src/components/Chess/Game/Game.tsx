@@ -15,7 +15,6 @@ import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
-import { isOrientation } from '../../../redux/game/game_state.reducer'
 import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
@@ -105,6 +104,14 @@ const Game: React.FC<object> = () => {
       isGameOver: gameState.isGameOver,
       isGameDraw: gameState.isGameDraw,
     })
+  }
+
+  const isOrientation = (address: string | undefined, player1: string) => {
+    if (address === player1) {
+      return 'white'
+    } else {
+      return 'black'
+    }
   }
 
   const currentPlayerTurn = useMemo(() => {

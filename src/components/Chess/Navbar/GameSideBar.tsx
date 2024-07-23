@@ -69,7 +69,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       socket.off(SOCKET_EVENTS.OPPONENT_DRAW_REQUEST, handleOpponentDrawRequest)
       socket.off(SOCKET_EVENTS.DRAW_CONFIRMED, handleDrawConfirmed)
     }
-  }, [socket, isGameDraw, isGameOver])
+  }, [socket, isGameDraw, isGameOver, gameDispatch])
 
   const handlePopupAction = (actionType: string) => {
     const actions: Record<string, () => void> = {
