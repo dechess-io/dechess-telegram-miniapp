@@ -1,9 +1,9 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import accountReducer from './account/account.reducer'
-import gameReducer from './game/game.reducer'
 import tournamentReducer from './tournament/tournament.reducer'
 import timerReducer from './timer/reducer'
+import gameReducer from './game/reducer'
 // import toastReducer from "./reducers/toastReducer";
 
 const createStore = () => {
@@ -14,6 +14,10 @@ const createStore = () => {
       tournament: tournamentReducer,
       timer: timerReducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }),
   })
 }
 

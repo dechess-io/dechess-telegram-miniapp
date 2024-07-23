@@ -400,7 +400,7 @@ const BotGame: React.FC<{}> = () => {
     return (
       <App theme={theme}>
         <Header />
-        <GameBoard
+        {/* <GameBoard
           player1={player1}
           player2={player2}
           moveLists={moves}
@@ -441,7 +441,7 @@ const BotGame: React.FC<{}> = () => {
           player1={player1}
           player2={player2}
           wallet={wallet}
-        />
+        /> */}
       </App>
     )
   }

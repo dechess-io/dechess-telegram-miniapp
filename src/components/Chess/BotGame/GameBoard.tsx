@@ -3,14 +3,16 @@ import { formatTime, getAvatarName } from '../../../utils/utils'
 import { Chessboard as Board } from 'react-chessboard'
 import { truncateSuiTx } from '../../../services/address'
 import { useTonWallet } from '@tonconnect/ui-react'
-import MoveRecord from './MoveRecord'
-import PlayerDisplay from './PlayerDisplay'
+// import MoveRecord from './MoveRecord'
+// import PlayerDisplay from './PlayerDisplay'
 import React, { useMemo, useState } from 'react'
 import { Block } from 'konsta/react'
-import { useAppSelector } from '../../../redux/store'
-import { selectGame } from '../../../redux/game/reducer'
 
 interface GameBoardProps {
+  player1: string
+  player2: string
+  moveLists: string[]
+  game: Chess | any
   onSquareClick: (square: Square) => void
   onSquareRightClick: (square: Square) => void
   onPromotionPieceSelect: any
@@ -18,11 +20,17 @@ interface GameBoardProps {
   moveSquares: Record<string, any>
   optionSquares: Record<string, any>
   rightClickedSquares: Record<string, any>
+  moveTo: any
   player1Timer: any
   player2Timer: any
+  currentMoveIndex: any
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
+  player1,
+  player2,
+  moveLists,
+  game,
   onSquareClick,
   onSquareRightClick,
   onPromotionPieceSelect,
@@ -30,11 +38,11 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   moveSquares,
   optionSquares,
   rightClickedSquares,
+  moveTo,
   player1Timer,
   player2Timer,
+  currentMoveIndex,
 }) => {
-  const { player1, player2, board, moveTo } = useAppSelector(selectGame)
-
   const [name1] = useState(getAvatarName())
   const [name2] = useState(getAvatarName())
 
@@ -79,12 +87,12 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
           <div className="flex justify-center items-center">
             <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
               <div className="flex flex-col space-y-1">
-                <MoveRecord />
-                <PlayerDisplay {...getPlayerDisplayProps(true)} />
+                {/* <MoveRecord />
+                <PlayerDisplay {...getPlayerDisplayProps(true)} /> */}
                 <div className="relative border-8 border-white rounded-lg">
                   <Board
                     boardOrientation={isOrientation}
-                    position={board.fen()}
+                    position={game.fen()}
                     id="ClickToMove"
                     animationDuration={200}
                     arePiecesDraggable={false}
@@ -110,7 +118,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                     showPromotionDialog={showPromotionDialog}
                   />
                 </div>
-                <PlayerDisplay {...getPlayerDisplayProps(false)} />
+                {/* <PlayerDisplay {...getPlayerDisplayProps(false)} /> */}
               </div>
             </div>
           </div>

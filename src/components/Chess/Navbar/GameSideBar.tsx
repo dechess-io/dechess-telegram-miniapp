@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Actions, ActionsButton, ActionsGroup } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
+import { useAppDispatch, useAppSelector } from '../../../redux/store'
+import { selectGame } from '../../../redux/game/reducer'
+import { setGameDraw, setGameOver } from '../../../redux/game/action'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -12,10 +15,7 @@ const SOCKET_EVENTS = {
 interface GameSidebarProps {
   isSidebarVisible: boolean
   toggleSidebar: any
-  game: any
   socket: any
-  toggleGameDraw: any
-  toggleGameOver: any
   user: string
   opponent: string
   isMoved: boolean
@@ -26,14 +26,14 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   isSidebarVisible,
   toggleSidebar,
   socket,
-  game,
-  toggleGameDraw,
-  toggleGameOver,
   user,
   opponent,
   isMoved,
   isWhite,
 }) => {
+  const { board, isGameDraw, isGameOver } = useAppSelector(selectGame)
+  const gameDispatch = useAppDispatch()
+
   const [visiblePopup, setVisiblePopup] = useState<string | null>(null)
   const gameId = location.pathname.split('/')[2]
   const [opponentAction, setOpponentAction] = useState<string | null>(null)
@@ -50,12 +50,12 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   }
 
   useEffect(() => {
-    const handleOpponentAbort = () => toggleGameOver()
-    const handleOpponentResign = () => toggleGameOver()
+    const handleOpponentAbort = () => gameDispatch(setGameOver(true))
+    const handleOpponentResign = () => gameDispatch(setGameOver(true))
     const handleOpponentDrawRequest = () => setDrawRequest(true)
     const handleDrawConfirmed = () => {
-      toggleGameOver()
-      toggleGameDraw()
+      gameDispatch(setGameOver(true))
+      gameDispatch(setGameDraw(true))
     }
 
     socket.on(SOCKET_EVENTS.OPPONENT_ABORT, handleOpponentAbort)
@@ -69,17 +69,19 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       socket.off(SOCKET_EVENTS.OPPONENT_DRAW_REQUEST, handleOpponentDrawRequest)
       socket.off(SOCKET_EVENTS.DRAW_CONFIRMED, handleDrawConfirmed)
     }
-  }, [socket, toggleGameOver, toggleGameDraw])
+  }, [socket, isGameDraw, isGameOver])
 
   const handlePopupAction = (actionType: string) => {
     const actions: Record<string, () => void> = {
       abort: () => {
         socket.emit('abort', { game_id: gameId, isGameOver: true, winner: opponent, loser: user })
-        toggleGameOver()
+        gameDispatch(setGameOver(true))
+        toggleSidebar()
       },
       draw: () => {
         socket.emit('drawRequest', { game_id: gameId })
         setVisiblePopup(null)
+        toggleSidebar()
       },
       resign: () => {
         socket.emit('resign', {
@@ -89,7 +91,8 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
           winner: opponent,
           loser: user,
         })
-        toggleGameOver()
+        gameDispatch(setGameOver(true))
+        toggleSidebar()
       },
     }
 
@@ -114,8 +117,8 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
 
   function isAbortAllow() {
     return (
-      (game._moveNumber === 1 && game._turn === 'b' && isMoved && !isWhite) ||
-      (game._moveNumber === 1 && game._turn === 'w' && !isMoved)
+      ((board as any)._moveNumber === 1 && (board as any)._turn === 'b' && isMoved && !isWhite) ||
+      ((board as any)._moveNumber === 1 && (board as any)._turn === 'w' && !isMoved)
     )
   }
 

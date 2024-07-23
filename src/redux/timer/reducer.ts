@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { defaultTimerReducer, TimerReducer } from './type'
 import { RootState } from '../store'
-import { setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from './action'
+import { resetTimer, setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from './action'
 
 const timerReducer = createReducer(defaultTimerReducer, (builder: any) => {
   builder.addCase(setTimer1, (state: TimerReducer, action: any) => {
@@ -16,6 +16,9 @@ const timerReducer = createReducer(defaultTimerReducer, (builder: any) => {
   })
   builder.addCase(setPlayer2Timer, (state: TimerReducer, action: any) => {
     state.player2Timer = action.payload
+  })
+  builder.addCase(resetTimer, (state: TimerReducer) => {
+    state = defaultTimerReducer
   })
 })
 
