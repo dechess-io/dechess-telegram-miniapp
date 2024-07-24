@@ -26,3 +26,22 @@ export const setPlayerTurn = createAction<string>('/game/set-player-turn')
 export const switchPlayerTurn = createAction('/game/switch-player-turn')
 export const setNewMove = createAction<any>('/game/set-new-move')
 export const resetGame = createAction('/game/reset-game')
+export const handleMoveFromSelection = createAction<Square>('/game/handle-move-from-selection')
+export const handleMoveToSelection = createAction<Square>('/game/handle-move-to-selection')
+export const move = createAction<{ foundMove: any; square: Square }>('/game/make-move')
+export const getMoveOptions = createAction<Square>('/game/get-move-options')
+export const isPromotionMove = createAction<{ move: any; square: Square }>(
+  '/game/is-promotion-move'
+)
+export const emitNewMove = createAction<{
+  from: any
+  to: any
+  isPromotionMove: any
+  foundMove: any
+  square: any
+  additionalProps: any
+}>('/game/emit-new-move')
+export const onSquareClick = createAction<Square>('/game/on-square-click')
+export const setRightClickedSquares = createAction<{ [key: string]: any }>(
+  '/game/set-right-clicked-squares'
+)

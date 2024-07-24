@@ -27,8 +27,16 @@ import {
   switchPlayerTurn,
   setNewMove,
   resetGame,
+  handleMoveFromSelection,
+  getMoveOptions,
+  handleMoveToSelection,
+  isPromotionMove,
+  move,
+  onSquareClick,
+  setRightClickedSquares,
 } from './action'
 import { Chess } from 'chess.js'
+import { convertToFigurineSan } from '../../utils/utils'
 
 const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
   builder
@@ -138,6 +146,103 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
     })
     .addCase(resetGame, (state: GameReducer) => {
       Object.assign(state, defaultGameReducer)
+    })
+    .addCase(handleMoveFromSelection, (state: GameReducer, action: any) => {
+      const hasMoveOptions = getMoveOptions(action.payload)
+      if (hasMoveOptions) {
+        state.moveFrom = action.payload
+      }
+    })
+    .addCase(handleMoveToSelection, (state: GameReducer, action: any) => {
+      const moves = state.board.moves({ square: state.moveFrom, verbose: true })
+      const foundMove = moves.find((m: any) => m.from === state.moveFrom && m.to === action.payload)
+      if (!foundMove) {
+        const hasMoveOptions = getMoveOptions(action.payload)
+        state.moveFrom = hasMoveOptions ? action.payload : undefined
+        return
+      }
+      state.moveTo = action.payload
+      if (isPromotionMove({ move: foundMove, square: action.payload })) {
+        state.showPromotionDialog = true
+        return
+      }
+      move({ foundMove, square: action.payload })
+    })
+    .addCase(move, (state: GameReducer, action: any) => {
+      const { foundMove, square } = action.payload
+      const gameCopy = state.board
+      const move = gameCopy.move({
+        from: state.moveFrom ? state.moveFrom : '',
+        to: square,
+        promotion: 'q',
+      })
+      foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
+      state.newMove = {
+        from: state.moveFrom,
+        to: square,
+        isPromotionMove: isPromotionMove({ move: foundMove, square }),
+        foundMove,
+        square,
+        additionalProps: {
+          san: foundMove.san,
+          lastMove: Date.now(),
+          startTime: Date.now(),
+        },
+      }
+      state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
+      if (!move) {
+        handleMoveFromSelection(square)
+        return
+      }
+      state.board = gameCopy
+      state.moveFrom = undefined
+      state.moveTo = undefined
+      state.optionSquares = {}
+    })
+    .addCase(getMoveOptions, (state: GameReducer, action: any) => {
+      const moves = state.board.moves({ square: action.payload, verbose: true })
+      if (moves.length === 0) {
+        state.optionSquares = {}
+        return false
+      }
+      const newSquares: any = {}
+      moves.forEach((move: any) => {
+        newSquares[move.to] = {
+          background:
+            state.board.get(move.to) &&
+            state.board.get(move.to).color !== state.board.get(action.payload).color
+              ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
+              : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
+          borderRadius: '50%',
+        }
+      })
+      newSquares[action.payload] = {
+        background: 'rgba(123, 97, 255, 1)',
+      }
+      state.optionSquares = newSquares
+      return true
+    })
+    .addCase(isPromotionMove, (state: GameReducer, action: any) => {
+      const { move, square } = action.payload
+      return (
+        (move.color === 'w' && move.piece === 'p' && square[1] === '8') ||
+        (move.color === 'b' && move.piece === 'p' && square[1] === '1')
+      )
+    })
+    .addCase(onSquareClick, (state: GameReducer, action: any) => {
+      // if (!isEligibleToPlay(state)) return;
+      // state.rightClickedSquares = {};
+      // if (!state.moveTo) {
+      //   if (!state.moveFrom) {
+      //     handleMoveFromSelection(action.payload);
+      //     return;
+      //   } else {
+      //     handleMoveToSelection(action.payload);
+      //   }
+      // }
+    })
+    .addCase(setRightClickedSquares, (state: GameReducer, action: any) => {
+      state.rightClickedSquares = action.payload
     })
 })
 

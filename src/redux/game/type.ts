@@ -17,6 +17,8 @@ export interface GameReducer {
   player1: string
   player2: string
   playerTurn: string
+  rightClickedSquares: any
+  newMove: any
 }
 
 export const defaultGameReducer: GameReducer = {
@@ -36,4 +38,6 @@ export const defaultGameReducer: GameReducer = {
   player1: '',
   player2: '',
   playerTurn: '',
+  rightClickedSquares: {},
+  newMove: {},
 }
