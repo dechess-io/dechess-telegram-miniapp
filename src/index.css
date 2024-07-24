@@ -2,10 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  @font-face {
+    font-family: "Space Grotesk";
+    font-style: normal;
+    font-weight: 200;
+    font-display: swap;
+    src: url(/fonts/SpaceGrotesk-Light.ttf) format("truetype");
+  }
+
+  @font-face {
+    font-family: "Space Grotesk";
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url(/fonts/SpaceGrotesk-Regular.ttf) format("truetype");
+  }
+
+  @font-face {
+    font-family: "Space Grotesk";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url(/fonts/SpaceGrotesk-Medium.ttf) format("truetype");
+  }
+
+  @font-face {
+    font-family: "Space Grotesk";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(/fonts/SpaceGrotesk-Bold.ttf) format("truetype");
+  }
+
+  body {
+    font-family: "Space Grotesk", sans-serif;
+  }
+}
+
 /* Hide scrollbar but still allow scrolling */
 body,
 html {
   scrollbar-width: none;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 500;
 }
 
 body::-webkit-scrollbar {

@@ -72,7 +72,7 @@ function App() {
 
   return (
     <>
-      <KonstaApp theme={theme}>
+      <KonstaApp className="font-space font-medium" theme={theme}>
         <Page className="overflow-auto hide-scrollbar">
           <Header />
           <ReactDialog
