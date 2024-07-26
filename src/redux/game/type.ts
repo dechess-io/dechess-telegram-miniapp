@@ -19,6 +19,9 @@ export interface GameReducer {
   playerTurn: string
   rightClickedSquares: any
   newMove: any
+  hasMoveOptions: boolean
+  isMove: boolean
+  foundMove: any
 }
 
 export const defaultGameReducer: GameReducer = {
@@ -40,4 +43,7 @@ export const defaultGameReducer: GameReducer = {
   playerTurn: '',
   rightClickedSquares: {},
   newMove: {},
+  hasMoveOptions: false,
+  isMove: false,
+  foundMove: null,
 }

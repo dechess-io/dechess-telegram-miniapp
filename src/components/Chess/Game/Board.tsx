@@ -9,6 +9,7 @@ import React, { useMemo, useState } from 'react'
 import { Block } from 'konsta/react'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
+import { selectTimer } from '../../../redux/timer/reducer'
 
 interface GameBoardProps {
   onSquareClick: (square: Square) => void
@@ -18,8 +19,6 @@ interface GameBoardProps {
   moveSquares: Record<string, any>
   optionSquares: Record<string, any>
   rightClickedSquares: Record<string, any>
-  player1Timer: any
-  player2Timer: any
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
@@ -30,10 +29,9 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   moveSquares,
   optionSquares,
   rightClickedSquares,
-  player1Timer,
-  player2Timer,
 }) => {
   const { player1, player2, board, moveTo } = useAppSelector(selectGame)
+  const { player1Timer, player2Timer } = useAppSelector(selectTimer)
 
   const [name1] = useState(getAvatarName())
   const [name2] = useState(getAvatarName())

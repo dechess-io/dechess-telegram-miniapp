@@ -30,13 +30,15 @@ import {
   handleMoveFromSelection,
   getMoveOptions,
   handleMoveToSelection,
-  isPromotionMove,
   move,
   onSquareClick,
   setRightClickedSquares,
+  setIsMove,
+  setFoundMove,
 } from './action'
 import { Chess } from 'chess.js'
 import { convertToFigurineSan } from '../../utils/utils'
+import { isEligibleToPlay, isPromotionMove } from '../../components/Chess/Game/util'
 
 const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
   builder
@@ -123,10 +125,12 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         (state.playerTurn = turn_player === 'w' ? player_1 : player_2)
     })
     .addCase(setPreviousMove, (state: GameReducer) => {
+      if (state.moveIndex <= 0) return
       state.moveIndex = state.moveIndex - 1
       state.board = new Chess(state.history[state.moveIndex - 1])
     })
     .addCase(setNextMove, (state: GameReducer) => {
+      if (state.moveIndex >= state.history.length) return
       ;(state.moveIndex = state.moveIndex + 1),
         (state.board = new Chess(state.history[state.moveIndex + 1]))
     })
@@ -148,12 +152,14 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       Object.assign(state, defaultGameReducer)
     })
     .addCase(handleMoveFromSelection, (state: GameReducer, action: any) => {
+      console.log('hello')
       const hasMoveOptions = getMoveOptions(action.payload)
       if (hasMoveOptions) {
         state.moveFrom = action.payload
       }
     })
     .addCase(handleMoveToSelection, (state: GameReducer, action: any) => {
+      console.log(action.payload)
       const moves = state.board.moves({ square: state.moveFrom, verbose: true })
       const foundMove = moves.find((m: any) => m.from === state.moveFrom && m.to === action.payload)
       if (!foundMove) {
@@ -162,7 +168,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         return
       }
       state.moveTo = action.payload
-      if (isPromotionMove({ move: foundMove, square: action.payload })) {
+      if (isPromotionMove(foundMove, action.payload)) {
         state.showPromotionDialog = true
         return
       }
@@ -180,11 +186,11 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.newMove = {
         from: state.moveFrom,
         to: square,
-        isPromotionMove: isPromotionMove({ move: foundMove, square }),
+        isPromotionMove: isPromotionMove(foundMove, square),
         foundMove,
         square,
         additionalProps: {
-          san: foundMove.san,
+          san: '',
           lastMove: Date.now(),
           startTime: Date.now(),
         },
@@ -197,16 +203,17 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.board = gameCopy
       state.moveFrom = undefined
       state.moveTo = undefined
+      state.isMove = false
       state.optionSquares = {}
     })
     .addCase(getMoveOptions, (state: GameReducer, action: any) => {
       const moves = state.board.moves({ square: action.payload, verbose: true })
       if (moves.length === 0) {
         state.optionSquares = {}
-        return false
+        state.hasMoveOptions = false
       }
       const newSquares: any = {}
-      moves.forEach((move: any) => {
+      moves.map((move: any) => {
         newSquares[move.to] = {
           background:
             state.board.get(move.to) &&
@@ -215,34 +222,32 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
               : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
           borderRadius: '50%',
         }
+        return move
       })
       newSquares[action.payload] = {
         background: 'rgba(123, 97, 255, 1)',
       }
       state.optionSquares = newSquares
-      return true
-    })
-    .addCase(isPromotionMove, (state: GameReducer, action: any) => {
-      const { move, square } = action.payload
-      return (
-        (move.color === 'w' && move.piece === 'p' && square[1] === '8') ||
-        (move.color === 'b' && move.piece === 'p' && square[1] === '1')
-      )
-    })
-    .addCase(onSquareClick, (state: GameReducer, action: any) => {
-      // if (!isEligibleToPlay(state)) return;
-      // state.rightClickedSquares = {};
-      // if (!state.moveTo) {
-      //   if (!state.moveFrom) {
-      //     handleMoveFromSelection(action.payload);
-      //     return;
-      //   } else {
-      //     handleMoveToSelection(action.payload);
-      //   }
-      // }
+      state.hasMoveOptions = true
     })
     .addCase(setRightClickedSquares, (state: GameReducer, action: any) => {
-      state.rightClickedSquares = action.payload
+      const colour = 'rgba(123, 97, 255, 1)'
+
+      const { square } = action.payload
+      state.rightClickedSquares = {
+        ...state.rightClickedSquares,
+        [square]:
+          state.rightClickedSquares[square] &&
+          state.rightClickedSquares[square].backgroundColor === colour
+            ? undefined
+            : { backgroundColor: colour },
+      }
+    })
+    .addCase(setIsMove, (state: GameReducer, action: any) => {
+      state.isMove = action.payload
+    })
+    .addCase(setFoundMove, (state: GameReducer, action: any) => {
+      state.foundMove = action.payload
     })
 })
 

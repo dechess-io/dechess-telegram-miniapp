@@ -30,9 +30,7 @@ export const handleMoveFromSelection = createAction<Square>('/game/handle-move-f
 export const handleMoveToSelection = createAction<Square>('/game/handle-move-to-selection')
 export const move = createAction<{ foundMove: any; square: Square }>('/game/make-move')
 export const getMoveOptions = createAction<Square>('/game/get-move-options')
-export const isPromotionMove = createAction<{ move: any; square: Square }>(
-  '/game/is-promotion-move'
-)
+
 export const emitNewMove = createAction<{
   from: any
   to: any
@@ -41,7 +39,10 @@ export const emitNewMove = createAction<{
   square: any
   additionalProps: any
 }>('/game/emit-new-move')
-export const onSquareClick = createAction<Square>('/game/on-square-click')
+export const onSquareClick = createAction<any>('/game/on-square-click')
 export const setRightClickedSquares = createAction<{ [key: string]: any }>(
   '/game/set-right-clicked-squares'
 )
+
+export const setIsMove = createAction<boolean>('/game/set-is-move')
+export const setFoundMove = createAction<any>('/game/set-found-move')

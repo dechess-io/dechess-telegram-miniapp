@@ -29,8 +29,11 @@ import {
   showPromotionDialog,
   switchPlayerTurn,
   move,
+  getMoveOptions,
+  onSquareClick,
 } from '../../../redux/game/action'
-import { emitNewMove, isEligibleToPlay, isOrientation, isPromotionMove } from './util'
+import { emitGameOver, emitNewMove, isEligibleToPlay, isOrientation, isPromotionMove } from './util'
+import { onSquareClickThunk } from '../../../redux/game/thunk'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -93,14 +96,6 @@ const Game: React.FC<object> = () => {
     )
   }, [gameState.playerTurn, gameState.player1, gameState.player2, timer1, timer2, startTime])
 
-  const emitGameOver = () => {
-    socket.emit('endGame', {
-      game_id: location.pathname.split('/')[2],
-      isGameOver: gameState.isGameOver,
-      isGameDraw: gameState.isGameDraw,
-    })
-  }
-
   const currentPlayerTurn = useMemo(() => {
     const orientation = isOrientation(wallet?.account.address, gameState.player1)
     if (orientation === 'white') {
@@ -108,47 +103,6 @@ const Game: React.FC<object> = () => {
     }
     return gameState.turn === 'b' ? gameState.player2 : gameState.player1
   }, [wallet, gameState.player1, gameState.player2, gameState.turn])
-
-  const getMoveOptions = useCallback(
-    (square: Square) => {
-      const moves = gameState.board.moves({ square, verbose: true })
-
-      if (moves.length === 0) {
-        gameDispatch(setOptionSquares({}))
-        return false
-      }
-
-      const newSquares: any = {}
-
-      moves.map((move: any) => {
-        newSquares[move.to] = {
-          background:
-            gameState.board.get(move.to) &&
-            gameState.board.get(move.to).color !== gameState.board.get(square).color
-              ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
-              : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
-          borderRadius: '50%',
-        }
-
-        return move
-      })
-
-      newSquares[square] = newSquares[square] = {
-        background: 'rgba(123, 97, 255, 1)',
-      }
-      gameDispatch(setOptionSquares(newSquares))
-      return true
-    },
-    [gameState.board]
-  )
-
-  const handleMoveFromSelection = useCallback(
-    (square: Square) => {
-      const hasMoveOptions = getMoveOptions(square)
-      if (hasMoveOptions) gameDispatch(setMoveFrom(square))
-    },
-    [getMoveOptions]
-  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
@@ -176,56 +130,12 @@ const Game: React.FC<object> = () => {
     )
   }
 
-  const handleMoveToSelection = useCallback(
-    (square: Square) => {
-      const moves = gameState.board.moves({
-        square: gameState.moveFrom,
-        verbose: true,
-      })
-
-      const foundMove = moves.find(
-        (m: any) => m.from === gameState.moveFrom && m.to === square
-      ) as any
-
-      if (!foundMove) {
-        const hasMoveOptions = getMoveOptions(square)
-        gameDispatch(setMoveFrom(hasMoveOptions ? square : undefined))
-        return
-      }
-
-      gameDispatch(setMoveTo(square))
-
-      if (isPromotionMove(foundMove, square)) {
-        gameDispatch(showPromotionDialog(true))
-        return
-      }
-
-      makeMove(foundMove, square)
-    },
-    [gameState.board, getMoveOptions, makeMove, gameState.moveFrom]
-  )
-
-  const onSquareClick = useCallback(
-    (square: Square) => {
-      if (!isEligibleToPlay(gameState, wallet)) return
-      gameDispatch(setRightClickedSquares({}))
-      if (!gameState.moveTo) {
-        if (!gameState.moveFrom) {
-          handleMoveFromSelection(square)
-          return
-        } else {
-          handleMoveToSelection(square)
-        }
-      }
-    },
-    [
-      isEligibleToPlay,
-      gameState.moveTo,
-      gameState.moveFrom,
-      handleMoveFromSelection,
-      handleMoveToSelection,
-    ]
-  )
+  const onSquareClicks = (square: Square) => {
+    gameDispatch(onSquareClickThunk(square, wallet))
+    if (gameState.isMove) {
+      makeMove(gameState.foundMove, square)
+    }
+  }
 
   const onPromotionPieceSelect = (piece: any) => {
     if (piece) {
@@ -268,17 +178,7 @@ const Game: React.FC<object> = () => {
   }
 
   const onSquareRightClick = useCallback((square: any) => {
-    const colour = 'rgba(123, 97, 255, 1)'
-    gameDispatch(
-      setRightClickedSquares({
-        ...gameState.rightClickedSquares,
-        [square]:
-          gameState.rightClickedSquares[square] &&
-          gameState.rightClickedSquares[square].backgroundColor === colour
-            ? undefined
-            : { backgroundColor: colour },
-      })
-    )
+    gameDispatch(setRightClickedSquares({ square }))
   }, [])
 
   useEffect(() => {
@@ -323,7 +223,7 @@ const Game: React.FC<object> = () => {
         }, 1000)
       } else if (isPlayerTimeout && !gameState.isGameOver) {
         gameDispatch(setGameOver(true))
-        emitGameOver()
+        emitGameOver(socket, gameState, location.pathname.split('/')[2])
       }
     }
 
@@ -389,7 +289,7 @@ const Game: React.FC<object> = () => {
     <App theme={theme}>
       <Header />
       <GameBoard
-        onSquareClick={onSquareClick}
+        onSquareClick={onSquareClicks}
         onSquareRightClick={onSquareRightClick}
         onPromotionPieceSelect={onPromotionPieceSelect}
         showPromotionDialog={gameState.showPromotionDialog}

@@ -356,24 +356,6 @@ const BotGame: React.FC<{}> = () => {
     // console.log("7s200:onSquareRightClick", rightClickedSquares);
   }
 
-  function handlePreviousMove() {
-    if (currentMoveIndex > 0) {
-      const newGame = new Chess(history[currentMoveIndex - 1])
-      gameDispatch(setGame(newGame))
-      setCurrentMoveIndex((prevIndex) => prevIndex - 1)
-      dismissPopup()
-    }
-  }
-
-  function handleNextMove() {
-    if (currentMoveIndex < history.length - 1) {
-      const newGame = new Chess(history[currentMoveIndex + 1])
-      gameDispatch(setGame(newGame))
-      setCurrentMoveIndex((prevIndex) => prevIndex + 1)
-      dismissPopup()
-    }
-  }
-
   const theme = isAndroid ? 'material' : 'ios'
 
   if (!board) {
@@ -394,8 +376,6 @@ const BotGame: React.FC<{}> = () => {
         <GameNavbar
           user={wallet?.account.address ? wallet?.account.address : 'player1'}
           opponent={wallet?.account.address === player1 ? player2 : player1}
-          handlePreviousMove={handlePreviousMove}
-          handleNextMove={handleNextMove}
           socket={socket}
           isMoved={moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
