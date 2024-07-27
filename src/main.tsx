@@ -7,31 +7,13 @@ import Game from './components/Chess/Game/Game'
 import Mode from './components/Mode/Mode'
 import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
-// import  Telegram from 'telegram-webapps'
-// import './styles/main.scss'
-
-// import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
-// import { getFullnodeUrl } from '@mysten/sui/client'
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
 import BotGame from './components/Chess/BotGame/BotGame'
-// import './index.css'
 
 WebApp.ready()
 WebApp.expand()
 WebApp.MainButton.enable()
 WebApp.enableClosingConfirmation()
-// (Telegram as any).disableVerticalSwipes();
-
-// const networkConfig = {
-//   testnet: {
-//     url: 'https://fullnode.testnet.sui.io:443',
-//   },
-//   mainnet: {
-//     url: 'https://fullnode.mainnet.sui.io:443',
-//   },
-// }
-// const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -55,9 +37,6 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig}>
-          <WalletProvider> */}
       <TonConnectUIProvider
         manifestUrl="https://miniapp.dechess.io/tonconnect-manifest.json"
         uiPreferences={{ theme: THEME.DARK }}
@@ -105,10 +84,6 @@ root.render(
       >
         <RouterProvider router={router}></RouterProvider>
       </TonConnectUIProvider>
-
-      {/* </WalletProvider>
-        </SuiClientProvider>
-      </QueryClientProvider> */}
     </Provider>
   </React.StrictMode>
 )
