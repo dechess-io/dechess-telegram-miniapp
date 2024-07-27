@@ -90,21 +90,22 @@ const normalizeFEN = (fen: string): string => {
 
 const addPositions = (fens: string[]): { [fen: string]: number } => {
   const positionHistory: { [fen: string]: number } = {}
-  fens.forEach((fen) => {
-    const normalizedFen = normalizeFEN(fen)
-    if (positionHistory[normalizedFen]) {
-      positionHistory[normalizedFen]++
-    } else {
-      positionHistory[normalizedFen] = 1
-    }
-  })
+  // fens.forEach((fen) => {
+  //   const normalizedFen = normalizeFEN(fen)
+  //   if (positionHistory[normalizedFen]) {
+  //     positionHistory[normalizedFen]++
+  //   } else {
+  //     positionHistory[normalizedFen] = 1
+  //   }
+  // })
   return positionHistory
 }
 
 export const isThreefoldRepetition = (fens: string[]): boolean => {
-  const positionHistory = addPositions(fens)
-  const lastFen = fens[fens.length - 1]
-  return positionHistory[normalizeFEN(lastFen)] >= 3
+  // const positionHistory = addPositions(fens)
+  // const lastFen = fens[fens.length - 1]
+  // return positionHistory[normalizeFEN(lastFen)] >= 3
+  return false
 }
 
 export const getRemainingTime = (timer: any, startTime: any) => {

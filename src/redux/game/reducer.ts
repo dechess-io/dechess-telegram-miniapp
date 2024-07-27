@@ -27,18 +27,12 @@ import {
   switchPlayerTurn,
   setNewMove,
   resetGame,
-  handleMoveFromSelection,
   getMoveOptions,
-  handleMoveToSelection,
-  move,
-  onSquareClick,
   setRightClickedSquares,
   setIsMove,
   setFoundMove,
 } from './action'
 import { Chess } from 'chess.js'
-import { convertToFigurineSan } from '../../utils/utils'
-import { isEligibleToPlay, isPromotionMove } from '../../components/Chess/Game/util'
 
 const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
   builder
@@ -141,70 +135,15 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
     })
     .addCase(setNewMove, (state: GameReducer, action: any) => {
-      ;(state.moves = [...state.moves, action.payload.san]),
-        (state.turn = action.payload.turn),
-        (state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1),
-        (state.board = new Chess(action.payload.fen)),
-        (state.history = action.payload.history),
-        (state.moveIndex = action.payload.history.length - 1)
+      state.moves = [...state.moves, action.payload.san]
+      state.turn = action.payload.turn
+      state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
+      state.board = new Chess(action.payload.fen)
+      state.history = action.payload.history
+      // (state.moveIndex = action.payload.history.length - 1)
     })
     .addCase(resetGame, (state: GameReducer) => {
       Object.assign(state, defaultGameReducer)
-    })
-    .addCase(handleMoveFromSelection, (state: GameReducer, action: any) => {
-      console.log('hello')
-      const hasMoveOptions = getMoveOptions(action.payload)
-      if (hasMoveOptions) {
-        state.moveFrom = action.payload
-      }
-    })
-    .addCase(handleMoveToSelection, (state: GameReducer, action: any) => {
-      console.log(action.payload)
-      const moves = state.board.moves({ square: state.moveFrom, verbose: true })
-      const foundMove = moves.find((m: any) => m.from === state.moveFrom && m.to === action.payload)
-      if (!foundMove) {
-        const hasMoveOptions = getMoveOptions(action.payload)
-        state.moveFrom = hasMoveOptions ? action.payload : undefined
-        return
-      }
-      state.moveTo = action.payload
-      if (isPromotionMove(foundMove, action.payload)) {
-        state.showPromotionDialog = true
-        return
-      }
-      move({ foundMove, square: action.payload })
-    })
-    .addCase(move, (state: GameReducer, action: any) => {
-      const { foundMove, square } = action.payload
-      const gameCopy = state.board
-      const move = gameCopy.move({
-        from: state.moveFrom ? state.moveFrom : '',
-        to: square,
-        promotion: 'q',
-      })
-      foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
-      state.newMove = {
-        from: state.moveFrom,
-        to: square,
-        isPromotionMove: isPromotionMove(foundMove, square),
-        foundMove,
-        square,
-        additionalProps: {
-          san: '',
-          lastMove: Date.now(),
-          startTime: Date.now(),
-        },
-      }
-      state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
-      if (!move) {
-        handleMoveFromSelection(square)
-        return
-      }
-      state.board = gameCopy
-      state.moveFrom = undefined
-      state.moveTo = undefined
-      state.isMove = false
-      state.optionSquares = {}
     })
     .addCase(getMoveOptions, (state: GameReducer, action: any) => {
       const moves = state.board.moves({ square: action.payload, verbose: true })
@@ -233,7 +172,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
     .addCase(setRightClickedSquares, (state: GameReducer, action: any) => {
       const colour = 'rgba(123, 97, 255, 1)'
 
-      const { square } = action.payload
+      const square = action.payload
       state.rightClickedSquares = {
         ...state.rightClickedSquares,
         [square]:

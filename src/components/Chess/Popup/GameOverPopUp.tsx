@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect } from 'react'
-import { Dialog, DialogButton } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
 
 type GameOverPopUpProps = {
   wallet: any
-
   showPopup: boolean
   setShowPopup: any
 }

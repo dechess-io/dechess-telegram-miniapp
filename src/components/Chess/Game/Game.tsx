@@ -21,19 +21,13 @@ import {
   resetMoveSelection,
   setGame,
   setGameOver,
-  setMoveFrom,
-  setMoveTo,
   setNewMove,
-  setOptionSquares,
   setRightClickedSquares,
   showPromotionDialog,
   switchPlayerTurn,
-  move,
-  getMoveOptions,
-  onSquareClick,
 } from '../../../redux/game/action'
-import { emitGameOver, emitNewMove, isEligibleToPlay, isOrientation, isPromotionMove } from './util'
-import { onSquareClickThunk } from '../../../redux/game/thunk'
+import { emitGameOver, emitNewMove, isOrientation } from './util'
+import { handleMoveThunk, onSquareClickThunk } from '../../../redux/game/thunk'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -108,8 +102,8 @@ const Game: React.FC<object> = () => {
   const makeMove = (foundMove: any, square: Square) => {
     setStartTime(Date.now())
     setIsStartGame(true)
-    gameDispatch(move({ foundMove, square }))
-    const { moveFrom, square: newMoveSquare, isPromotionMove, additionalProps } = gameState.newMove
+    const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+    const { moveFrom, square: newMoveSquare, isPromotionMove, additionalProps } = newState.newMove
     emitNewMove(
       socket,
       moveFrom,
@@ -119,7 +113,7 @@ const Game: React.FC<object> = () => {
       newMoveSquare,
       additionalProps,
       location.pathname.split('/')[2],
-      gameState,
+      newState,
       currentPlayerTurn,
       player1Timer,
       player2Timer,
@@ -131,9 +125,9 @@ const Game: React.FC<object> = () => {
   }
 
   const onSquareClicks = (square: Square) => {
-    gameDispatch(onSquareClickThunk(square, wallet))
-    if (gameState.isMove) {
-      makeMove(gameState.foundMove, square)
+    const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
+    if (isMove) {
+      makeMove(foundMove, square)
     }
   }
 
@@ -177,9 +171,9 @@ const Game: React.FC<object> = () => {
     return true
   }
 
-  const onSquareRightClick = useCallback((square: any) => {
-    gameDispatch(setRightClickedSquares({ square }))
-  }, [])
+  const onSquareRightClick = (square: any) => {
+    gameDispatch(setRightClickedSquares(square))
+  }
 
   useEffect(() => {
     if (isThreefoldRepetition(gameState.history)) {
