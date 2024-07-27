@@ -493,7 +493,7 @@ const Game: React.FC<object> = () => {
 
   return (
     <App theme={theme}>
-      <Header />
+      {/* <Header /> */}
       <GameBoard
         player1={gameState.player1}
         player2={gameState.player2}
