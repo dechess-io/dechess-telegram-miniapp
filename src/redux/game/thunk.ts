@@ -1,9 +1,10 @@
 import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from 'redux'
 import { RootState } from '../store'
-import { isEligibleToPlay, isPromotionMove } from '../../components/Chess/Game/util'
+import { emitNewMove, isEligibleToPlay, isPromotionMove } from '../../components/Chess/Game/util'
 import {
   getMoveOptions,
+  resetMoveSelection,
   setFoundMove,
   setGame,
   setIsMove,
@@ -17,6 +18,8 @@ import {
 } from './action'
 import { GameReducer } from './type'
 import { convertToFigurineSan } from '../../utils/utils'
+import { socket } from '../../services/socket'
+import { setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from '../timer/action'
 export const onSquareClickThunk = (
   square: any,
   wallet: any
@@ -125,5 +128,90 @@ export const handleMoveThunk = (
     dispatch(setOptionSquares({}))
 
     return getState().game
+  }
+}
+
+export const setupSocketListenersThunk = (): ThunkAction<void, RootState, unknown, AnyAction> => {
+  return (dispatch, getState) => {
+    const state = getState().game
+    const gameId = location.pathname.split('/')[2]
+
+    socket.connect()
+    socket.on('connection', () => {})
+    socket.on('newmove', (room: any) => {
+      if (room.fen) {
+        dispatch(setNewMove(room))
+        dispatch(setPlayer1Timer(room.timers.player1Timer))
+        dispatch(setPlayer2Timer(room.timers.player2Timer))
+        dispatch(setTimer1(room.timer1))
+        dispatch(setTimer2(room.timer2))
+      }
+    })
+    socket.on('start', (data: any) => {
+      if (data.start === true) {
+        // dispatch(setIsStartGame(true));
+      }
+    })
+    socket.on('opponentDisconnect', () => {})
+
+    socket.emit('joinGame', { game_id: gameId })
+
+    return () => {
+      socket.off('connection')
+      socket.off('newmove')
+      socket.off('start')
+      socket.off('opponentDisconnect')
+    }
+  }
+}
+
+export const handlePromotionMoveThunk = (
+  payload: any
+): ThunkAction<void, RootState, unknown, AnyAction> => {
+  return (dispatch, getState) => {
+    const state = getState().game
+    const {
+      piece,
+      player1Timer,
+      player2Timer,
+      additionTimePerMove,
+      timer1,
+      timer2,
+      startTime,
+      currentPlayerTurn,
+    } = payload
+    if (piece) {
+      const gameCopy: any = state.board
+      const newMove = gameCopy.move({
+        from: state.moveFrom,
+        to: state.moveTo,
+        promotion: piece[1].toLowerCase() ?? 'q',
+      })
+
+      if (newMove) {
+        dispatch(setGame(gameCopy))
+        emitNewMove(
+          state.moveFrom,
+          state.moveTo,
+          true,
+          {
+            promotion: piece[1].toLowerCase() ?? 'q',
+          },
+          location.pathname.split('/')[2],
+          state,
+          currentPlayerTurn,
+          player1Timer,
+          player2Timer,
+          additionTimePerMove,
+          timer1,
+          timer2,
+          startTime
+        )
+        dispatch(switchPlayerTurn())
+      }
+
+      dispatch(resetMoveSelection())
+      dispatch(showPromotionDialog(false))
+    }
   }
 }

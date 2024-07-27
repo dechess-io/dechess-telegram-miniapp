@@ -1,5 +1,6 @@
 import { Square } from 'chess.js'
 import { getRemainingTime } from '../../../utils/utils'
+import { socket } from '../../../services/socket'
 
 export const isPromotionMove = (move: any, square: Square) => {
   return (
@@ -17,12 +18,9 @@ export const isOrientation = (address: string | undefined, player1: string) => {
 }
 
 export function emitNewMove(
-  socket: any,
   from: any,
   to: any,
   isPromotionMove: any,
-  foundMove: any,
-  square: any,
   additionalProps = {},
   gameId: string,
   gameState: any,

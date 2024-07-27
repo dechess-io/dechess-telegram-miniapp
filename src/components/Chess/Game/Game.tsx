@@ -16,18 +16,14 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectTimer } from '../../../redux/timer/reducer'
 import { setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from '../../../redux/timer/action'
 import { selectGame } from '../../../redux/game/reducer'
-import {
-  loadGame,
-  resetMoveSelection,
-  setGame,
-  setGameOver,
-  setNewMove,
-  setRightClickedSquares,
-  showPromotionDialog,
-  switchPlayerTurn,
-} from '../../../redux/game/action'
+import { loadGame, setGameOver, setRightClickedSquares } from '../../../redux/game/action'
 import { emitGameOver, emitNewMove, isOrientation } from './util'
-import { handleMoveThunk, onSquareClickThunk } from '../../../redux/game/thunk'
+import {
+  handleMoveThunk,
+  handlePromotionMoveThunk,
+  onSquareClickThunk,
+  setupSocketListenersThunk,
+} from '../../../redux/game/thunk'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -78,11 +74,6 @@ const Game: React.FC<object> = () => {
 
   const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
 
-  const handleSwitchTurn = useCallback(
-    () => gameDispatch(switchPlayerTurn()),
-    [gameState.player1, gameState.player2]
-  )
-
   const isPlayerTimeout = useMemo(() => {
     return (
       (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) === 0) ||
@@ -101,16 +92,12 @@ const Game: React.FC<object> = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
     setStartTime(Date.now())
-    setIsStartGame(true)
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     const { moveFrom, square: newMoveSquare, isPromotionMove, additionalProps } = newState.newMove
     emitNewMove(
-      socket,
       moveFrom,
       newMoveSquare,
       isPromotionMove,
-      foundMove,
-      newMoveSquare,
       additionalProps,
       location.pathname.split('/')[2],
       newState,
@@ -132,43 +119,18 @@ const Game: React.FC<object> = () => {
   }
 
   const onPromotionPieceSelect = (piece: any) => {
-    if (piece) {
-      const gameCopy: any = gameState.board
-      const newMove = gameCopy.move({
-        from: gameState.moveFrom,
-        to: gameState.moveTo,
-        promotion: piece[1].toLowerCase() ?? 'q',
+    gameDispatch(
+      handlePromotionMoveThunk({
+        piece,
+        player1Timer,
+        player2Timer,
+        additionTimePerMove,
+        timer1,
+        timer2,
+        startTime,
+        currentPlayerTurn,
       })
-
-      if (newMove) {
-        gameDispatch(setGame(gameCopy))
-        emitNewMove(
-          socket,
-          gameState.moveFrom,
-          gameState.moveTo,
-          true,
-          null,
-          null,
-          {
-            promotion: piece[1].toLowerCase() ?? 'q',
-          },
-          location.pathname.split('/')[2],
-          gameState,
-          currentPlayerTurn,
-          player1Timer,
-          player2Timer,
-          additionTimePerMove,
-          timer1,
-          timer2,
-          startTime
-        )
-        handleSwitchTurn()
-      }
-    }
-
-    gameDispatch(resetMoveSelection())
-    gameDispatch(showPromotionDialog(false))
-    return true
+    )
   }
 
   const onSquareRightClick = (square: any) => {
@@ -231,45 +193,7 @@ const Game: React.FC<object> = () => {
   }
 
   useEffect(() => {
-    const onConnect = () => {}
-
-    const onNewMove = (room: any) => {
-      if (room.fen) {
-        gameDispatch(setNewMove(room))
-        timerDispatch(setPlayer1Timer(room.timers.player1Timer))
-        timerDispatch(setPlayer2Timer(room.timers.player2Timer))
-        setStartTime(room.startTime)
-        timerDispatch(setTimer1(room.timer1))
-        timerDispatch(setTimer2(room.timer2))
-      }
-    }
-
-    const onStart = (data: any) => {
-      if (data.start === true) {
-        setIsStartGame(true)
-      }
-    }
-
-    let notificationTimeoutId: any
-
-    const onOpponentDisconnect = () => {}
-
-    socket.connect()
-    socket.on('connection', onConnect)
-    socket.on('newmove', onNewMove)
-    socket.on('start', onStart)
-    socket.on('opponentDisconnect', onOpponentDisconnect)
-
-    socket.emit('joinGame', { game_id: location.pathname.split('/')[2] })
-
-    return () => {
-      socket.off('connection', onConnect)
-      socket.off('newmove', onNewMove)
-      socket.off('start', onStart)
-      socket.off('opponentDisconnect', onOpponentDisconnect)
-      // Clear the timeout when the component unmounts
-      clearTimeout(notificationTimeoutId)
-    }
+    gameDispatch(setupSocketListenersThunk())
   }, [])
 
   useEffect(() => {
