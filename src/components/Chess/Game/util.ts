@@ -1,5 +1,5 @@
 import { Square } from 'chess.js'
-import { getRemainingTime } from '../../../utils/utils'
+import { getRemainingTime, getTimeFromLocalStorage } from '../../../utils/utils'
 import { socket } from '../../../services/socket'
 
 export const isPromotionMove = (move: any, square: Square) => {
@@ -25,15 +25,42 @@ export function emitNewMove(
   gameId: string,
   gameState: any,
   currentPlayerTurn: any,
-  player1Timer: any,
-  player2Timer: any,
-  additionTimePerMove: any,
-  timer1: any,
-  timer2: any,
-  startTime: any
+  additionTimePerMove: any
 ) {
   const turn = gameState.board.turn()
   const fen = gameState.board.fen()
+
+  const updatedPlayer1Timer =
+    currentPlayerTurn === gameState.player1
+      ? getRemainingTime(
+          getTimeFromLocalStorage('timer1', 0),
+          getTimeFromLocalStorage('startTime', 0)
+        )
+      : getTimeFromLocalStorage('timer1', 0)
+  const updatedPlayer2Timer =
+    currentPlayerTurn === gameState.player2
+      ? getRemainingTime(
+          getTimeFromLocalStorage('timer2', 0),
+          getTimeFromLocalStorage('startTime', 0)
+        )
+      : getTimeFromLocalStorage('timer2', 0)
+
+  const updatedTimer1 =
+    currentPlayerTurn === gameState.player1
+      ? getRemainingTime(
+          getTimeFromLocalStorage('timer1', 0),
+          getTimeFromLocalStorage('startTime', 0)
+        )
+      : getTimeFromLocalStorage('timer1', 0)
+  const updatedTimer2 =
+    currentPlayerTurn === gameState.player2
+      ? getRemainingTime(
+          getTimeFromLocalStorage('timer2', 0),
+          getTimeFromLocalStorage('startTime', 0)
+        )
+      : getTimeFromLocalStorage('timer2', 0)
+
+  console.table([updatedPlayer1Timer, updatedPlayer2Timer, updatedTimer1, updatedTimer2])
 
   socket.emit('move', {
     from,
@@ -44,14 +71,13 @@ export function emitNewMove(
     fen,
     isPromotion: isPromotionMove,
     timers: {
-      player1Timer:
-        currentPlayerTurn === gameState.player1 ? player1Timer + additionTimePerMove : player1Timer,
-      player2Timer:
-        currentPlayerTurn === gameState.player2 ? player2Timer + additionTimePerMove : player2Timer,
+      player1Timer: updatedPlayer1Timer,
+      player2Timer: updatedPlayer2Timer,
     },
-    timer1: currentPlayerTurn === gameState.player1 ? getRemainingTime(timer1, startTime) : timer1,
-    timer2: currentPlayerTurn === gameState.player2 ? getRemainingTime(timer2, startTime) : timer2,
-    ...additionalProps,
+    startTime: Date.now(),
+    timer1: updatedTimer1,
+    timer2: updatedTimer2,
+    san: (additionalProps as any).san,
   })
 }
 

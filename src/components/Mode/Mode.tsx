@@ -10,7 +10,6 @@ import Footer from '../Footer/Footer'
 import { isAndroid } from 'react-device-detect'
 import { useAppDispatch } from '../../redux/store'
 import { resetGame } from '../../redux/game/action'
-import { resetTimer } from '../../redux/timer/action'
 
 const buttonsData = {
   bullet: [
@@ -96,14 +95,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
     })
   }
 
-  const removeLocalStorage = () => {
-    localStorage.removeItem('lastUpdateTime')
-    localStorage.removeItem('player1Timer')
-    localStorage.removeItem('player2Timer')
-    localStorage.removeItem('timer1')
-    localStorage.removeItem('timer2')
-    localStorage.removeItem('startTime')
-  }
+  const removeLocalStorage = () => {}
 
   const onCreateGame = async () => {
     setLoading(true)
@@ -111,6 +103,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
       removeLocalStorage()
       navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
     } else {
+      removeLocalStorage()
       socket.emit('createGame', { timeStep, additionTimePerMove }, (response: any) => {
         if (response.status === 200) {
           setLoading(false)
@@ -128,7 +121,6 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
         if (data.status === 200) {
           setLoading(false)
           removeLocalStorage()
-          timerDispatch(resetTimer())
           gameDispatch(resetGame())
           navigate(`/game/${data.board.game_id}`)
         }

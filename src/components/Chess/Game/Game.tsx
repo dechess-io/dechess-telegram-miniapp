@@ -4,7 +4,12 @@ import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
-import { getRemainingTime, isThreefoldRepetition, setLocalStorage } from '../../../utils/utils'
+import {
+  getRemainingTime,
+  getTimeFromLocalStorage,
+  isThreefoldRepetition,
+  setLocalStorage,
+} from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -13,22 +18,25 @@ import GameBoard from './Board'
 import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
-import { selectTimer } from '../../../redux/timer/reducer'
-import { setPlayer1Timer, setPlayer2Timer, setTimer1, setTimer2 } from '../../../redux/timer/action'
 import { selectGame } from '../../../redux/game/reducer'
-import { loadGame, setGameOver, setRightClickedSquares } from '../../../redux/game/action'
+import {
+  loadGame,
+  setGameOver,
+  setNewMove,
+  setRightClickedSquares,
+} from '../../../redux/game/action'
 import { emitGameOver, emitNewMove, isOrientation } from './util'
+import { useTimer } from 'react-timer-hook'
+
 import {
   handleMoveThunk,
   handlePromotionMoveThunk,
   onSquareClickThunk,
-  setupSocketListenersThunk,
 } from '../../../redux/game/thunk'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
-  const { timer1, timer2, player1Timer, player2Timer } = useAppSelector(selectTimer)
   const timerDispatch = useAppDispatch()
   const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
   const location = useLocation()
@@ -41,8 +49,22 @@ const Game: React.FC<object> = () => {
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   const [startTime, setStartTime] = useState(0)
 
-  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
+  const {
+    seconds: timer1Seconds,
+    minutes: timer1Minutes,
+    start: startTimer1,
+    pause: pauseTimer1,
+    restart: restartTimer1,
+  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+  const {
+    seconds: timer2Seconds,
+    minutes: timer2Minutes,
+    start: startTimer2,
+    pause: pauseTimer2,
+    restart: restartTimer2,
+  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
 
+  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
   useEffect(() => {
     restApi
       .get('/load-game-v2', {
@@ -53,15 +75,11 @@ const Game: React.FC<object> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
-          setStartTime(data.startTime)
           gameDispatch(loadGame(data))
-          timerDispatch(setTimer1(data.timer1))
-          timerDispatch(setTimer2(data.timer2))
+          setStartTime(Date.now())
+          // restartTimer1(new Date(Date.now() + data.timer1 * 1000));
+          // restartTimer2(new Date(Date.now() + data.timer2 * 1000));
           if (data.move_number === 1 && data.turn_player === 'w') {
-            timerDispatch(setTimer1(data.timers.player1Timer))
-            timerDispatch(setTimer2(data.timers.player2Timer))
-            timerDispatch(setPlayer1Timer(data.timers.player1Timer))
-            timerDispatch(setPlayer2Timer(data.timers.player2Timer))
             setAdditionTimePerMove(data.timePerMove)
           }
 
@@ -74,24 +92,15 @@ const Game: React.FC<object> = () => {
 
   const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
 
-  const isPlayerTimeout = useMemo(() => {
+  const isPlayerTimeout = () => {
     return (
-      (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) === 0) ||
-      (gameState.playerTurn === gameState.player2 && getRemainingTime(timer2, startTime) === 0)
+      (gameState.playerTurn === gameState.player1 && timer1Minutes * 60 + timer1Seconds === 0) ||
+      (gameState.playerTurn === gameState.player2 && timer2Minutes * 60 + timer2Seconds === 0)
     )
-  }, [gameState.playerTurn, gameState.player1, gameState.player2, timer1, timer2, startTime])
-
-  const currentPlayerTurn = useMemo(() => {
-    const orientation = isOrientation(wallet?.account.address, gameState.player1)
-    if (orientation === 'white') {
-      return gameState.turn === 'w' ? gameState.player1 : gameState.player2
-    }
-    return gameState.turn === 'b' ? gameState.player2 : gameState.player1
-  }, [wallet, gameState.player1, gameState.player2, gameState.turn])
+  }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
-    setStartTime(Date.now())
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     const { moveFrom, square: newMoveSquare, isPromotionMove, additionalProps } = newState.newMove
     emitNewMove(
@@ -101,13 +110,8 @@ const Game: React.FC<object> = () => {
       additionalProps,
       location.pathname.split('/')[2],
       newState,
-      currentPlayerTurn,
-      player1Timer,
-      player2Timer,
-      additionTimePerMove,
-      timer1,
-      timer2,
-      startTime
+      newState.playerTurn,
+      additionTimePerMove
     )
   }
 
@@ -122,13 +126,8 @@ const Game: React.FC<object> = () => {
     gameDispatch(
       handlePromotionMoveThunk({
         piece,
-        player1Timer,
-        player2Timer,
         additionTimePerMove,
-        timer1,
-        timer2,
-        startTime,
-        currentPlayerTurn,
+        currentPlayerTurn: gameState.playerTurn,
       })
     )
   }
@@ -137,17 +136,17 @@ const Game: React.FC<object> = () => {
     gameDispatch(setRightClickedSquares(square))
   }
 
-  useEffect(() => {
-    if (isThreefoldRepetition(gameState.history)) {
-      socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
-    }
-  }, [gameState.history])
+  // useEffect(() => {
+  //   if (isThreefoldRepetition(gameState.history)) {
+  //     socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
+  //   }
+  // }, [gameState.history])
 
-  useEffect(() => {
-    if (gameState.isGameOver || gameState.isGameDraw) {
-      setShowPopup(true)
-    }
-  }, [gameState.isGameOver, gameState.isGameDraw])
+  // useEffect(() => {
+  //   if (gameState.isGameOver || gameState.isGameDraw) {
+  //     setShowPopup(true)
+  //   }
+  // }, [gameState.isGameOver, gameState.isGameDraw])
 
   useEffect(() => {
     if (wallet) {
@@ -156,50 +155,61 @@ const Game: React.FC<object> = () => {
   }, [wallet])
 
   useEffect(() => {
-    setLocalStorage('player1Timer', player1Timer)
-  }, [player1Timer])
+    setLocalStorage('startTime', startTime)
+  }, [startTime])
 
   useEffect(() => {
-    setLocalStorage('player2Timer', player2Timer)
-  }, [player2Timer])
-
-  useEffect(() => {
-    let intervalId: any
-    if (GameOver()) {
-      if (gameState.playerTurn === gameState.player1 && getRemainingTime(timer1, startTime) > 0) {
-        intervalId = setInterval(() => {
-          timerDispatch(setPlayer1Timer(getRemainingTime(timer1, startTime)))
-        }, 1000)
+    if (
+      !gameState.isGameDraw &&
+      !gameState.isGameOver &&
+      !gameState.isWinner &&
+      !gameState.isLoser
+    ) {
+      if (gameState.playerTurn === gameState.player1 && timer1Minutes * 60 + timer1Seconds > 0) {
+        startTimer1()
+        pauseTimer2()
       } else if (
         gameState.playerTurn === gameState.player2 &&
-        getRemainingTime(timer2, startTime) > 0
+        timer2Minutes * 60 + timer2Seconds > 0
       ) {
-        intervalId = setInterval(() => {
-          timerDispatch(setPlayer2Timer(getRemainingTime(timer2, startTime)))
-        }, 1000)
-      } else if (isPlayerTimeout && !gameState.isGameOver) {
+        startTimer2()
+        pauseTimer1()
+      } else if (isPlayerTimeout() && !gameState.isGameOver) {
         gameDispatch(setGameOver(true))
         emitGameOver(socket, gameState, location.pathname.split('/')[2])
       }
     }
 
-    return () => clearInterval(intervalId)
-  }, [gameState.playerTurn, player1Timer, player2Timer, gameState.isGameDraw, gameState.isGameOver])
-
-  const GameOver = () => {
-    return (
-      !gameState.isGameDraw && !gameState.isGameOver && !gameState.isWinner && !gameState.isLoser
-    )
-  }
+    return () => {}
+  }, [gameState.turn])
 
   useEffect(() => {
-    gameDispatch(setupSocketListenersThunk())
+    const gameId = location.pathname.split('/')[2]
+
+    socket.connect()
+    socket.on('connection', () => {})
+    socket.on('newmove', (room: any) => {
+      if (room.fen) {
+        gameDispatch(setNewMove(room))
+        setStartTime(room.startTime)
+      }
+    })
+    socket.on('start', (data: any) => {
+      if (data.start === true) {
+        // dispatch(setIsStartGame(true));
+      }
+    })
+    socket.on('opponentDisconnect', () => {})
+
+    socket.emit('joinGame', { game_id: gameId })
+
+    return () => {
+      socket.off('connection')
+      socket.off('newmove')
+      socket.off('start')
+      socket.off('opponentDisconnect')
+    }
   }, [])
-
-  useEffect(() => {
-    setLocalStorage('timer1', timer1)
-    setLocalStorage('timer2', timer2)
-  }, [timer1, timer2])
 
   if (!gameState.board) return <LoadingGame />
 
@@ -207,6 +217,8 @@ const Game: React.FC<object> = () => {
     <App theme={theme}>
       <Header />
       <GameBoard
+        player1Timer={timer1Minutes * 60 + timer1Seconds}
+        player2Timer={timer2Minutes * 60 + timer2Seconds}
         onSquareClick={onSquareClicks}
         onSquareRightClick={onSquareRightClick}
         onPromotionPieceSelect={onPromotionPieceSelect}
