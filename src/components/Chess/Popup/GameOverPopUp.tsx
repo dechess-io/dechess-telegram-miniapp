@@ -1,50 +1,40 @@
 import { useNavigate } from 'react-router-dom'
 import React, { useEffect } from 'react'
-import { Dialog, DialogButton } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
+import { useAppSelector } from '../../../redux/store'
+import { selectGame } from '../../../redux/game/reducer'
 
 type GameOverPopUpProps = {
-  game: any
-  isGameOver: boolean
-  isGameDraw: boolean
-  player1: string
-  player2: string
   wallet: any
-  isWinner: boolean
-  isLoser: boolean
   showPopup: boolean
   setShowPopup: any
 }
 
 const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
-  game,
-  isGameOver,
-  isGameDraw,
-  player1,
-  player2,
   wallet,
-  isWinner,
-  isLoser,
+
   showPopup,
   setShowPopup,
 }) => {
+  const { board, isGameOver, isGameDraw, player1, player2, isWinner, isLoser } =
+    useAppSelector(selectGame)
   const navigate = useNavigate()
   useEffect(() => {
-    if (game.isGameOver() || isGameOver || game.isDraw() || isGameDraw) {
+    if (board.isGameOver() || isGameOver || board.isDraw() || isGameDraw) {
       setTimeout(() => {
         setShowPopup(true)
       }, 1000)
     }
-  }, [game, isGameOver, isGameDraw])
+  }, [board, isGameOver, isGameDraw])
 
   const renderMessage = () => {
     if (isWinner) return 'You Win!'
     if (isLoser) return 'You Lose!'
-    if (game.isDraw() || isGameDraw) return 'Draw!'
-    if (game.isGameOver() || isGameOver) {
+    if (board.isDraw() || isGameDraw) return 'Draw!'
+    if (board.isGameOver() || isGameOver) {
       const playerWon =
-        (player1 === wallet?.account.address && game._turn === 'b') ||
-        (player2 === wallet?.account.address && game._turn === 'w')
+        (player1 === wallet?.account.address && (board as any)._turn === 'b') ||
+        (player2 === wallet?.account.address && (board as any)._turn === 'w')
       return playerWon ? 'You Win!' : 'You Lose!'
     }
     return null
@@ -54,7 +44,7 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
     <>
       <ReactDialog
         className="min-w-[22rem]"
-        open={showPopup && (game.isGameOver() || game.isDraw() || isGameOver || isGameDraw)}
+        open={showPopup && (board.isGameOver() || board.isDraw() || isGameOver || isGameDraw)}
         onHide={() => setShowPopup(false)}
         onCancel={() => navigate('/')}
         onOk={() => navigate('/mode')}

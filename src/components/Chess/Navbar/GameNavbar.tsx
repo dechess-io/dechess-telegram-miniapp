@@ -4,14 +4,11 @@ import GameChat, { Message } from './GameChat'
 import { useTonWallet } from '@tonconnect/ui-react'
 import { Chess } from 'chess.js'
 import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react'
+import { useAppDispatch } from '../../../redux/store'
+import { setPreviousMove } from '../../../redux/game/action'
 
 interface GameNavbarProps {
-  handlePreviousMove: any
-  handleNextMove: any
   socket: any
-  game: Chess | any
-  toggleGameDraw: any
-  toggleGameOver: any
   user: string
   opponent: string
   isMoved: boolean
@@ -19,18 +16,15 @@ interface GameNavbarProps {
 }
 
 const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
-  handleNextMove,
-  handlePreviousMove,
   socket,
-  game,
-  toggleGameDraw,
-  toggleGameOver,
   user,
   opponent,
   isMoved,
   isWhite,
 }) => {
   const wallet = useTonWallet()
+
+  const gameDispatch = useAppDispatch()
 
   const [messages, setMessages] = useState<Message[]>([])
   const [isSidebarVisible, setIsSidebarVisible] = useState(false)
@@ -88,7 +82,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
             }
           />
           <TabbarLink
-            onClick={handlePreviousMove}
+            onClick={() => gameDispatch(setPreviousMove())}
             icon={
               <Icon
                 ios={<img className="w-[20px] h-[20px]" src="/arrow-left-1.svg" />}
@@ -97,7 +91,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
             }
           />
           <TabbarLink
-            onClick={handleNextMove}
+            onClick={() => gameDispatch(setPreviousMove())}
             icon={
               <Icon
                 ios={<img className="w-[20px] h-[20px]" src="/arrow-right-1.svg" />}
@@ -112,10 +106,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
         isMoved={isMoved}
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
-        game={game}
         socket={socket}
-        toggleGameOver={toggleGameOver}
-        toggleGameDraw={toggleGameDraw}
         user={user}
         opponent={opponent}
         isWhite={isWhite}

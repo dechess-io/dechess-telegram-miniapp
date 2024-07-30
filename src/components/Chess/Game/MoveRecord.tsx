@@ -1,18 +1,19 @@
 import { useEffect, useRef } from 'react'
+import { useAppSelector } from '../../../redux/store'
+import { selectGame } from '../../../redux/game/reducer'
 
-type MoveRecordProps = {
-  moveLists: string[]
-  currentMoveIndex: any
-}
+type MoveRecordProps = {}
 
-const MoveRecord: React.FC<MoveRecordProps> = ({ moveLists, currentMoveIndex }) => {
+const MoveRecord: React.FC<MoveRecordProps> = () => {
+  const { moves, moveIndex } = useAppSelector(selectGame)
+
   const moveListRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (moveListRef.current) {
       moveListRef.current.scrollLeft = moveListRef.current.scrollWidth
     }
-  }, [moveLists])
+  }, [moves])
 
   return (
     <div
