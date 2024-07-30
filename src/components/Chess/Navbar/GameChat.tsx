@@ -45,6 +45,25 @@ const GameChat: React.FC<GameChatProps> = ({
   const inputOpacity = messageText ? 1 : 0.3
   const isClickable = messageText.trim().length > 0
 
+  const handleChangeMessage = (e: { target: { value: string } }) => {
+    let value = e.target.value
+    const maxLength = 200
+    const prohibitedCharacters = /[^a-zA-Z0-9\s.,!?]/
+
+    value = value.replace(/<br\s*\/?>/gi, '')
+
+    if (!value.trim()) {
+      setMessageText('')
+      return
+    }
+
+    if (value.length > maxLength) return
+
+    if (prohibitedCharacters.test(value)) return
+
+    setMessageText(value)
+  }
+
   const currentDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     month: 'short',
@@ -104,7 +123,8 @@ const GameChat: React.FC<GameChatProps> = ({
         className="hide-scrollbar"
         placeholder="Message"
         value={messageText}
-        onInput={(e) => setMessageText(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && isClickable && handleSendClick()}
+        onInput={handleChangeMessage}
         left={
           <Link
             onClick={setIsChatVisible}

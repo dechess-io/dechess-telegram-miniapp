@@ -18,19 +18,12 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
   return (
     <div
       ref={moveListRef}
-      className="pb-1 bg-blue-gradient-1 h-[15px] text-white overflow-hidden whitespace-nowrap bg-opacity-80"
-      style={{ width: '100%' }}
+      className="bg-blue-gradient-1 flex items-center text-xs gap-4 text-white overflow-hidden whitespace-nowrap bg-opacity-80 px-4"
     >
-      <div className="flex space-x-2 text-[12px]">
-        {moves.map((move, index) => {
-          if (index >= moveIndex) return
-          return (
-            <span key={index} className="inline-block">{`${
-              index % 2 === 0 ? index / 2 + 1 + '. ' : ''
-            }${move}`}</span>
-          )
-        })}
-      </div>
+      {moveLists.map((move, index) => {
+        if (index >= currentMoveIndex) return
+        return <p key={index}>{`${index % 2 === 0 ? index / 2 + 1 + '. ' : ''}${move}`}</p>
+      })}
     </div>
   )
 }

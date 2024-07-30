@@ -172,10 +172,10 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       <Actions opened={isSidebarVisible && !visiblePopup} onBackdropClick={() => toggleSidebar()}>
         <ActionsGroup>
           <ActionsButton onClick={() => togglePopup('draw')}>Draw</ActionsButton>
-          <ActionsButton onClick={handleAbort}>Abort</ActionsButton>
+          {game._moveNumber < 2 && <ActionsButton onClick={handleAbort}>Abort</ActionsButton>}
           <ActionsButton onClick={() => togglePopup('resign')}>Resign</ActionsButton>
-          <ActionsButton onClick={() => toggleSidebar()}>Share Game</ActionsButton>
-          <ActionsButton onClick={() => toggleSidebar()}>Setting</ActionsButton>
+          {/* <ActionsButton onClick={() => toggleSidebar()}>Share Game</ActionsButton>
+          <ActionsButton onClick={() => toggleSidebar()}>Setting</ActionsButton> */}
           <ActionsButton onClick={() => toggleSidebar()}>Cancel</ActionsButton>
         </ActionsGroup>
       </Actions>

@@ -238,7 +238,7 @@ const Game: React.FC<object> = () => {
 
   return (
     <App theme={theme}>
-      <Header />
+      {/* <Header /> */}
       <GameBoard
         player1Timer={timer1Minutes * 60 + timer1Seconds}
         player2Timer={timer2Minutes * 60 + timer2Seconds}
