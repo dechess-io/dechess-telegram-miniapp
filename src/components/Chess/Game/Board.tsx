@@ -20,6 +20,7 @@ interface GameBoardProps {
   rightClickedSquares: Record<string, any>
   player1Timer: number
   player2Timer: number
+  kingSquares: any
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
@@ -30,6 +31,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   moveSquares,
   optionSquares,
   rightClickedSquares,
+  kingSquares,
   player1Timer,
   player2Timer,
 }) => {
@@ -104,6 +106,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                     customSquareStyles={{
                       ...moveSquares,
                       ...optionSquares,
+                      ...kingSquares,
                       ...rightClickedSquares,
                     }}
                     promotionToSquare={moveTo}

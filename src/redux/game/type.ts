@@ -22,6 +22,7 @@ export interface GameReducer {
   hasMoveOptions: boolean
   isMove: boolean
   foundMove: any
+  kingSquares: any
 }
 
 export const defaultGameReducer: GameReducer = {
@@ -46,4 +47,5 @@ export const defaultGameReducer: GameReducer = {
   hasMoveOptions: false,
   isMove: false,
   foundMove: null,
+  kingSquares: {},
 }

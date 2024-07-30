@@ -31,8 +31,77 @@ import {
   setRightClickedSquares,
   setIsMove,
   setFoundMove,
+  setOpponentMove,
+  setKingSquares,
 } from './action'
-import { Chess } from 'chess.js'
+import { Chess, Square } from 'chess.js'
+
+export const squares = [
+  'a8',
+  'b8',
+  'c8',
+  'd8',
+  'e8',
+  'f8',
+  'g8',
+  'h8',
+  'a7',
+  'b7',
+  'c7',
+  'd7',
+  'e7',
+  'f7',
+  'g7',
+  'h7',
+  'a6',
+  'b6',
+  'c6',
+  'd6',
+  'e6',
+  'f6',
+  'g6',
+  'h6',
+  'a5',
+  'b5',
+  'c5',
+  'd5',
+  'e5',
+  'f5',
+  'g5',
+  'h5',
+  'a4',
+  'b4',
+  'c4',
+  'd4',
+  'e4',
+  'f4',
+  'g4',
+  'h4',
+  'a3',
+  'b3',
+  'c3',
+  'd3',
+  'e3',
+  'f3',
+  'g3',
+  'h3',
+  'a2',
+  'b2',
+  'c2',
+  'd2',
+  'e2',
+  'f2',
+  'g2',
+  'h2',
+  'a1',
+  'b1',
+  'c1',
+  'd1',
+  'e1',
+  'f1',
+  'g1',
+  'h1',
+]
 
 const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
   builder
@@ -93,6 +162,22 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
     .addCase(setTurn, (state: GameReducer, action: any) => {
       state.turn = action.payload
     })
+    .addCase(setOpponentMove, (state: GameReducer, action: any) => {
+      state.turn = action.payload.turn
+      state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
+      state.board = new Chess(action.payload.fen)
+      // if(state.board.isCheckmate() || state.board.isCheck()) {
+      //   let bking = (state.board as any)._kings['b'];
+      //   let wking = (state.board as any)._kings['w'];
+      //   (state.board as any).get(squares[bking]).color = 'rgba(123, 97, 255, 1)';
+      //   (state.board as any).get(squares[wking]).color = 'rgba(123, 97, 255, 1)';
+      //   console.log(squares[bking])
+      //   console.log(squares[wking])
+      //   console.log("checkmate")
+      // }
+      state.history = action.payload.history
+      state.moves = [...state.moves, action.payload.san]
+    })
     .addCase(loadGame, (state: GameReducer, action: any) => {
       const {
         turn_player,
@@ -106,17 +191,17 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         loser,
       } = action.payload
 
-      ;(state.isGameOver = isGameOver),
-        (state.isGameDraw = isGameDraw),
-        (state.board = new Chess(fen)),
-        (state.history = [...history]),
-        (state.moveIndex = history.length - 1),
-        (state.turn = turn_player),
-        (state.isWinner = winner && localStorage.getItem('address') === winner),
-        (state.isLoser = loser && localStorage.getItem('address') === loser),
-        (state.player1 = player_1),
-        (state.player2 = player_2),
-        (state.playerTurn = turn_player === 'w' ? player_1 : player_2)
+      state.isGameOver = isGameOver
+      state.isGameDraw = isGameDraw
+      state.board = new Chess(fen)
+      state.history = [...history]
+      state.moveIndex = history.length - 1
+      state.turn = turn_player
+      state.isWinner = winner && localStorage.getItem('address') === winner
+      state.isLoser = loser && localStorage.getItem('address') === loser
+      state.player1 = player_1
+      state.player2 = player_2
+      state.playerTurn = turn_player === 'w' ? player_1 : player_2
     })
     .addCase(setPreviousMove, (state: GameReducer) => {
       if (state.moveIndex <= 0) return
@@ -135,18 +220,12 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
     })
     .addCase(setNewMove, (state: GameReducer, action: any) => {
-      if (action.payload.foundMove?.san) {
-        state.moves = [...state.moves, action.payload.foundMove.san]
-      }
-
-      if (action.payload.san) {
-        state.moves = [...state.moves, action.payload.san]
-      }
-
       state.turn = action.payload.turn
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
       state.board = new Chess(action.payload.fen)
       state.history = action.payload.history
+      state.newMove = action.payload
+
       // (state.moveIndex = action.payload.history.length - 1)
     })
     .addCase(resetGame, (state: GameReducer) => {
@@ -185,6 +264,18 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         [square]:
           state.rightClickedSquares[square] &&
           state.rightClickedSquares[square].backgroundColor === colour
+            ? undefined
+            : { backgroundColor: colour },
+      }
+    })
+    .addCase(setKingSquares, (state: GameReducer, action: any) => {
+      const colour = 'rgba(123, 97, 255, 1)'
+
+      const square = action.payload
+      state.kingSquares = {
+        ...state.kingSquares,
+        [square]:
+          state.kingSquares[square] && state.kingSquares[square].backgroundColor === colour
             ? undefined
             : { backgroundColor: colour },
       }

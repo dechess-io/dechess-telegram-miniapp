@@ -21,46 +21,16 @@ export function emitNewMove(
   from: any,
   to: any,
   isPromotionMove: any,
-  additionalProps = {},
+  san: string,
   gameId: string,
   gameState: any,
   currentPlayerTurn: any,
-  additionTimePerMove: any
+  additionTimePerMove: any,
+  playerTimer1: any,
+  playerTimer2: any
 ) {
   const turn = gameState.board.turn()
   const fen = gameState.board.fen()
-
-  const updatedPlayer1Timer =
-    currentPlayerTurn === gameState.player1
-      ? getRemainingTime(
-          getTimeFromLocalStorage('timer1', 0),
-          getTimeFromLocalStorage('startTime', 0)
-        )
-      : getTimeFromLocalStorage('timer1', 0)
-  const updatedPlayer2Timer =
-    currentPlayerTurn === gameState.player2
-      ? getRemainingTime(
-          getTimeFromLocalStorage('timer2', 0),
-          getTimeFromLocalStorage('startTime', 0)
-        )
-      : getTimeFromLocalStorage('timer2', 0)
-
-  const updatedTimer1 =
-    currentPlayerTurn === gameState.player1
-      ? getRemainingTime(
-          getTimeFromLocalStorage('timer1', 0),
-          getTimeFromLocalStorage('startTime', 0)
-        )
-      : getTimeFromLocalStorage('timer1', 0)
-  const updatedTimer2 =
-    currentPlayerTurn === gameState.player2
-      ? getRemainingTime(
-          getTimeFromLocalStorage('timer2', 0),
-          getTimeFromLocalStorage('startTime', 0)
-        )
-      : getTimeFromLocalStorage('timer2', 0)
-
-  console.table([updatedPlayer1Timer, updatedPlayer2Timer, updatedTimer1, updatedTimer2])
 
   socket.emit('move', {
     from,
@@ -70,14 +40,10 @@ export function emitNewMove(
     address: '',
     fen,
     isPromotion: isPromotionMove,
-    timers: {
-      player1Timer: updatedPlayer1Timer,
-      player2Timer: updatedPlayer2Timer,
-    },
     startTime: Date.now(),
-    timer1: updatedTimer1,
-    timer2: updatedTimer2,
-    san: (additionalProps as any).san,
+    playerTimer1,
+    playerTimer2,
+    san,
   })
 }
 

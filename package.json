@@ -28,7 +28,7 @@
     "@ton/core": "^0.56.3",
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.11.1",
-    "@tonconnect/ui-react": "^2.0.5",
+    "@tonconnect/ui-react": "^2.0.6",
     "@twa-dev/sdk": "^7.0.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.2",

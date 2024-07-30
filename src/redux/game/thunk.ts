@@ -102,11 +102,7 @@ export const handleMoveThunk = (
         isPromotionMove: isPromotionMove(foundMove, square),
         foundMove: copyFoundMove,
         square,
-        additionalProps: {
-          san: copyFoundMove.san,
-          lastMove: Date.now(),
-          startTime: Date.now(),
-        },
+        san: copyFoundMove.san,
       })
     )
     dispatch(switchPlayerTurn())
@@ -170,7 +166,7 @@ export const handlePromotionMoveThunk = (
 ): ThunkAction<void, RootState, unknown, AnyAction> => {
   return (dispatch, getState) => {
     const state = getState().game
-    const { piece, additionTimePerMove, currentPlayerTurn } = payload
+    const { piece, additionTimePerMove, currentPlayerTurn, playerTimer1, playerTimer2 } = payload
     if (piece) {
       const gameCopy: any = state.board
       const newMove = gameCopy.move({
@@ -185,13 +181,13 @@ export const handlePromotionMoveThunk = (
           state.moveFrom,
           state.moveTo,
           true,
-          {
-            promotion: piece[1].toLowerCase() ?? 'q',
-          },
+          newMove.san,
           location.pathname.split('/')[2],
           state,
           currentPlayerTurn,
-          additionTimePerMove
+          additionTimePerMove,
+          playerTimer1,
+          playerTimer2
         )
         dispatch(switchPlayerTurn())
       }

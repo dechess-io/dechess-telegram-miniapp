@@ -4,12 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
-import {
-  getRemainingTime,
-  getTimeFromLocalStorage,
-  isThreefoldRepetition,
-  setLocalStorage,
-} from '../../../utils/utils'
+import { isThreefoldRepetition, setLocalStorage } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -18,11 +13,12 @@ import GameBoard from './Board'
 import { App, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
-import { selectGame } from '../../../redux/game/reducer'
+import { selectGame, squares } from '../../../redux/game/reducer'
 import {
   loadGame,
   setGameOver,
-  setNewMove,
+  setKingSquares,
+  setOpponentMove,
   setRightClickedSquares,
 } from '../../../redux/game/action'
 import { emitGameOver, emitNewMove, isOrientation } from './util'
@@ -37,7 +33,6 @@ import {
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
-  const timerDispatch = useAppDispatch()
   const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
   const location = useLocation()
   const wallet = useTonWallet()
@@ -56,6 +51,7 @@ const Game: React.FC<object> = () => {
     pause: pauseTimer1,
     restart: restartTimer1,
   } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+
   const {
     seconds: timer2Seconds,
     minutes: timer2Minutes,
@@ -65,32 +61,6 @@ const Game: React.FC<object> = () => {
   } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
 
   // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
-  useEffect(() => {
-    restApi
-      .get('/load-game-v2', {
-        params: {
-          game_id: location.pathname.split('/')[2],
-        },
-      })
-      .then(async (res) => {
-        if (res.status === 200) {
-          const data = res.data.game
-          gameDispatch(loadGame(data))
-          setStartTime(Date.now())
-          // restartTimer1(new Date(Date.now() + data.timer1 * 1000));
-          // restartTimer2(new Date(Date.now() + data.timer2 * 1000));
-          if (data.move_number === 1 && data.turn_player === 'w') {
-            setAdditionTimePerMove(data.timePerMove)
-          }
-
-          if (!(data.move_number === 1 && data.turn_player === 'w')) {
-            setIsStartGame(true)
-          }
-        }
-      })
-  }, [gameState.turn])
-
-  const dismissPopup = useCallback(() => setIsPopupDismissed(true), [])
 
   const isPlayerTimeout = () => {
     return (
@@ -99,19 +69,33 @@ const Game: React.FC<object> = () => {
     )
   }
 
+  const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+  function indexToSquare(index: any) {
+    const rank = 8 - Math.floor(index / 16)
+    const fileIndex = index % 16
+    if (fileIndex >= 8) {
+      throw new Error('Index out of bounds')
+    }
+    return file[fileIndex] + rank
+  }
+  console.log(gameState.board)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
-    const { moveFrom, square: newMoveSquare, isPromotionMove, additionalProps } = newState.newMove
+    const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
     emitNewMove(
       moveFrom,
       newMoveSquare,
       isPromotionMove,
-      additionalProps,
+      san,
       location.pathname.split('/')[2],
       newState,
       newState.playerTurn,
-      additionTimePerMove
+      additionTimePerMove,
+      timer1Minutes * 60 + timer1Seconds,
+      timer2Minutes * 60 + timer2Seconds
     )
   }
 
@@ -136,27 +120,56 @@ const Game: React.FC<object> = () => {
     gameDispatch(setRightClickedSquares(square))
   }
 
+  useEffect(() => {
+    if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
+      gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
+      gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['b'])))
+    }
+  }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
+
+  useEffect(() => {
+    restApi
+      .get('/load-game-v2', {
+        params: {
+          game_id: location.pathname.split('/')[2],
+        },
+      })
+      .then(async (res) => {
+        if (res.status === 200) {
+          const data = res.data.game
+          gameDispatch(loadGame(data))
+          setStartTime(Date.now())
+          restartTimer1(new Date(Date.now() + data.playerTimer1 * 1000))
+          restartTimer2(new Date(Date.now() + data.playerTimer2 * 1000))
+
+          if (data.move_number === 1 && data.turn_player === 'w') {
+            setAdditionTimePerMove(data.timePerMove)
+          }
+
+          if (!(data.move_number === 1 && data.turn_player === 'w')) {
+            setIsStartGame(true)
+          }
+        }
+      })
+  }, [gameState.turn])
+
   // useEffect(() => {
   //   if (isThreefoldRepetition(gameState.history)) {
   //     socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
   //   }
   // }, [gameState.history])
 
-  // useEffect(() => {
-  //   if (gameState.isGameOver || gameState.isGameDraw) {
-  //     setShowPopup(true)
-  //   }
-  // }, [gameState.isGameOver, gameState.isGameDraw])
+  useEffect(() => {
+    if (gameState.isGameOver || gameState.isGameDraw) {
+      setShowPopup(true)
+    }
+  }, [gameState.isGameOver, gameState.isGameDraw])
 
   useEffect(() => {
     if (wallet) {
       setLocalStorage('address', wallet.account?.address)
     }
   }, [wallet])
-
-  useEffect(() => {
-    setLocalStorage('startTime', startTime)
-  }, [startTime])
 
   useEffect(() => {
     if (
@@ -181,7 +194,7 @@ const Game: React.FC<object> = () => {
     }
 
     return () => {}
-  }, [gameState.turn])
+  }, [gameState.turn, timer1Minutes, timer1Seconds, timer2Minutes, timer2Seconds])
 
   useEffect(() => {
     const gameId = location.pathname.split('/')[2]
@@ -190,13 +203,23 @@ const Game: React.FC<object> = () => {
     socket.on('connection', () => {})
     socket.on('newmove', (room: any) => {
       if (room.fen) {
-        gameDispatch(setNewMove(room))
-        setStartTime(room.startTime)
+        gameDispatch(setOpponentMove(room))
+        if (gameState.playerTurn === gameState.player1) {
+          restartTimer1(new Date(Date.now() + room.player1Timer * 1000))
+          pauseTimer2()
+        } else {
+          restartTimer2(new Date(Date.now() + room.player2Timer * 1000))
+          pauseTimer1()
+        }
+
+        if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
+          console.log('checkmate')
+        }
       }
     })
     socket.on('start', (data: any) => {
       if (data.start === true) {
-        // dispatch(setIsStartGame(true));
+        // setIsStartGame(true);
       }
     })
     socket.on('opponentDisconnect', () => {})
@@ -224,6 +247,7 @@ const Game: React.FC<object> = () => {
         onPromotionPieceSelect={onPromotionPieceSelect}
         showPromotionDialog={gameState.showPromotionDialog}
         moveSquares={moveSquares}
+        kingSquares={gameState.kingSquares}
         optionSquares={gameState.optionSquares}
         rightClickedSquares={gameState.rightClickedSquares}
       />

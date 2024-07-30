@@ -27,8 +27,11 @@ import {
   setOptionSquares,
   showPromotionDialog,
 } from '../../../redux/game/action'
+import { useTimer } from 'react-timer-hook'
 
 const BotGame: React.FC<{}> = () => {
+  const gameState = useAppSelector(selectGame)
+
   const location = useLocation()
   const {
     optionSquares,
@@ -54,7 +57,6 @@ const BotGame: React.FC<{}> = () => {
     wallet?.account.address ? wallet.account.address : 'player1'
   )
   const [player2, setPlayer2] = useState('bot')
-  const [moveSquares, setMoveSquares] = useState({})
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
   const [currentPlayer, setCurrentPlayer] = useState(
@@ -62,33 +64,31 @@ const BotGame: React.FC<{}> = () => {
   )
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
-  const [rightClickedSquares, setRightClickedSquares] = useState<any>({})
-  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
-  const [startTime, setStartTime] = useState(
-    Number(localStorage.getItem('startTime'))
-      ? Number(localStorage.getItem('startTime'))
-      : Date.now()
-  )
-  const [timer1, setTimer1] = useState(
-    Number(localStorage.getItem('timer1'))
-      ? Number(localStorage.getItem('timer1'))
-      : Number(queryParams.get('time')) * 60
-  )
-  const [timer2, setTimer2] = useState(
-    Number(localStorage.getItem('timer2'))
-      ? Number(localStorage.getItem('timer2'))
-      : Number(queryParams.get('time')) * 60
-  )
-  const [player1Timer, setPlayer1Timer] = useState(
-    Number(localStorage.getItem('player1Timer'))
-      ? Number(localStorage.getItem('player1Timer'))
-      : Number(queryParams.get('time')) * 60
-  )
-  const [player2Timer, setPlayer2Timer] = useState(
-    Number(localStorage.getItem('player2Timer'))
-      ? Number(localStorage.getItem('player2Timer'))
-      : Number(queryParams.get('time')) * 60
-  )
+
+  const {
+    seconds: timer1Seconds,
+    minutes: timer1Minutes,
+    start: startTimer1,
+    pause: pauseTimer1,
+    restart: restartTimer1,
+  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+
+  const {
+    seconds: timer2Seconds,
+    minutes: timer2Minutes,
+    start: startTimer2,
+    pause: pauseTimer2,
+    restart: restartTimer2,
+  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+
+  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
+
+  const isPlayerTimeout = () => {
+    return (
+      (gameState.playerTurn === gameState.player1 && timer1Minutes * 60 + timer1Seconds === 0) ||
+      (gameState.playerTurn === gameState.player2 && timer2Minutes * 60 + timer2Seconds === 0)
+    )
+  }
 
   engine.onmessage = function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
@@ -99,16 +99,12 @@ const BotGame: React.FC<{}> = () => {
           from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
           to: data[1].substring(2, 4),
         })
-        setStartTime(Date.now() - additionTimePerMove)
-        localStorage.setItem('startTime', startTime.toString())
-        setTimer2(timer2 - Math.floor((Date.now() - startTime) / 1000))
 
         gameDispatch(setGame(gameCopy))
         gameDispatch(resetMoveSelection())
         gameDispatch(addMoves(convertToFigurineSan(data[1], 'b')))
         gameDispatch(addGameHistory(gameCopy.fen()))
         gameDispatch(setGameOver(gameCopy.isGameOver()))
-        setCurrentMoveIndex((prevIndex) => prevIndex + 1)
         handleSwitchTurn()
       }, 4500)
     }
@@ -118,19 +114,6 @@ const BotGame: React.FC<{}> = () => {
     engine.postMessage(`position fen ${position}`)
     engine.postMessage('go depth 5')
   }
-
-  useEffect(() => {
-    localStorage.setItem('timer1', timer1.toString())
-    localStorage.setItem('timer2', timer2.toString())
-  }, [timer1, timer2])
-
-  useEffect(() => {
-    localStorage.setItem('player1Timer', player1Timer.toString())
-  }, [player1Timer])
-
-  useEffect(() => {
-    localStorage.setItem('player2Timer', player2Timer.toString())
-  }, [player2Timer])
 
   useEffect(() => {
     if (isThreefoldRepetition(history)) {
@@ -152,45 +135,6 @@ const BotGame: React.FC<{}> = () => {
 
   const dismissPopup = () => {
     setIsPopupDismissed(true)
-  }
-
-  useEffect(() => {
-    let intervalId: any
-
-    console.log(player1Timer)
-
-    if (!isGameDraw && !isGameOver && isStartGame && !isWinner && !isLoser) {
-      if (board?.isGameOver?.()) return
-      if (
-        currentPlayer === player1 &&
-        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
-      ) {
-        intervalId = setInterval(() => {
-          setPlayer1Timer(Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0))
-        }, 1000)
-      } else if (
-        currentPlayer === player2 &&
-        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) > 0
-      ) {
-        intervalId = setInterval(() => {
-          setPlayer2Timer(Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0))
-        }, 1000)
-      } else if (isPlayerTimeout() && !isGameOver) {
-        gameDispatch(setGameOver(true))
-        emitGameOver()
-      }
-    }
-
-    return () => clearInterval(intervalId)
-  }, [currentPlayer, player1Timer, player2Timer, isGameDraw, isGameOver])
-
-  function isPlayerTimeout() {
-    return (
-      (currentPlayer === player1 &&
-        Math.max(timer1 - Math.floor((Date.now() - startTime) / 1000), 0) === 0) ||
-      (currentPlayer === player2 &&
-        Math.max(timer2 - Math.floor((Date.now() - startTime) / 1000), 0) === 0)
-    )
   }
 
   const emitGameOver = () => {
@@ -230,17 +174,6 @@ const BotGame: React.FC<{}> = () => {
     return true
   }
 
-  function isEligibleToPlay() {
-    if (isGameDraw || isGameOver || board.isDraw() || board.isGameOver()) return false
-
-    // if (currentMoveIndex < gameHistory.length - 1) return false
-
-    const isPlayerTurn =
-      (player1 === wallet?.account.address && (board as any)._turn === 'w') ||
-      (player2 === wallet?.account.address && (board as any)._turn === 'b')
-    return isPlayerTurn
-  }
-
   function handleMoveFromSelection(square: Square) {
     const hasMoveOptions = getMoveOptions(square)
     if (hasMoveOptions) gameDispatch(setMoveFrom(square))
@@ -272,9 +205,6 @@ const BotGame: React.FC<{}> = () => {
 
   function makeMove(foundMove: any, square: Square) {
     setIsStartGame(true)
-    setStartTime(Date.now() - additionTimePerMove)
-    localStorage.setItem('startTime', startTime.toString())
-    setTimer1(timer1 - Math.floor((Date.now() - startTime) / 1000))
     let gameCopy = board
     const move = gameCopy.move({
       from: moveFrom ? moveFrom : '',
@@ -292,7 +222,6 @@ const BotGame: React.FC<{}> = () => {
       handleMoveFromSelection(square)
       return
     }
-    setCurrentMoveIndex((prevIndex) => prevIndex + 1)
     gameDispatch(addMoves(foundMove.san))
     gameDispatch(addGameHistory(gameCopy.fen()))
     gameDispatch(setGame(gameCopy))
@@ -312,8 +241,6 @@ const BotGame: React.FC<{}> = () => {
   }
 
   function onSquareClick(square: Square) {
-    if (!isEligibleToPlay()) return
-    setRightClickedSquares({})
     if (!moveTo) {
       if (!moveFrom) {
         handleMoveFromSelection(square)
@@ -346,13 +273,7 @@ const BotGame: React.FC<{}> = () => {
 
   function onSquareRightClick(square: any) {
     const colour = 'rgba(123, 97, 255, 1)'
-    setRightClickedSquares({
-      ...rightClickedSquares,
-      [square]:
-        rightClickedSquares[square] && rightClickedSquares[square].backgroundColor === colour
-          ? undefined
-          : { backgroundColor: colour },
-    })
+
     // console.log("7s200:onSquareRightClick", rightClickedSquares);
   }
 
@@ -365,13 +286,16 @@ const BotGame: React.FC<{}> = () => {
       <App theme={theme}>
         <Header />
         <GameBoard
+          player1Timer={0}
+          player2Timer={0}
           onSquareClick={onSquareClick}
           onSquareRightClick={onSquareRightClick}
           onPromotionPieceSelect={onPromotionPieceSelect}
           showPromotionDialog={showPromotion}
-          moveSquares={moveSquares}
+          moveSquares={{}}
           optionSquares={optionSquares}
-          rightClickedSquares={rightClickedSquares}
+          rightClickedSquares={{}}
+          kingSquares={{}}
         />
         <GameNavbar
           user={wallet?.account.address ? wallet?.account.address : 'player1'}

@@ -43,3 +43,5 @@ export const setRightClickedSquares = createAction<{ [key: string]: any }>(
 
 export const setIsMove = createAction<boolean>('/game/set-is-move')
 export const setFoundMove = createAction<any>('/game/set-found-move')
+export const setOpponentMove = createAction<any>('/game/set-opponent-move')
+export const setKingSquares = createAction<any>('/game/set-king-squares')
