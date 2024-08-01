@@ -94,7 +94,8 @@ export const handleMoveThunk = (
       promotion: 'q',
     })
     let copyFoundMove = { ...foundMove }
-    copyFoundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
+    let convertSan = convertToFigurineSan(foundMove.san, foundMove.color)
+    copyFoundMove.san = convertSan ? convertSan : foundMove.san
     dispatch(
       setNewMove({
         from: state.moveFrom,

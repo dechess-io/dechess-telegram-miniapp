@@ -76,7 +76,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
   return (
     <>
-      <Block strong className='my-0 !py-0' style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <Block strong className="my-0 !py-0" style={{ paddingLeft: 0, paddingRight: 0 }}>
         <div className="flex flex-col pt-6 justify-start bg-[#041d21] h-screen">
           <div className="flex justify-center items-center">
             <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>

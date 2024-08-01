@@ -41,12 +41,13 @@ type ModeProps = {
 const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   const navigate = useNavigate()
   const gameDispatch = useAppDispatch()
-  const timerDispatch = useAppDispatch()
   const [loading, setLoading] = useState(false)
   const [totalSeconds, setTotalSeconds] = useState(0)
   const [activeButton, setActiveButton] = useState(null)
   const [timeStep, setTimestep] = useState(0)
   const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
+
+  console.log('ho')
 
   let timerInterval: any
 
@@ -82,6 +83,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   useEffect(() => {
     if (totalSeconds > 30 && !isBotMode) {
       removeLocalStorage()
+      gameDispatch(resetGame())
       navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
     }
   }, [totalSeconds])
@@ -98,9 +100,12 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   const removeLocalStorage = () => {}
 
   const onCreateGame = async () => {
+    await gameDispatch(resetGame())
     setLoading(true)
     if (isBotMode) {
       removeLocalStorage()
+      console.log('Hel;p')
+      gameDispatch(resetGame())
       navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
     } else {
       removeLocalStorage()

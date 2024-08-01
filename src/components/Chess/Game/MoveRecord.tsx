@@ -20,8 +20,8 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
       ref={moveListRef}
       className="bg-blue-gradient-1 flex items-center text-xs gap-4 text-white overflow-hidden whitespace-nowrap bg-opacity-80 px-4"
     >
-      {moveLists.map((move, index) => {
-        if (index >= currentMoveIndex) return
+      {moves.map((move, index) => {
+        if (index >= moveIndex) return
         return <p key={index}>{`${index % 2 === 0 ? index / 2 + 1 + '. ' : ''}${move}`}</p>
       })}
     </div>
