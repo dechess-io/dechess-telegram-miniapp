@@ -27,7 +27,7 @@ export const switchPlayerTurn = createAction('/game/switch-player-turn')
 export const setNewMove = createAction<any>('/game/set-new-move')
 export const resetGame = createAction('/game/reset-game')
 export const getMoveOptions = createAction<Square>('/game/get-move-options')
-
+export const resetGameState = createAction('/game/reset-game-state')
 export const emitNewMove = createAction<{
   from: any
   to: any

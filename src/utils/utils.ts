@@ -75,12 +75,11 @@ const whitePieces: ChessPieces = {
 }
 
 export function convertToFigurineSan(str: string, turn: string): string {
-  let mp: ChessPieces
-  mp = turn === 'w' ? whitePieces : blackPieces
-  if (mp.hasOwnProperty(str[0])) {
-    return mp[str[0]] + str.slice(1)
-  }
+  const pieces = turn === 'w' ? whitePieces : blackPieces
   return str
+    .split('')
+    .map((char) => pieces[char] || char)
+    .join('')
 }
 
 const normalizeFEN = (fen: string): string => {
@@ -116,4 +115,15 @@ export const setLocalStorage = (key: any, value: any) => {
   if (value !== undefined && value !== null) {
     localStorage.setItem(key, value.toString())
   }
+}
+
+const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+export function indexToSquare(index: any) {
+  const rank = 8 - Math.floor(index / 16)
+  const fileIndex = index % 16
+  if (fileIndex >= 8) {
+    throw new Error('Index out of bounds')
+  }
+  return file[fileIndex] + rank
 }

@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
-import { isThreefoldRepetition, setLocalStorage } from '../../../utils/utils'
+import { indexToSquare, isThreefoldRepetition, setLocalStorage } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -68,18 +68,6 @@ const Game: React.FC<object> = () => {
       (gameState.playerTurn === gameState.player2 && timer2Minutes * 60 + timer2Seconds === 0)
     )
   }
-
-  const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-
-  function indexToSquare(index: any) {
-    const rank = 8 - Math.floor(index / 16)
-    const fileIndex = index % 16
-    if (fileIndex >= 8) {
-      throw new Error('Index out of bounds')
-    }
-    return file[fileIndex] + rank
-  }
-  console.log(gameState.board)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
@@ -188,8 +176,8 @@ const Game: React.FC<object> = () => {
         startTimer2()
         pauseTimer1()
       } else if (isPlayerTimeout() && !gameState.isGameOver) {
-        gameDispatch(setGameOver(true))
-        emitGameOver(socket, gameState, location.pathname.split('/')[2])
+        // gameDispatch(setGameOver(true))
+        // emitGameOver(socket, gameState, location.pathname.split('/')[2])
       }
     }
 
@@ -210,10 +198,6 @@ const Game: React.FC<object> = () => {
         } else {
           restartTimer2(new Date(Date.now() + room.player2Timer * 1000))
           pauseTimer1()
-        }
-
-        if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
-          console.log('checkmate')
         }
       }
     })

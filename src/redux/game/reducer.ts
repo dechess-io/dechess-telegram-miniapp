@@ -166,15 +166,6 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.turn = action.payload.turn
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
       state.board = new Chess(action.payload.fen)
-      // if(state.board.isCheckmate() || state.board.isCheck()) {
-      //   let bking = (state.board as any)._kings['b'];
-      //   let wking = (state.board as any)._kings['w'];
-      //   (state.board as any).get(squares[bking]).color = 'rgba(123, 97, 255, 1)';
-      //   (state.board as any).get(squares[wking]).color = 'rgba(123, 97, 255, 1)';
-      //   console.log(squares[bking])
-      //   console.log(squares[wking])
-      //   console.log("checkmate")
-      // }
       state.history = action.payload.history
       state.moves = [...state.moves, action.payload.san]
     })
@@ -229,7 +220,31 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       // (state.moveIndex = action.payload.history.length - 1)
     })
     .addCase(resetGame, (state: GameReducer) => {
-      Object.assign(state, defaultGameReducer)
+      state.board = new Chess()
+      state.history = [new Chess().fen()]
+      state.moveIndex = 0
+      state.turn = 'w'
+      state.optionSquares = {}
+      state.moveFrom = undefined
+      state.moveTo = undefined
+      state.showPromotionDialog = false
+      state.isGameOver = false
+      state.isGameDraw = false
+      state.moveIndex = 0
+      state.moves = []
+      state.board = new Chess()
+      state.isWinner = false
+      state.isLoser = false
+      state.turn = 'w'
+      state.player1 = ''
+      state.player2 = ''
+      state.playerTurn = ''
+      state.rightClickedSquares = {}
+      state.newMove = {}
+      state.hasMoveOptions = false
+      state.isMove = false
+      state.foundMove = null
+      state.kingSquares = {}
     })
     .addCase(getMoveOptions, (state: GameReducer, action: any) => {
       const moves = state.board.moves({ square: action.payload, verbose: true })

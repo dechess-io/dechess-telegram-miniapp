@@ -22,30 +22,25 @@ import {
   setGame,
   setGameDraw,
   setGameOver,
-  setMoveFrom,
-  setMoveTo,
   setOptionSquares,
+  setPlayerTurn,
+  setRightClickedSquares,
   showPromotionDialog,
+  setPlayer1,
+  setPlayer2,
+  setNewMove,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
+import {
+  handleMoveThunk,
+  handlePromotionMoveThunk,
+  onSquareClickThunk,
+} from '../../../redux/game/thunk'
 
 const BotGame: React.FC<{}> = () => {
-  const gameState = useAppSelector(selectGame)
+  const gameState = useAppSelector((state) => state.game)
 
   const location = useLocation()
-  const {
-    optionSquares,
-    moveFrom,
-    moveTo,
-    showPromotionDialog: showPromotion,
-    isGameOver,
-    isGameDraw,
-    board,
-    history: history,
-    moves,
-    isWinner,
-    isLoser,
-  } = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
 
   // Parse the query parameters
@@ -53,15 +48,10 @@ const BotGame: React.FC<{}> = () => {
 
   const wallet = useTonWallet()
   const [turn, setTurn] = useState(wallet?.account.address ? wallet.account.address : 'player1')
-  const [player1, setPlayer1] = useState(
-    wallet?.account.address ? wallet.account.address : 'player1'
-  )
-  const [player2, setPlayer2] = useState('bot')
+  const [player1] = useState(wallet?.account.address ? wallet.account.address : 'player1')
+  const [player2] = useState('bot')
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
-  const [currentPlayer, setCurrentPlayer] = useState(
-    wallet?.account.address ? wallet.account.address : 'player1'
-  )
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
 
@@ -71,7 +61,10 @@ const BotGame: React.FC<{}> = () => {
     start: startTimer1,
     pause: pauseTimer1,
     restart: restartTimer1,
-  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+  } = useTimer({
+    expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
+    autoStart: false,
+  })
 
   const {
     seconds: timer2Seconds,
@@ -79,9 +72,23 @@ const BotGame: React.FC<{}> = () => {
     start: startTimer2,
     pause: pauseTimer2,
     restart: restartTimer2,
-  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+  } = useTimer({
+    expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
+    autoStart: false,
+  })
 
   // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
+
+  useEffect(() => {
+    gameDispatch(resetGame())
+    gameDispatch(setPlayer1(player1))
+    gameDispatch(setPlayer2(player2))
+    if (gameState.playerTurn === player1) {
+      startTimer1()
+    } else {
+      startTimer2()
+    }
+  }, [])
 
   const isPlayerTimeout = () => {
     return (
@@ -90,23 +97,34 @@ const BotGame: React.FC<{}> = () => {
     )
   }
 
+  function getRandomValueFromList(list: any) {
+    const randomIndex = Math.floor(Math.random() * list.length)
+    return list[randomIndex]
+  }
+
   engine.onmessage = function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
       const data = event.data.split(' ')
-      let gameCopy = board
-      setTimeout(() => {
-        gameCopy.move({
-          from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
-          to: data[1].substring(2, 4),
-        })
-
-        gameDispatch(setGame(gameCopy))
-        gameDispatch(resetMoveSelection())
-        gameDispatch(addMoves(convertToFigurineSan(data[1], 'b')))
-        gameDispatch(addGameHistory(gameCopy.fen()))
-        gameDispatch(setGameOver(gameCopy.isGameOver()))
-        handleSwitchTurn()
-      }, 4500)
+      let gameCopy = gameState.board
+      setTimeout(
+        () => {
+          gameCopy.move({
+            from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
+            to: data[1].substring(2, 4),
+          })
+          gameDispatch(
+            setNewMove({
+              turn: gameCopy.turn(),
+              fen: gameCopy.fen(),
+              san: data[1],
+              board: gameCopy,
+              history: [...gameState.history, gameCopy.fen()],
+            })
+          )
+          gameDispatch(resetMoveSelection())
+        },
+        getRandomValueFromList([1000, 2000, 3000, 4000])
+      )
     }
   }
 
@@ -115,17 +133,29 @@ const BotGame: React.FC<{}> = () => {
     engine.postMessage('go depth 5')
   }
 
-  useEffect(() => {
-    if (isThreefoldRepetition(history)) {
-      gameDispatch(setGameDraw(true))
+  const makeMove = (foundMove: any, square: Square) => {
+    const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+    sendPositionToEngine(newState.board.fen())
+  }
+
+  const onSquareClick = (square: Square) => {
+    const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
+    if (isMove) {
+      makeMove(foundMove, square)
     }
-  }, [history])
+  }
+
+  // useEffect(() => {
+  //   if (isThreefoldRepetition(gameState.history)) {
+  //     gameDispatch(setGameDraw(true))
+  //   }
+  // }, [history])
 
   useEffect(() => {
-    if (isGameOver || isGameDraw) {
+    if (gameState.isGameOver || gameState.isGameDraw) {
       setShowPopup(true)
     }
-  }, [isGameOver, isGameDraw])
+  }, [gameState.isGameOver, gameState.isGameDraw])
 
   useEffect(() => {
     if (wallet) {
@@ -133,167 +163,62 @@ const BotGame: React.FC<{}> = () => {
     }
   }, [wallet])
 
-  const dismissPopup = () => {
-    setIsPopupDismissed(true)
-  }
-
-  const emitGameOver = () => {
-    gameDispatch(setGameOver(true))
-  }
-
-  const handleSwitchTurn = () => {
-    setCurrentPlayer((prev) => (prev === player1 ? player2 : player1))
-  }
-
-  function getMoveOptions(square: Square) {
-    const moves = board.moves({ square, verbose: true })
-
-    if (moves.length === 0) {
-      gameDispatch(setOptionSquares({}))
-      return false
-    }
-
-    const newSquares: any = {}
-
-    moves.map((move: any) => {
-      newSquares[move.to] = {
-        background:
-          board.get(move.to) && board.get(move.to).color !== board.get(square).color
-            ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
-            : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
-        borderRadius: '50%',
-      }
-
-      return move
-    })
-
-    newSquares[square] = newSquares[square] = {
-      background: 'rgba(123, 97, 255, 1)',
-    }
-    gameDispatch(setOptionSquares(newSquares))
-    return true
-  }
-
-  function handleMoveFromSelection(square: Square) {
-    const hasMoveOptions = getMoveOptions(square)
-    if (hasMoveOptions) gameDispatch(setMoveFrom(square))
-  }
-
-  function handleMoveToSelection(square: Square) {
-    const moves = board.moves({
-      square: moveFrom,
-      verbose: true,
-    })
-
-    const foundMove = moves.find((m: any) => m.from === moveFrom && m.to === square) as any
-
-    if (!foundMove) {
-      const hasMoveOptions = getMoveOptions(square)
-      gameDispatch(setMoveFrom(hasMoveOptions ? square : undefined))
-      return
-    }
-
-    gameDispatch(setMoveTo(square))
-
-    if (isPromotionMove(foundMove, square)) {
-      gameDispatch(showPromotionDialog(true))
-      return
-    }
-
-    makeMove(foundMove, square)
-  }
-
-  function makeMove(foundMove: any, square: Square) {
-    setIsStartGame(true)
-    let gameCopy = board
-    const move = gameCopy.move({
-      from: moveFrom ? moveFrom : '',
-      to: square,
-      promotion: 'q',
-    })
-
-    foundMove.san = convertToFigurineSan(foundMove.san, foundMove.color)
-
-    emitMove(foundMove, square, gameCopy)
-
-    handleSwitchTurn()
-
-    if (!move) {
-      handleMoveFromSelection(square)
-      return
-    }
-    gameDispatch(addMoves(foundMove.san))
-    gameDispatch(addGameHistory(gameCopy.fen()))
-    gameDispatch(setGame(gameCopy))
-    gameDispatch(setGameOver(gameCopy.isGameOver()))
-    gameDispatch(resetMoveSelection())
-  }
-
-  function isPromotionMove(move: any, square: Square) {
-    return (
-      (move.color === 'w' && move.piece === 'p' && square[1] === '8') ||
-      (move.color === 'b' && move.piece === 'p' && square[1] === '1')
+  const onPromotionPieceSelect = (piece: any) => {
+    gameDispatch(
+      handlePromotionMoveThunk({
+        piece,
+        additionTimePerMove,
+        currentPlayerTurn: gameState.playerTurn,
+      })
     )
   }
 
-  function emitMove(foundMove: any, square: Square, gameCopy: any) {
-    sendPositionToEngine(gameCopy.fen())
+  const onSquareRightClick = (square: any) => {
+    gameDispatch(setRightClickedSquares(square))
   }
 
-  function onSquareClick(square: Square) {
-    if (!moveTo) {
-      if (!moveFrom) {
-        handleMoveFromSelection(square)
-        return
-      } else {
-        handleMoveToSelection(square)
-      }
-    }
-  }
-
-  function onPromotionPieceSelect(piece: any) {
-    if (piece) {
-      let gameCopy: any = board
-      const newMove = gameCopy.move({
-        from: moveFrom,
-        to: moveTo,
-        promotion: piece[1].toLowerCase() ?? 'q',
-      })
-      console.log('7s200:pro', { promotion: piece[1].toLowerCase() ?? 'q' })
-      if (newMove) {
-        gameDispatch(setGame(gameCopy))
-        handleSwitchTurn()
+  useEffect(() => {
+    if (
+      !gameState.isGameDraw &&
+      !gameState.isGameOver &&
+      !gameState.isWinner &&
+      !gameState.isLoser
+    ) {
+      if (gameState.playerTurn === gameState.player1 && timer1Minutes * 60 + timer1Seconds > 0) {
+        startTimer1()
+        pauseTimer2()
+      } else if (
+        gameState.playerTurn === gameState.player2 &&
+        timer2Minutes * 60 + timer2Seconds > 0
+      ) {
+        startTimer2()
+        pauseTimer1()
+      } else if (isPlayerTimeout() && !gameState.isGameOver) {
+        // gameDispatch(setGameOver(true))
+        // emitGameOver(socket, gameState, location.pathname.split('/')[2])
       }
     }
 
-    gameDispatch(resetMoveSelection())
-    gameDispatch(showPromotionDialog(false))
-    return true
-  }
-
-  function onSquareRightClick(square: any) {
-    const colour = 'rgba(123, 97, 255, 1)'
-
-    // console.log("7s200:onSquareRightClick", rightClickedSquares);
-  }
+    return () => {}
+  }, [gameState.turn, timer1Minutes, timer1Seconds, timer2Minutes, timer2Seconds])
 
   const theme = isAndroid ? 'material' : 'ios'
 
-  if (!board) {
+  if (!gameState.board) {
     return <LoadingGame />
   } else {
     return (
       <App theme={theme}>
         <Header />
         <GameBoard
-          player1Timer={0}
-          player2Timer={0}
+          player1Timer={timer1Minutes * 60 + timer1Seconds}
+          player2Timer={timer2Minutes * 60 + timer2Seconds}
           onSquareClick={onSquareClick}
           onSquareRightClick={onSquareRightClick}
           onPromotionPieceSelect={onPromotionPieceSelect}
-          showPromotionDialog={showPromotion}
+          showPromotionDialog={gameState.showPromotionDialog}
           moveSquares={{}}
-          optionSquares={optionSquares}
+          optionSquares={gameState.optionSquares}
           rightClickedSquares={{}}
           kingSquares={{}}
         />
@@ -301,7 +226,7 @@ const BotGame: React.FC<{}> = () => {
           user={wallet?.account.address ? wallet?.account.address : 'player1'}
           opponent={wallet?.account.address === player1 ? player2 : player1}
           socket={socket}
-          isMoved={moves.length !== 0}
+          isMoved={gameState.moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
         />
         <GameOverPopUp
