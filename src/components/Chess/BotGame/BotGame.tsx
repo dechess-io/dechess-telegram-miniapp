@@ -1,11 +1,7 @@
 import { useEffect, useState, useRef, useReducer } from 'react'
 import { Chess, Square } from 'chess.js'
 import GameOverPopUp from '../Popup/GameOverPopUp'
-import {
-  convertToFigurineSan,
-  getRandomValueFromList,
-  isThreefoldRepetition,
-} from '../../../utils/utils'
+import { convertToFigurineSan, getRandomValueFromList, indexToSquare } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -29,6 +25,8 @@ import {
   setGameOver,
   setWinner,
   setLoser,
+  setKingSquares,
+  resetKingSquares,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
 import {
@@ -39,11 +37,8 @@ import {
 
 const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
-
   const location = useLocation()
   const gameDispatch = useAppDispatch()
-
-  // Parse the query parameters
   const queryParams = new URLSearchParams(location.search)
 
   const wallet = useTonWallet()
@@ -85,8 +80,6 @@ const BotGame: React.FC<{}> = () => {
       gameDispatch(setWinner(false))
     },
   })
-
-  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
 
   useEffect(() => {
     gameDispatch(resetGame())
@@ -183,6 +176,15 @@ const BotGame: React.FC<{}> = () => {
     pauseTimer2()
   }, [gameState.isGameOver, gameState.isWinner, gameState.isLoser])
 
+  useEffect(() => {
+    if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
+      gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
+      gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['b'])))
+    } else {
+      gameDispatch(resetKingSquares())
+    }
+  }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
+
   const theme = isAndroid ? 'material' : 'ios'
 
   if (!gameState.board) {
@@ -201,7 +203,7 @@ const BotGame: React.FC<{}> = () => {
           moveSquares={{}}
           optionSquares={gameState.optionSquares}
           rightClickedSquares={{}}
-          kingSquares={{}}
+          kingSquares={gameState.kingSquares}
         />
         <GameNavbar
           user={wallet?.account.address ? wallet?.account.address : 'player1'}
@@ -210,11 +212,7 @@ const BotGame: React.FC<{}> = () => {
           isMoved={gameState.moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
         />
-        <GameOverPopUp
-          setShowPopup={setShowPopup}
-          showPopup={showPopup && !isPopupDismissed}
-          wallet={wallet}
-        />
+        <GameOverPopUp setShowPopup={setShowPopup} showPopup={showPopup && !isPopupDismissed} />
       </App>
     )
   }

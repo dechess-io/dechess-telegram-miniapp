@@ -33,6 +33,7 @@ import {
   setFoundMove,
   setOpponentMove,
   setKingSquares,
+  resetKingSquares,
 } from './action'
 import { Chess, Square } from 'chess.js'
 
@@ -163,7 +164,6 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.turn = action.payload
     })
     .addCase(setOpponentMove, (state: GameReducer, action: any) => {
-      console.log(action.payload)
       state.turn = action.payload.turn
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
       state.board = new Chess(action.payload.fen)
@@ -285,7 +285,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       }
     })
     .addCase(setKingSquares, (state: GameReducer, action: any) => {
-      const colour = 'rgba(123, 97, 255, 1)'
+      const colour = 'rgba(220, 20, 60, 0.8)'
 
       const square = action.payload
       state.kingSquares = {
@@ -301,6 +301,9 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
     })
     .addCase(setFoundMove, (state: GameReducer, action: any) => {
       state.foundMove = action.payload
+    })
+    .addCase(resetKingSquares, (state: GameReducer) => {
+      state.kingSquares = {}
     })
 })
 

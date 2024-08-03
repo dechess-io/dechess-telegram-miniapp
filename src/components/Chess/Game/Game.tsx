@@ -16,10 +16,12 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectGame, squares } from '../../../redux/game/reducer'
 import {
   loadGame,
+  resetKingSquares,
   setGameOver,
   setKingSquares,
   setOpponentMove,
   setRightClickedSquares,
+  setWinner,
 } from '../../../redux/game/action'
 import { emitGameOver, emitNewMove, isOrientation } from './util'
 import { useTimer } from 'react-timer-hook'
@@ -49,25 +51,32 @@ const Game: React.FC<object> = () => {
     minutes: timer1Minutes,
     start: startTimer1,
     pause: pauseTimer1,
+    resume: resumeTimer1,
     restart: restartTimer1,
-  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+  } = useTimer({
+    expiryTimestamp: new Date(Date.now() + 100000),
+    autoStart: false,
+    onExpire: () => {
+      gameDispatch(setGameOver(true))
+    },
+  })
 
   const {
     seconds: timer2Seconds,
     minutes: timer2Minutes,
     start: startTimer2,
     pause: pauseTimer2,
+    resume: resumeTimer2,
     restart: restartTimer2,
-  } = useTimer({ expiryTimestamp: new Date(Date.now() + 100000), autoStart: false })
+  } = useTimer({
+    expiryTimestamp: new Date(Date.now() + 100000),
+    autoStart: false,
+    onExpire: () => {
+      gameDispatch(setGameOver(true))
+    },
+  })
 
   // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
-
-  const isPlayerTimeout = () => {
-    return (
-      (gameState.playerTurn === gameState.player1 && timer1Minutes * 60 + timer1Seconds === 0) ||
-      (gameState.playerTurn === gameState.player2 && timer2Minutes * 60 + timer2Seconds === 0)
-    )
-  }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = (foundMove: any, square: Square) => {
@@ -112,6 +121,8 @@ const Game: React.FC<object> = () => {
     if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
       gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
       gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['b'])))
+    } else {
+      gameDispatch(resetKingSquares())
     }
   }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
 
@@ -127,8 +138,8 @@ const Game: React.FC<object> = () => {
           const data = res.data.game
           gameDispatch(loadGame(data))
           setStartTime(Date.now())
-          restartTimer1(new Date(Date.now() + data.playerTimer1 * 1000))
-          restartTimer2(new Date(Date.now() + data.playerTimer2 * 1000))
+          restartTimer1(new Date(Date.now() + data.playerTimer1 * 1000), true)
+          restartTimer2(new Date(Date.now() + data.playerTimer2 * 1000), true)
 
           if (data.move_number === 1 && data.turn_player === 'w') {
             setAdditionTimePerMove(data.timePerMove)
@@ -167,17 +178,14 @@ const Game: React.FC<object> = () => {
       !gameState.isLoser
     ) {
       if (gameState.playerTurn === gameState.player1 && timer1Minutes * 60 + timer1Seconds > 0) {
-        startTimer1()
+        resumeTimer1()
         pauseTimer2()
       } else if (
         gameState.playerTurn === gameState.player2 &&
         timer2Minutes * 60 + timer2Seconds > 0
       ) {
-        startTimer2()
+        resumeTimer2()
         pauseTimer1()
-      } else if (isPlayerTimeout() && !gameState.isGameOver) {
-        // gameDispatch(setGameOver(true))
-        // emitGameOver(socket, gameState, location.pathname.split('/')[2])
       }
     }
 
@@ -201,11 +209,6 @@ const Game: React.FC<object> = () => {
         }
       }
     })
-    socket.on('start', (data: any) => {
-      if (data.start === true) {
-        // setIsStartGame(true);
-      }
-    })
     socket.on('opponentDisconnect', () => {})
 
     socket.emit('joinGame', { game_id: gameId })
@@ -222,7 +225,7 @@ const Game: React.FC<object> = () => {
 
   return (
     <App theme={theme}>
-      {/* <Header /> */}
+      <Header />
       <GameBoard
         player1Timer={timer1Minutes * 60 + timer1Seconds}
         player2Timer={timer2Minutes * 60 + timer2Seconds}
@@ -255,7 +258,6 @@ const Game: React.FC<object> = () => {
       <GameOverPopUp
         setShowPopup={setShowPopup}
         showPopup={showPopup && !isPopupDismissed}
-        wallet={wallet}
       />
     </App>
   )

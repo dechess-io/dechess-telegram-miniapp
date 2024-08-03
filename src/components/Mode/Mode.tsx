@@ -47,8 +47,6 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   const [timeStep, setTimestep] = useState(0)
   const [additionTimePerMove, setAdditionTimePerMove] = useState(0)
 
-  console.log('ho')
-
   let timerInterval: any
 
   useEffect(() => {
@@ -104,7 +102,6 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
     setLoading(true)
     if (isBotMode) {
       removeLocalStorage()
-      console.log('Hel;p')
       gameDispatch(resetGame())
       navigate(`/game-bot?time=${timeStep}&increment=${additionTimePerMove}`)
     } else {

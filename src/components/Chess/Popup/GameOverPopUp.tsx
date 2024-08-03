@@ -3,19 +3,15 @@ import React, { useEffect } from 'react'
 import ReactDialog from '../../Dialog/ReactDialog'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
+import { useTonWallet } from '@tonconnect/ui-react'
 
 type GameOverPopUpProps = {
-  wallet: any
   showPopup: boolean
   setShowPopup: any
 }
 
-const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
-  wallet,
-
-  showPopup,
-  setShowPopup,
-}) => {
+const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({ showPopup, setShowPopup }) => {
+  const wallet = useTonWallet()
   const { board, isGameOver, isGameDraw, player1, player2, isWinner, isLoser } =
     useAppSelector(selectGame)
   const navigate = useNavigate()
