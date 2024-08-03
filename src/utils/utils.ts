@@ -127,3 +127,8 @@ export function indexToSquare(index: any) {
   }
   return file[fileIndex] + rank
 }
+
+export function getRandomValueFromList(list: any) {
+  const randomIndex = Math.floor(Math.random() * list.length)
+  return list[randomIndex]
+}
