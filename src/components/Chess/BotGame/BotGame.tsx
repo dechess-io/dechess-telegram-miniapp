@@ -163,6 +163,8 @@ const BotGame: React.FC<{}> = () => {
         piece,
         additionTimePerMove,
         currentPlayerTurn: gameState.playerTurn,
+        playerTimer1: timer1Minutes * 60 + timer1Seconds,
+        playerTimer2: timer2Minutes * 60 + timer2Seconds,
       })
     )
   }
@@ -178,8 +180,11 @@ const BotGame: React.FC<{}> = () => {
 
   useEffect(() => {
     if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
-      gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
-      gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['b'])))
+      if ((gameState.board as any)._isKingAttacked('w')) {
+        gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
+      } else if ((gameState.board as any)._isKingAttacked('b')) {
+        gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['b'])))
+      }
     } else {
       gameDispatch(resetKingSquares())
     }
@@ -199,11 +204,7 @@ const BotGame: React.FC<{}> = () => {
           onSquareClick={onSquareClick}
           onSquareRightClick={onSquareRightClick}
           onPromotionPieceSelect={onPromotionPieceSelect}
-          showPromotionDialog={gameState.showPromotionDialog}
           moveSquares={{}}
-          optionSquares={gameState.optionSquares}
-          rightClickedSquares={{}}
-          kingSquares={gameState.kingSquares}
         />
         <GameNavbar
           user={wallet?.account.address ? wallet?.account.address : 'player1'}

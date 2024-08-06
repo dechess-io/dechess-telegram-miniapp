@@ -5,7 +5,7 @@ import { useTonWallet } from '@tonconnect/ui-react'
 import { Chess } from 'chess.js'
 import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react'
 import { useAppDispatch } from '../../../redux/store'
-import { setPreviousMove } from '../../../redux/game/action'
+import { setNextMove, setPreviousMove } from '../../../redux/game/action'
 
 interface GameNavbarProps {
   socket: any
@@ -91,7 +91,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
             }
           />
           <TabbarLink
-            onClick={() => gameDispatch(setPreviousMove())}
+            onClick={() => gameDispatch(setNextMove())}
             icon={
               <Icon
                 ios={<img className="w-[20px] h-[20px]" src="/arrow-right-1.svg" />}

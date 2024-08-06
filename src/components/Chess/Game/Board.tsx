@@ -14,28 +14,29 @@ interface GameBoardProps {
   onSquareClick: (square: Square) => void
   onSquareRightClick: (square: Square) => void
   onPromotionPieceSelect: any
-  showPromotionDialog: boolean
   moveSquares: Record<string, any>
-  optionSquares: Record<string, any>
-  rightClickedSquares: Record<string, any>
   player1Timer: number
   player2Timer: number
-  kingSquares: any
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
   onSquareClick,
   onSquareRightClick,
   onPromotionPieceSelect,
-  showPromotionDialog,
   moveSquares,
-  optionSquares,
-  rightClickedSquares,
-  kingSquares,
   player1Timer,
   player2Timer,
 }) => {
-  const { player1, player2, board, moveTo } = useAppSelector(selectGame)
+  const {
+    player1,
+    player2,
+    board,
+    moveTo,
+    showPromotionDialog,
+    optionSquares,
+    rightClickedSquares,
+    kingSquares,
+  } = useAppSelector(selectGame)
 
   const [name1] = useState(getAvatarName())
   const [name2] = useState(getAvatarName())

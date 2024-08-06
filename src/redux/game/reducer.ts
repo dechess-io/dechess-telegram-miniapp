@@ -161,9 +161,11 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.player2 = action.payload
     })
     .addCase(setTurn, (state: GameReducer, action: any) => {
+      console.log(action.payload)
       state.turn = action.payload
     })
     .addCase(setOpponentMove, (state: GameReducer, action: any) => {
+      console.log(action.payload.turn)
       state.turn = action.payload.turn
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
       state.board = new Chess(action.payload.fen)
@@ -182,7 +184,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         winner,
         loser,
       } = action.payload
-
+      console.log(action.payload.turn_player)
       state.isGameOver = isGameOver
       state.isGameDraw = isGameDraw
       state.board = new Chess(fen)
@@ -198,12 +200,12 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
     .addCase(setPreviousMove, (state: GameReducer) => {
       if (state.moveIndex <= 0) return
       state.moveIndex = state.moveIndex - 1
-      state.board = new Chess(state.history[state.moveIndex - 1])
+      state.board = new Chess(state.history[state.moveIndex])
     })
     .addCase(setNextMove, (state: GameReducer) => {
       if (state.moveIndex >= state.history.length) return
-      ;(state.moveIndex = state.moveIndex + 1),
-        (state.board = new Chess(state.history[state.moveIndex + 1]))
+      state.moveIndex = state.moveIndex + 1
+      state.board = new Chess(state.history[state.moveIndex])
     })
     .addCase(setPlayerTurn, (state: GameReducer, action: any) => {
       state.playerTurn = action.payload
@@ -212,10 +214,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
     })
     .addCase(setNewMove, (state: GameReducer, action: any) => {
-      state.turn = action.payload.turn
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
-      state.board = new Chess(action.payload.fen)
-      state.history = action.payload.history
       state.newMove = action.payload
 
       // (state.moveIndex = action.payload.history.length - 1)
