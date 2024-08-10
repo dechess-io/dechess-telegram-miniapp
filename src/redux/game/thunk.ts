@@ -182,7 +182,7 @@ export const handlePromotionMoveThunk = (
           state.moveFrom,
           state.moveTo,
           true,
-          newMove.san,
+          convertToFigurineSan(newMove.san, gameCopy.turn()),
           location.pathname.split('/')[2],
           state,
           currentPlayerTurn,

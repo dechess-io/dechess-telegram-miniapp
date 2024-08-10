@@ -27,6 +27,9 @@ import {
   setLoser,
   setKingSquares,
   resetKingSquares,
+  setGameHistory,
+  setCurrentMoveIndex,
+  setMoves,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
 import {
@@ -105,16 +108,17 @@ const BotGame: React.FC<{}> = () => {
             from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
             to: data[1].substring(2, 4),
           })
+          let san = gameState.board.history()?.pop() as string
           gameDispatch(
             setOpponentMove({
               turn: gameCopy.turn(),
               fen: gameCopy.fen(),
-              san: data[1],
+              san: convertToFigurineSan(san, gameCopy.turn()),
               board: gameCopy,
-              history: [],
+              history: [...gameState.history, gameCopy.fen()],
             })
           )
-
+          gameDispatch(setCurrentMoveIndex(gameState.moves.length))
           gameDispatch(resetMoveSelection())
           resumeTimer1()
           pauseTimer2()
@@ -131,6 +135,9 @@ const BotGame: React.FC<{}> = () => {
 
   const makeMove = (foundMove: any, square: Square) => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+    gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
+    gameDispatch(setMoves([...gameState.moves, foundMove.san]))
+    gameDispatch(setCurrentMoveIndex(gameState.moves.length))
     pauseTimer1()
     resumeTimer2()
     sendPositionToEngine(newState.board.fen())

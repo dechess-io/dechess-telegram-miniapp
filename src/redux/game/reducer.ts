@@ -161,11 +161,9 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.player2 = action.payload
     })
     .addCase(setTurn, (state: GameReducer, action: any) => {
-      console.log(action.payload)
       state.turn = action.payload
     })
     .addCase(setOpponentMove, (state: GameReducer, action: any) => {
-      console.log(action.payload.turn)
       state.turn = action.payload.turn
       state.playerTurn = state.playerTurn === state.player1 ? state.player2 : state.player1
       state.board = new Chess(action.payload.fen)
@@ -184,7 +182,6 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
         winner,
         loser,
       } = action.payload
-      console.log(action.payload.turn_player)
       state.isGameOver = isGameOver
       state.isGameDraw = isGameDraw
       state.board = new Chess(fen)

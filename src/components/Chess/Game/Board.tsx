@@ -9,6 +9,7 @@ import React, { useMemo, useState } from 'react'
 import { Block } from 'konsta/react'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
+import ProgressBar from '@ramonak/react-progress-bar'
 
 interface GameBoardProps {
   onSquareClick: (square: Square) => void
@@ -17,6 +18,8 @@ interface GameBoardProps {
   moveSquares: Record<string, any>
   player1Timer: number
   player2Timer: number
+  showProgressBar: boolean
+  progressBar: number
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
@@ -26,6 +29,8 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   moveSquares,
   player1Timer,
   player2Timer,
+  showProgressBar,
+  progressBar,
 }) => {
   const {
     player1,
@@ -82,6 +87,16 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
           <div className="flex justify-center items-center">
             <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
               <div className="flex flex-col space-y-1">
+                {showProgressBar && (
+                  <ProgressBar
+                    completed={(progressBar * 100) / 120}
+                    bgColor="#93d3fb"
+                    height="10px"
+                    borderRadius="0"
+                    isLabelVisible={false}
+                    baseBgColor="black"
+                  />
+                )}
                 <MoveRecord />
                 <PlayerDisplay {...getPlayerDisplayProps(true)} />
                 <div className="relative border-8 border-white rounded-lg">

@@ -15,6 +15,7 @@ import { store } from './redux/store'
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
 import BotGame from './components/Chess/BotGame/BotGame'
+import Puzzle from './components/Chess/Puzzle/Puzzle'
 // import './index.css'
 
 WebApp.ready()
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
       { path: '/mode', element: <Mode isBotMode={false} /> },
       { path: '/bot', element: <Mode isBotMode={true} /> },
       { path: '/game-bot', element: <BotGame /> },
+      { path: '/puzzle', element: <Puzzle /> },
       // { path: '/tournament', element: <TournamentBoard /> },
       // { path: "/tournament", element: <Tournament2 /> },
     ],

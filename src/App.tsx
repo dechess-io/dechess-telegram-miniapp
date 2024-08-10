@@ -37,6 +37,7 @@ function App() {
   }, [])
 
   const handleRejoin = () => {
+    socket.emit('joinGame', { game_id: data.game_id })
     navigate('/game/' + data.game_id)
     setShowPopup(false)
   }
@@ -59,7 +60,7 @@ function App() {
     { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
     { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
     { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
-    { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/' },
+    { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/puzzle' },
   ]
 
   const createActionButton = (config: any) => (

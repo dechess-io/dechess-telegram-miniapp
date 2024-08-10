@@ -1671,6 +1671,11 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
+"@ramonak/react-progress-bar@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@ramonak/react-progress-bar/-/react-progress-bar-5.2.0.tgz#30d72850b0f2f5020d59d5bcc94d54f8f2393aec"
+  integrity sha512-hgsn1YSXzDplCVNJ/YiCM0nVbVHKu7+2OHlj3kr2wU9ELPa9A/qj+c+GKGKqzJullsofRJV5yMN/Y/jL9aE4/Q==
+
 "@react-dnd/asap@^5.0.1":
   version "5.0.2"
   resolved "https://registry.npmjs.org/@react-dnd/asap/-/asap-5.0.2.tgz"

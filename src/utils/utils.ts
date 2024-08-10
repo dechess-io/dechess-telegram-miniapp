@@ -76,10 +76,7 @@ const whitePieces: ChessPieces = {
 
 export function convertToFigurineSan(str: string, turn: string): string {
   const pieces = turn === 'w' ? whitePieces : blackPieces
-  return str
-    .split('')
-    .map((char) => pieces[char] || char)
-    .join('')
+  return str.replace(/[NBRQK]/g, (match) => pieces[match] || match)
 }
 
 const normalizeFEN = (fen: string): string => {
