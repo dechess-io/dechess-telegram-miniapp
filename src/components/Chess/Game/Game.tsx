@@ -10,7 +10,7 @@ import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
-import { App, Notification } from 'konsta/react'
+import { App, Block, Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectGame, squares } from '../../../redux/game/reducer'
@@ -45,6 +45,7 @@ const Game: React.FC<object> = () => {
   const [additionTimePerMove, setAdditionTimePerMove] = useState(1)
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   const [startTime, setStartTime] = useState(0)
+  const [showProgressBar, setShowProgressBar] = useState(false)
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 100000),
@@ -195,7 +196,15 @@ const Game: React.FC<object> = () => {
     const gameId = location.pathname.split('/')[2]
 
     socket.connect()
-    socket.on('connection', () => {})
+    socket.on('connection', () => {
+      setShowProgressBar(false)
+    })
+
+    socket.on('joinGame', (data: any) => {
+      console.log('Opponent rejoin')
+      setShowProgressBar(false)
+    })
+
     socket.on('newmove', (room: any) => {
       if (room.fen) {
         gameDispatch(setOpponentMove(room))
@@ -208,7 +217,15 @@ const Game: React.FC<object> = () => {
         }
       }
     })
-    socket.on('opponentDisconnect', () => {})
+    socket.on('opponentDisconnect', () => {
+      setNotificationCloseOnClick(true)
+      setTimeout(() => {
+        setNotificationCloseOnClick(false)
+      }, 2000)
+
+      setShowProgressBar(true)
+      countDown.restart(new Date(Date.now() + 60 * 1000 * 2))
+    })
 
     socket.emit('joinGame', { game_id: gameId })
 
@@ -232,6 +249,8 @@ const Game: React.FC<object> = () => {
         onSquareRightClick={onSquareRightClick}
         onPromotionPieceSelect={onPromotionPieceSelect}
         moveSquares={moveSquares}
+        showProgressBar={showProgressBar}
+        progressBar={countDown.seconds + countDown.minutes * 60}
       />
       <GameNavbar
         user={wallet?.account.address ? wallet?.account.address : ''}

@@ -1,0 +1,45 @@
+{
+  "games": [
+    {
+      "player1": "Bill Harvey",
+      "player2": "Henry Buckle",
+      "opponent": "NN",
+      "location": "London",
+      "year": 1840,
+      "fen": "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 0",
+      "moves": "1. Nf6+ gxf6 2. Bxf7#"
+    },
+    {
+      "player1": "Louis Paulsen",
+      "player2": "Blachy",
+      "location": "New York",
+      "year": 1857,
+      "fen": "1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 0",
+      "moves": "1. Qd5+ Ka6 2. cxb8=N#"
+    },
+    {
+      "player1": "Paul Morphy",
+      "player2": "Duke Isouard",
+      "location": "Paris",
+      "year": 1858,
+      "fen": "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0",
+      "moves": "1. Qb8+ Nxb8 2. Rd8#"
+    },
+    {
+      "player1": "Johannes Zukertort",
+      "player2": "Adolf Anderssen",
+      "location": "Breslau",
+      "year": 1865,
+      "fen": "r1b2k1r/ppp1bppp/8/1B1Q4/5q2/2P5/PPP2PPP/R3R1K1 w - - 1 0",
+      "moves": "1. Qd8+ Bxd8 2. Re8#"
+    },
+    {
+      "player1": "Gustav Neumann",
+      "player2": "Carl Mayet",
+      "location": "Berlin",
+      "year": 1866,
+      "fen": "5rkr/pp2Rp2/1b1p1Pb1/3P2Q1/2n3P1/2p5/P4P2/4R1K1 w - - 1 0",
+      "moves": "1. Qxg6+ fxg6 2. Rg7#"
+    }
+  ]
+}
