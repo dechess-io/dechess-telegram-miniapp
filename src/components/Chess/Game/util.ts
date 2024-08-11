@@ -62,11 +62,3 @@ export const isEligibleToPlay = (gameState: any, wallet: any) => {
     (gameState.player2 === wallet?.account.address && (gameState.board as any)._turn === 'b')
   return isPlayerTurn
 }
-
-export const emitGameOver = (socket: any, gameState: any, gameId: string) => {
-  socket.emit('endGame', {
-    game_id: location.pathname.split('/')[2],
-    isGameOver: gameState.isGameOver,
-    isGameDraw: gameState.isGameDraw,
-  })
-}
