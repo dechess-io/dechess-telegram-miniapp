@@ -16,6 +16,7 @@ import { store } from './redux/store'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
 import BotGame from './components/Chess/BotGame/BotGame'
 import Puzzle from './components/Chess/Puzzle/Puzzle'
+import PuzzleGame from './components/Chess/Puzzle/PuzzleGame'
 // import './index.css'
 
 WebApp.ready()
