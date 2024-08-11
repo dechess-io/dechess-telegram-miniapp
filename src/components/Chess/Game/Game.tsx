@@ -92,7 +92,6 @@ const Game: React.FC<object> = () => {
         san,
         location.pathname.split('/')[2],
         newState,
-        newState.playerTurn,
         additionTimePerMove,
         timer1.minutes * 60 + timer1.seconds,
         timer2.minutes * 60 + timer2.seconds
@@ -159,7 +158,7 @@ const Game: React.FC<object> = () => {
     } else {
       gameDispatch(resetKingSquares())
     }
-  }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
+  }, [gameState.board])
 
   useEffect(() => {
     restApi
@@ -175,6 +174,8 @@ const Game: React.FC<object> = () => {
           setStartTime(Date.now())
           timer1.restart(new Date(Date.now() + data.playerTimer1 * 1000), true)
           timer2.restart(new Date(Date.now() + data.playerTimer2 * 1000), true)
+          timer1.pause()
+          timer2.pause()
 
           if (data.move_number === 1 && data.turn_player === 'w') {
             setAdditionTimePerMove(data.timePerMove)
@@ -205,13 +206,16 @@ const Game: React.FC<object> = () => {
     }
   }, [wallet])
 
+  console.log(isStartGame)
+
   useEffect(() => {
     if (
       !gameState.isGameDraw &&
       !gameState.isGameOver &&
       !gameState.isWinner &&
       !gameState.isLoser &&
-      !showProgressBar
+      !showProgressBar &&
+      isStartGame
     ) {
       if (gameState.playerTurn === gameState.player1 && timer1.minutes * 60 + timer1.seconds > 0) {
         timer1.resume()

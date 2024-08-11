@@ -167,7 +167,7 @@ export const handlePromotionMoveThunk = (
 ): ThunkAction<void, RootState, unknown, AnyAction> => {
   return (dispatch, getState) => {
     const state = getState().game
-    const { piece, additionTimePerMove, currentPlayerTurn, playerTimer1, playerTimer2 } = payload
+    const { piece, additionTimePerMove, playerTimer1, playerTimer2 } = payload
     if (piece) {
       const gameCopy: any = state.board
       const newMove = gameCopy.move({
@@ -185,7 +185,6 @@ export const handlePromotionMoveThunk = (
           convertToFigurineSan(newMove.san, gameCopy.turn()),
           location.pathname.split('/')[2],
           state,
-          currentPlayerTurn,
           additionTimePerMove,
           playerTimer1,
           playerTimer2
