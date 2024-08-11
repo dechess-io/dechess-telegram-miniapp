@@ -19,11 +19,12 @@ import {
   resetKingSquares,
   setGameOver,
   setKingSquares,
+  setLoser,
   setOpponentMove,
   setRightClickedSquares,
   setWinner,
 } from '../../../redux/game/action'
-import { emitGameOver, emitNewMove, isOrientation } from './util'
+import { emitNewMove } from './util'
 import { useTimer } from 'react-timer-hook'
 
 import {
@@ -53,6 +54,21 @@ const Game: React.FC<object> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
+      if (wallet?.account.address === gameState.player1) {
+        gameDispatch(setLoser(true))
+        socket.emit('gameOver', {
+          game_id: location.pathname.split('/')[2],
+          winner: gameState.player2,
+          loser: gameState.player1,
+        })
+      } else {
+        gameDispatch(setWinner(true))
+        socket.emit('gameOver', {
+          game_id: location.pathname.split('/')[2],
+          winner: gameState.player1,
+          loser: gameState.player2,
+        })
+      }
     },
   })
 
@@ -61,6 +77,21 @@ const Game: React.FC<object> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
+      if (wallet?.account.address === gameState.player2) {
+        gameDispatch(setLoser(true))
+        socket.emit('gameOver', {
+          game_id: location.pathname.split('/')[2],
+          winner: gameState.player1,
+          loser: gameState.player2,
+        })
+      } else {
+        gameDispatch(setWinner(true))
+        socket.emit('gameOver', {
+          game_id: location.pathname.split('/')[2],
+          winner: gameState.player2,
+          loser: gameState.player1,
+        })
+      }
     },
   })
 
@@ -77,6 +108,20 @@ const Game: React.FC<object> = () => {
     autoStart: true,
     onExpire: () => {
       gameDispatch(setGameOver(true))
+      gameDispatch(setWinner(true))
+      if (wallet?.account.address === gameState.player1) {
+        socket.emit('gameOver', {
+          game_id: location.pathname.split('/')[2],
+          winner: gameState.player1,
+          loser: gameState.player2,
+        })
+      } else {
+        socket.emit('gameOver', {
+          game_id: location.pathname.split('/')[2],
+          winner: gameState.player2,
+          loser: gameState.player1,
+        })
+      }
     },
   })
 
@@ -118,6 +163,17 @@ const Game: React.FC<object> = () => {
     [gameDispatch, makeMove, wallet]
   )
 
+  const isGameContinue = () => {
+    return (
+      !gameState.isGameDraw &&
+      !gameState.isGameOver &&
+      !gameState.isWinner &&
+      !gameState.isLoser &&
+      !showProgressBar &&
+      isStartGame
+    )
+  }
+
   const onPromotionPieceSelect = useCallback(
     (piece: any) => {
       gameDispatch(
@@ -158,7 +214,7 @@ const Game: React.FC<object> = () => {
     } else {
       gameDispatch(resetKingSquares())
     }
-  }, [gameState.board])
+  }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
 
   useEffect(() => {
     restApi
@@ -206,17 +262,8 @@ const Game: React.FC<object> = () => {
     }
   }, [wallet])
 
-  console.log(isStartGame)
-
   useEffect(() => {
-    if (
-      !gameState.isGameDraw &&
-      !gameState.isGameOver &&
-      !gameState.isWinner &&
-      !gameState.isLoser &&
-      !showProgressBar &&
-      isStartGame
-    ) {
+    if (isGameContinue()) {
       if (gameState.playerTurn === gameState.player1 && timer1.minutes * 60 + timer1.seconds > 0) {
         timer1.resume()
         timer2.pause()
@@ -237,6 +284,8 @@ const Game: React.FC<object> = () => {
     timer2.minutes,
     timer2.seconds,
     showProgressBar,
+    gameState.playerTurn,
+    gameState,
   ])
 
   useEffect(() => {

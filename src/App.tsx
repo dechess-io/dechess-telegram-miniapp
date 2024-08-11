@@ -44,7 +44,6 @@ function App() {
 
   const handleCancel = () => {
     setShowPopup(false)
-    console.log(data)
     socket.emit('resign', {
       game_id: data.game_id,
       isGameOver: true,
