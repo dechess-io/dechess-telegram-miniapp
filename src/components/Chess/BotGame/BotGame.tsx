@@ -52,14 +52,7 @@ const BotGame: React.FC<{}> = () => {
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
 
-  const {
-    seconds: timer1Seconds,
-    minutes: timer1Minutes,
-    start: startTimer1,
-    pause: pauseTimer1,
-    resume: resumeTimer1,
-    restart: restartTimer1,
-  } = useTimer({
+  const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
     autoStart: false,
     onExpire: () => {
@@ -68,14 +61,7 @@ const BotGame: React.FC<{}> = () => {
     },
   })
 
-  const {
-    seconds: timer2Seconds,
-    minutes: timer2Minutes,
-    start: startTimer2,
-    pause: pauseTimer2,
-    resume: resumeTimer2,
-    restart: restartTimer2,
-  } = useTimer({
+  const timer2 = useTimer({
     expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
     autoStart: false,
     onExpire: () => {
@@ -88,13 +74,13 @@ const BotGame: React.FC<{}> = () => {
     gameDispatch(resetGame())
     gameDispatch(setPlayer1(player1))
     gameDispatch(setPlayer2(player2))
-    startTimer1()
+    timer1.start()
     if (gameState.turn === 'w') {
-      startTimer1()
-      pauseTimer2()
+      timer1.start()
+      timer2.pause()
     } else if (gameState.turn === 'b') {
-      startTimer2()
-      pauseTimer1()
+      timer2.start()
+      timer1.pause()
     }
   }, [])
 
@@ -120,8 +106,8 @@ const BotGame: React.FC<{}> = () => {
           )
           gameDispatch(setCurrentMoveIndex(gameState.moves.length))
           gameDispatch(resetMoveSelection())
-          resumeTimer1()
-          pauseTimer2()
+          timer1.resume()
+          timer2.pause()
         },
         getRandomValueFromList([4000])
       )
@@ -138,8 +124,8 @@ const BotGame: React.FC<{}> = () => {
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
     gameDispatch(setCurrentMoveIndex(gameState.moves.length))
-    pauseTimer1()
-    resumeTimer2()
+    timer1.pause()
+    timer2.resume()
     sendPositionToEngine(newState.board.fen())
   }
 
@@ -170,8 +156,8 @@ const BotGame: React.FC<{}> = () => {
         piece,
         additionTimePerMove,
         currentPlayerTurn: gameState.playerTurn,
-        playerTimer1: timer1Minutes * 60 + timer1Seconds,
-        playerTimer2: timer2Minutes * 60 + timer2Seconds,
+        playerTimer1: timer1.minutes * 60 + timer1.seconds,
+        playerTimer2: timer2.minutes * 60 + timer2.seconds,
       })
     )
   }
@@ -181,8 +167,8 @@ const BotGame: React.FC<{}> = () => {
   }
 
   useEffect(() => {
-    pauseTimer1()
-    pauseTimer2()
+    timer1.pause()
+    timer2.pause()
   }, [gameState.isGameOver, gameState.isWinner, gameState.isLoser])
 
   useEffect(() => {
@@ -206,12 +192,14 @@ const BotGame: React.FC<{}> = () => {
       <App theme={theme}>
         <Header />
         <GameBoard
-          player1Timer={timer1Minutes * 60 + timer1Seconds}
-          player2Timer={timer2Minutes * 60 + timer2Seconds}
+          player1Timer={timer1.minutes * 60 + timer1.seconds}
+          player2Timer={timer2.minutes * 60 + timer2.seconds}
           onSquareClick={onSquareClick}
           onSquareRightClick={onSquareRightClick}
           onPromotionPieceSelect={onPromotionPieceSelect}
           moveSquares={{}}
+          showProgressBar={false}
+          progressBar={0}
         />
         <GameNavbar
           user={wallet?.account.address ? wallet?.account.address : 'player1'}

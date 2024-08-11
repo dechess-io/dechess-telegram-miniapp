@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer, useMemo, useCallback } from 'react'
+import { useEffect, useState, useReducer, useMemo, useCallback, useRef } from 'react'
 import { Chess, Square } from 'chess.js'
 import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
@@ -46,9 +46,10 @@ const Game: React.FC<object> = () => {
   const [notificationCloseOnClick, setNotificationCloseOnClick] = useState(false)
   const [startTime, setStartTime] = useState(0)
   const [showProgressBar, setShowProgressBar] = useState(false)
+  const [progress, setProgress] = useState(120)
 
   const timer1 = useTimer({
-    expiryTimestamp: new Date(Date.now() + 100000),
+    expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
@@ -56,12 +57,20 @@ const Game: React.FC<object> = () => {
   })
 
   const timer2 = useTimer({
-    expiryTimestamp: new Date(Date.now() + 100000),
+    expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
     },
   })
+
+  const timer1Ref = useRef(timer1)
+  const timer2Ref = useRef(timer2)
+
+  useEffect(() => {
+    timer1Ref.current = timer1
+    timer2Ref.current = timer2
+  }, [timer1, timer2])
 
   const countDown = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
@@ -71,48 +80,74 @@ const Game: React.FC<object> = () => {
     },
   })
 
-  // const [opponentDisconnect, setOpponentDisconnect] = useState(false)
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const makeMove = (foundMove: any, square: Square) => {
-    const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
-    const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
-    emitNewMove(
-      moveFrom,
-      newMoveSquare,
-      isPromotionMove,
-      san,
-      location.pathname.split('/')[2],
-      newState,
-      newState.playerTurn,
-      additionTimePerMove,
-      timer1.minutes * 60 + timer1.seconds,
-      timer2.minutes * 60 + timer2.seconds
-    )
-  }
-
-  const onSquareClicks = (square: any) => {
-    const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
-    if (isMove) {
-      makeMove(foundMove, square)
-    }
-  }
-
-  const onPromotionPieceSelect = (piece: any) => {
-    gameDispatch(
-      handlePromotionMoveThunk({
-        piece,
+  const makeMove = useCallback(
+    (foundMove: any, square: Square) => {
+      const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+      const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
+      emitNewMove(
+        moveFrom,
+        newMoveSquare,
+        isPromotionMove,
+        san,
+        location.pathname.split('/')[2],
+        newState,
+        newState.playerTurn,
         additionTimePerMove,
-        currentPlayerTurn: gameState.playerTurn,
-        playerTimer1: timer1.minutes * 60 + timer1.seconds,
-        playerTimer2: timer2.minutes * 60 + timer2.seconds,
-      })
-    )
-  }
+        timer1.minutes * 60 + timer1.seconds,
+        timer2.minutes * 60 + timer2.seconds
+      )
+    },
+    [
+      additionTimePerMove,
+      gameDispatch,
+      location.pathname,
+      timer1.minutes,
+      timer1.seconds,
+      timer2.minutes,
+      timer2.seconds,
+    ]
+  )
 
-  const onSquareRightClick = (square: any) => {
-    gameDispatch(setRightClickedSquares(square))
-  }
+  const onSquareClicks = useCallback(
+    (square: any) => {
+      const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
+      if (isMove) {
+        makeMove(foundMove, square)
+      }
+    },
+    [gameDispatch, makeMove, wallet]
+  )
+
+  const onPromotionPieceSelect = useCallback(
+    (piece: any) => {
+      gameDispatch(
+        handlePromotionMoveThunk({
+          piece,
+          additionTimePerMove,
+          currentPlayerTurn: gameState.playerTurn,
+          playerTimer1: timer1.minutes * 60 + timer1.seconds,
+          playerTimer2: timer2.minutes * 60 + timer2.seconds,
+        })
+      )
+    },
+    [
+      additionTimePerMove,
+      gameDispatch,
+      gameState.playerTurn,
+      timer1.minutes,
+      timer1.seconds,
+      timer2.minutes,
+      timer2.seconds,
+    ]
+  )
+
+  const onSquareRightClick = useCallback(
+    (square: any) => {
+      gameDispatch(setRightClickedSquares(square))
+    },
+    [gameDispatch]
+  )
 
   useEffect(() => {
     if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
@@ -175,7 +210,8 @@ const Game: React.FC<object> = () => {
       !gameState.isGameDraw &&
       !gameState.isGameOver &&
       !gameState.isWinner &&
-      !gameState.isLoser
+      !gameState.isLoser &&
+      !showProgressBar
     ) {
       if (gameState.playerTurn === gameState.player1 && timer1.minutes * 60 + timer1.seconds > 0) {
         timer1.resume()
@@ -190,19 +226,24 @@ const Game: React.FC<object> = () => {
     }
 
     return () => {}
-  }, [gameState.turn, timer1.minutes, timer1.seconds, timer2.minutes, timer2.seconds])
+  }, [
+    gameState.turn,
+    timer1.minutes,
+    timer1.seconds,
+    timer2.minutes,
+    timer2.seconds,
+    showProgressBar,
+  ])
 
   useEffect(() => {
     const gameId = location.pathname.split('/')[2]
 
     socket.connect()
-    socket.on('connection', () => {
-      setShowProgressBar(false)
-    })
+    socket.on('connection', () => {})
 
     socket.on('joinGame', (data: any) => {
-      console.log('Opponent rejoin')
       setShowProgressBar(false)
+      countDown.pause()
     })
 
     socket.on('newmove', (room: any) => {
@@ -224,7 +265,23 @@ const Game: React.FC<object> = () => {
       }, 2000)
 
       setShowProgressBar(true)
-      countDown.restart(new Date(Date.now() + 60 * 1000 * 2))
+      timer1.pause()
+      timer2.pause()
+      let countDownTime: any = new Date(
+        Date.now() + (countDown.minutes * 60 + countDown.seconds) * 1000
+      )
+      const { minutes: timer1Minutes, seconds: timer1Seconds } = timer1Ref.current
+      const { minutes: timer2Minutes, seconds: timer2Seconds } = timer2Ref.current
+      let userTime = Math.min(
+        timer1Minutes * 60 + timer1Seconds,
+        timer2Minutes * 60 + timer2Seconds
+      )
+
+      if (countDown.minutes * 60 + countDown.seconds > userTime) {
+        countDownTime = new Date(Date.now() + userTime * 1000)
+        setProgress(userTime)
+      }
+      countDown.restart(countDownTime)
     })
 
     socket.emit('joinGame', { game_id: gameId })
@@ -250,7 +307,7 @@ const Game: React.FC<object> = () => {
         onPromotionPieceSelect={onPromotionPieceSelect}
         moveSquares={moveSquares}
         showProgressBar={showProgressBar}
-        progressBar={countDown.seconds + countDown.minutes * 60}
+        progressBar={((countDown.seconds + countDown.minutes * 60) * 100) / progress}
       />
       <GameNavbar
         user={wallet?.account.address ? wallet?.account.address : ''}
