@@ -89,7 +89,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
               <div className="flex flex-col space-y-1">
                 {showProgressBar && (
                   <ProgressBar
-                    completed={(progressBar * 100) / 120}
+                    completed={progressBar}
                     bgColor="#93d3fb"
                     height="10px"
                     borderRadius="0"

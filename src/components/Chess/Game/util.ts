@@ -24,7 +24,6 @@ export function emitNewMove(
   san: string,
   gameId: string,
   gameState: any,
-  currentPlayerTurn: any,
   additionTimePerMove: any,
   playerTimer1: any,
   playerTimer2: any
@@ -41,8 +40,8 @@ export function emitNewMove(
     fen,
     isPromotion: isPromotionMove,
     startTime: Date.now(),
-    playerTimer1,
-    playerTimer2,
+    playerTimer1: turn === 'w' ? playerTimer1 : playerTimer1 + additionTimePerMove,
+    playerTimer2: turn === 'w' ? playerTimer2 + additionTimePerMove : playerTimer2,
     san,
   })
 }

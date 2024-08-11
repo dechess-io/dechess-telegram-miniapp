@@ -48,7 +48,6 @@ const BotGame: React.FC<{}> = () => {
   const [player1] = useState(wallet?.account.address ? wallet.account.address : 'player1')
   const [player2] = useState('bot')
   const [showPopup, setShowPopup] = useState(false)
-  const [isStartGame, setIsStartGame] = useState(false)
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
 
@@ -84,33 +83,43 @@ const BotGame: React.FC<{}> = () => {
     }
   }, [])
 
-  engine.onmessage = function (event) {
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+  engine.onmessage = async function (event) {
     if (event.data.split(' ')[0] === 'bestmove') {
       const data = event.data.split(' ')
       let gameCopy = gameState.board
-      setTimeout(
-        () => {
-          gameCopy.move({
-            from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
-            to: data[1].substring(2, 4),
-          })
-          let san = gameState.board.history()?.pop() as string
-          gameDispatch(
-            setOpponentMove({
-              turn: gameCopy.turn(),
-              fen: gameCopy.fen(),
-              san: convertToFigurineSan(san, gameCopy.turn()),
-              board: gameCopy,
-              history: [...gameState.history, gameCopy.fen()],
-            })
-          )
-          gameDispatch(setCurrentMoveIndex(gameState.moves.length))
-          gameDispatch(resetMoveSelection())
-          timer1.resume()
-          timer2.pause()
-        },
-        getRandomValueFromList([4000])
+
+      await delay(getRandomValueFromList([4000]))
+
+      gameCopy.move({
+        from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
+        to: data[1].substring(2, 4),
+      })
+      let san = gameState.board.history()?.pop() as string
+      gameDispatch(
+        setOpponentMove({
+          turn: gameCopy.turn(),
+          fen: gameCopy.fen(),
+          san: convertToFigurineSan(san, gameCopy.turn()),
+          board: gameCopy,
+          history: [...gameState.history, gameCopy.fen()],
+        })
       )
+      gameDispatch(setCurrentMoveIndex(gameState.moves.length))
+      gameDispatch(resetMoveSelection())
+
+      timer2.restart(
+        new Date(
+          Date.now() +
+            timer2.minutes * 60 * 1000 +
+            timer2.seconds * 1000 +
+            additionTimePerMove * 1000 -
+            4000
+        )
+      )
+      timer2.pause()
+      timer1.resume()
     }
   }
 
@@ -124,6 +133,11 @@ const BotGame: React.FC<{}> = () => {
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
     gameDispatch(setCurrentMoveIndex(gameState.moves.length))
+    timer1.restart(
+      new Date(
+        Date.now() + timer1.minutes * 60 * 1000 + timer1.seconds * 1000 + additionTimePerMove * 1000
+      )
+    )
     timer1.pause()
     timer2.resume()
     sendPositionToEngine(newState.board.fen())
