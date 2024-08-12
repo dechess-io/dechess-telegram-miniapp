@@ -3,7 +3,7 @@ import { Actions, ActionsButton, ActionsGroup } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
-import { setGameDraw, setGameOver } from '../../../redux/game/action'
+import { setGameDraw, setGameOver, setWinner } from '../../../redux/game/action'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -50,8 +50,14 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   }
 
   useEffect(() => {
-    const handleOpponentAbort = () => gameDispatch(setGameOver(true))
-    const handleOpponentResign = () => gameDispatch(setGameOver(true))
+    const handleOpponentAbort = () => {
+      gameDispatch(setGameOver(true))
+      gameDispatch(setWinner(true))
+    }
+    const handleOpponentResign = () => {
+      gameDispatch(setGameOver(true))
+      gameDispatch(setWinner(true))
+    }
     const handleOpponentDrawRequest = () => setDrawRequest(true)
     const handleDrawConfirmed = () => {
       gameDispatch(setGameOver(true))

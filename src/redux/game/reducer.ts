@@ -200,7 +200,7 @@ const gameReducer = createReducer(defaultGameReducer, (builder: any) => {
       state.board = new Chess(state.history[state.moveIndex])
     })
     .addCase(setNextMove, (state: GameReducer) => {
-      if (state.moveIndex >= state.history.length) return
+      if (state.moveIndex >= state.history.length - 1) return
       state.moveIndex = state.moveIndex + 1
       state.board = new Chess(state.history[state.moveIndex])
     })

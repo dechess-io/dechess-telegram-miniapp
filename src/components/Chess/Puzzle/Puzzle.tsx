@@ -30,7 +30,6 @@ const Puzzle: React.FC = () => {
         return response.json()
       })
       .then((data: any) => {
-        console.log(data)
         setChessGames(data.games)
       })
       .catch((error) => {

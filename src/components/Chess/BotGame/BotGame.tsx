@@ -106,7 +106,7 @@ const BotGame: React.FC<{}> = () => {
           history: [...gameState.history, gameCopy.fen()],
         })
       )
-      gameDispatch(setCurrentMoveIndex(gameState.moves.length))
+      gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
       gameDispatch(resetMoveSelection())
 
       timer2.restart(
@@ -132,7 +132,7 @@ const BotGame: React.FC<{}> = () => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
-    gameDispatch(setCurrentMoveIndex(gameState.moves.length))
+    gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     timer1.restart(
       new Date(
         Date.now() + timer1.minutes * 60 * 1000 + timer1.seconds * 1000 + additionTimePerMove * 1000
