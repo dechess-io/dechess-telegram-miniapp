@@ -144,6 +144,7 @@ const BotGame: React.FC<{}> = () => {
   }
 
   const onSquareClick = (square: Square) => {
+    if (gameState.moveIndex !== gameState.history.length - 1) return
     const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
     if (isMove) {
       gameDispatch(setTurn('b'))

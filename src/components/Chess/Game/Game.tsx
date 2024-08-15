@@ -155,6 +155,7 @@ const Game: React.FC<object> = () => {
 
   const onSquareClicks = useCallback(
     (square: any) => {
+      if (gameState.moveIndex !== gameState.history.length - 1) return
       const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
       if (isMove) {
         makeMove(foundMove, square)
