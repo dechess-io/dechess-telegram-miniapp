@@ -51,6 +51,11 @@ const BotGame: React.FC<{}> = () => {
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
 
+  const playSound = () => {
+    const audio = new Audio('/move-self.mp3')
+    audio.play()
+  }
+
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
     autoStart: false,
@@ -106,6 +111,7 @@ const BotGame: React.FC<{}> = () => {
           history: [...gameState.history, gameCopy.fen()],
         })
       )
+      playSound()
       gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
       gameDispatch(resetMoveSelection())
 
@@ -131,6 +137,7 @@ const BotGame: React.FC<{}> = () => {
   const makeMove = (foundMove: any, square: Square) => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
+    playSound()
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
     gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     timer1.restart(

@@ -98,6 +98,11 @@ const Game: React.FC<object> = () => {
   const timer1Ref = useRef(timer1)
   const timer2Ref = useRef(timer2)
 
+  const playSound = () => {
+    const audio = new Audio('/move-self.mp3')
+    audio.play()
+  }
+
   useEffect(() => {
     timer1Ref.current = timer1
     timer2Ref.current = timer2
@@ -129,6 +134,7 @@ const Game: React.FC<object> = () => {
   const makeMove = useCallback(
     (foundMove: any, square: Square) => {
       const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+      playSound()
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
       emitNewMove(
         moveFrom,
@@ -303,6 +309,7 @@ const Game: React.FC<object> = () => {
     socket.on('newmove', (room: any) => {
       if (room.fen) {
         gameDispatch(setOpponentMove(room))
+        playSound()
         if (gameState.playerTurn === gameState.player1) {
           timer1.restart(new Date(Date.now() + room.player1Timer * 1000))
           timer2.pause()
