@@ -127,6 +127,8 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                     }}
                     promotionToSquare={moveTo}
                     showPromotionDialog={showPromotionDialog}
+                    isDraggablePiece={() => true}
+                    arePremovesAllowed={true}
                   />
                 </div>
                 <PlayerDisplay {...getPlayerDisplayProps(false)} />

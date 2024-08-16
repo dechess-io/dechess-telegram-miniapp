@@ -195,6 +195,7 @@ const BotGame: React.FC<{}> = () => {
 
   useEffect(() => {
     if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
+      gameDispatch(resetKingSquares())
       if ((gameState.board as any)._isKingAttacked('w')) {
         gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
       } else if ((gameState.board as any)._isKingAttacked('b')) {
