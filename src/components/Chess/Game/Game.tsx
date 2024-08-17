@@ -32,6 +32,7 @@ import {
   handlePromotionMoveThunk,
   onSquareClickThunk,
 } from '../../../redux/game/thunk'
+import { audio } from '../../../services/move_sounds'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -99,7 +100,6 @@ const Game: React.FC<object> = () => {
   const timer2Ref = useRef(timer2)
 
   const playSound = () => {
-    const audio = new Audio('/move-self.mp3')
     audio.play()
   }
 
@@ -134,7 +134,6 @@ const Game: React.FC<object> = () => {
   const makeMove = useCallback(
     (foundMove: any, square: Square) => {
       const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
-      playSound()
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
       emitNewMove(
         moveFrom,
@@ -147,6 +146,7 @@ const Game: React.FC<object> = () => {
         timer1.minutes * 60 + timer1.seconds,
         timer2.minutes * 60 + timer2.seconds
       )
+      playSound()
     },
     [
       additionTimePerMove,

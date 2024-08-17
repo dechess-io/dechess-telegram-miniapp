@@ -18,7 +18,7 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
   return (
     <div
       ref={moveListRef}
-      className="bg-blue-gradient-1 flex items-center text-xs gap-4 text-white overflow-hidden whitespace-nowrap bg-opacity-80 px-4"
+      className="bg-blue-gradient-1 flex items-center text-xs gap-4 text-white overflow-x-auto whitespace-nowrap bg-opacity-80 px-4 scrollbar-hide scrollbar-x-hide"
     >
       {moves.map((move, index) => {
         if (index >= moveIndex) return
