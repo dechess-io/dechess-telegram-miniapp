@@ -57,6 +57,8 @@ const Game: React.FC<object> = () => {
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
 
+  console.log(WebApp)
+
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
     autoStart: false,
@@ -105,6 +107,7 @@ const Game: React.FC<object> = () => {
 
   useEffect(() => {
     if (gameState.isGameOver) {
+      console.log(chatId)
       socket.emit('chatId', {
         chatId: chatId,
         gameId: location.pathname.split('/')[2],
