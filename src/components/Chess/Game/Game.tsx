@@ -18,11 +18,16 @@ import {
   loadGame,
   resetKingSquares,
   setGameOver,
+  setIsMove,
   setKingSquares,
   setLoser,
+  setMoveFrom,
+  setMoveTo,
   setOpponentMove,
+  setOptionSquares,
   setRightClickedSquares,
   setWinner,
+  showPromotionDialog,
 } from '../../../redux/game/action'
 import { emitNewMove } from './util'
 import { useTimer } from 'react-timer-hook'
@@ -33,6 +38,7 @@ import {
   onSquareClickThunk,
 } from '../../../redux/game/thunk'
 import { audio } from '../../../services/move_sounds'
+import WebApp from '@twa-dev/sdk'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -49,6 +55,7 @@ const Game: React.FC<object> = () => {
   const [startTime, setStartTime] = useState(0)
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
+  const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
@@ -96,6 +103,15 @@ const Game: React.FC<object> = () => {
     },
   })
 
+  useEffect(() => {
+    if (gameState.isGameOver) {
+      socket.emit('chatId', {
+        chatId: chatId,
+        gameId: location.pathname.split('/')[2],
+      })
+    }
+  }, [gameState.isGameOver])
+
   const timer1Ref = useRef(timer1)
   const timer2Ref = useRef(timer2)
 
@@ -133,6 +149,8 @@ const Game: React.FC<object> = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = useCallback(
     (foundMove: any, square: Square) => {
+      console.log('makeMove')
+
       const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
       emitNewMove(
@@ -161,6 +179,7 @@ const Game: React.FC<object> = () => {
 
   const onSquareClicks = useCallback(
     (square: any) => {
+      console.log('squareClick')
       if (gameState.moveIndex !== gameState.history.length - 1) return
       const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
       if (isMove) {
@@ -183,6 +202,15 @@ const Game: React.FC<object> = () => {
 
   const onPromotionPieceSelect = useCallback(
     (piece: any) => {
+      if (!piece) {
+        gameDispatch(setMoveFrom(undefined))
+        gameDispatch(setMoveTo(undefined))
+        gameDispatch(showPromotionDialog(false))
+        gameDispatch(setIsMove(false))
+        gameDispatch(setOptionSquares({}))
+        return
+      }
+
       gameDispatch(
         handlePromotionMoveThunk({
           piece,

@@ -3,7 +3,7 @@ import { Actions, ActionsButton, ActionsGroup } from 'konsta/react'
 import ReactDialog from '../../Dialog/ReactDialog'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
-import { setGameDraw, setGameOver, setWinner } from '../../../redux/game/action'
+import { setGameDraw, setGameOver, setLoser, setWinner } from '../../../redux/game/action'
 
 const SOCKET_EVENTS = {
   OPPONENT_ABORT: 'opponentAbort',
@@ -82,6 +82,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       abort: () => {
         socket.emit('abort', { game_id: gameId, isGameOver: true, winner: opponent, loser: user })
         gameDispatch(setGameOver(true))
+        gameDispatch(setLoser(true))
         toggleSidebar()
       },
       draw: () => {
@@ -98,6 +99,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
           loser: user,
         })
         gameDispatch(setGameOver(true))
+        gameDispatch(setLoser(true))
         toggleSidebar()
       },
     }

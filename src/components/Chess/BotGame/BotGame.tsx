@@ -30,6 +30,11 @@ import {
   setGameHistory,
   setCurrentMoveIndex,
   setMoves,
+  setMoveFrom,
+  setMoveTo,
+  showPromotionDialog,
+  setIsMove,
+  setOptionSquares,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
 import {
@@ -173,6 +178,15 @@ const BotGame: React.FC<{}> = () => {
   }, [wallet])
 
   const onPromotionPieceSelect = (piece: any) => {
+    if (!piece) {
+      gameDispatch(setMoveFrom(undefined))
+      gameDispatch(setMoveTo(undefined))
+      gameDispatch(showPromotionDialog(false))
+      gameDispatch(setIsMove(false))
+      gameDispatch(setOptionSquares({}))
+      return
+    }
+
     gameDispatch(
       handlePromotionMoveThunk({
         piece,

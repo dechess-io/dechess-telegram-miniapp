@@ -146,7 +146,5 @@ module.exports = konstaConfig({
       ibm: 'IBM Plex Mono',
     },
   },
-  plugins: [
-    require('tailwind-scrollbar-hide')
-  ],
+  plugins: [require('tailwind-scrollbar-hide')],
 })
