@@ -37,7 +37,15 @@ import {
   handlePromotionMoveThunk,
   onSquareClickThunk,
 } from '../../../redux/game/thunk'
-import { audio } from '../../../services/move_sounds'
+import {
+  captureSound,
+  checkSound,
+  gameOverSound,
+  gameStartSound,
+  opponentMoveSound,
+  promoteSound,
+  selfMoveSound,
+} from '../../../services/move_sounds'
 import WebApp from '@twa-dev/sdk'
 
 const Game: React.FC<object> = () => {
@@ -57,8 +65,6 @@ const Game: React.FC<object> = () => {
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
 
-  console.log(WebApp)
-
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
     autoStart: false,
@@ -66,6 +72,7 @@ const Game: React.FC<object> = () => {
       gameDispatch(setGameOver(true))
       if (wallet?.account.address === gameState.player1) {
         gameDispatch(setLoser(true))
+        gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
           winner: gameState.player2,
@@ -73,6 +80,7 @@ const Game: React.FC<object> = () => {
         })
       } else {
         gameDispatch(setWinner(true))
+        gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
           winner: gameState.player1,
@@ -89,6 +97,7 @@ const Game: React.FC<object> = () => {
       gameDispatch(setGameOver(true))
       if (wallet?.account.address === gameState.player2) {
         gameDispatch(setLoser(true))
+        gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
           winner: gameState.player1,
@@ -96,6 +105,7 @@ const Game: React.FC<object> = () => {
         })
       } else {
         gameDispatch(setWinner(true))
+        gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
           winner: gameState.player2,
@@ -119,7 +129,7 @@ const Game: React.FC<object> = () => {
   const timer2Ref = useRef(timer2)
 
   const playSound = () => {
-    audio.play()
+    selfMoveSound.play()
   }
 
   useEffect(() => {
@@ -134,12 +144,14 @@ const Game: React.FC<object> = () => {
       gameDispatch(setGameOver(true))
       gameDispatch(setWinner(true))
       if (wallet?.account.address === gameState.player1) {
+        gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
           winner: gameState.player1,
           loser: gameState.player2,
         })
       } else {
+        gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
           winner: gameState.player2,
@@ -156,6 +168,7 @@ const Game: React.FC<object> = () => {
 
       const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
+
       emitNewMove(
         moveFrom,
         newMoveSquare,
@@ -165,9 +178,22 @@ const Game: React.FC<object> = () => {
         newState,
         additionTimePerMove,
         timer1.minutes * 60 + timer1.seconds,
-        timer2.minutes * 60 + timer2.seconds
+        timer2.minutes * 60 + timer2.seconds,
+        newState.board.isCheck() || newState.board.isCheckmate(),
+        foundMove.captured
       )
-      playSound()
+
+      if (foundMove.captured) {
+        captureSound.play()
+        return
+      } else if (newState.board.isCheck() || newState.board.isCheckmate()) {
+        console.log('check')
+        checkSound.play()
+        return
+      } else {
+        selfMoveSound.play()
+        return
+      }
     },
     [
       additionTimePerMove,
@@ -214,6 +240,8 @@ const Game: React.FC<object> = () => {
         return
       }
 
+      promoteSound.play()
+
       gameDispatch(
         handlePromotionMoveThunk({
           piece,
@@ -256,6 +284,10 @@ const Game: React.FC<object> = () => {
   }, [gameState.board.fen()])
 
   useEffect(() => {
+    gameStartSound.play()
+  }, [])
+
+  useEffect(() => {
     restApi
       .get('/load-game-v2', {
         params: {
@@ -292,6 +324,7 @@ const Game: React.FC<object> = () => {
   useEffect(() => {
     if (gameState.isGameOver || gameState.isGameDraw) {
       setShowPopup(true)
+      gameOverSound.play()
     }
   }, [gameState.isGameOver, gameState.isGameDraw])
 
@@ -341,7 +374,15 @@ const Game: React.FC<object> = () => {
     socket.on('newmove', (room: any) => {
       if (room.fen) {
         gameDispatch(setOpponentMove(room))
-        playSound()
+        if (room.isCheck) {
+          checkSound.play()
+        } else if (room.isCapture) {
+          captureSound.play()
+        } else if (room.isPromotion) {
+          promoteSound.play()
+        } else {
+          opponentMoveSound.play()
+        }
         if (gameState.playerTurn === gameState.player1) {
           timer1.restart(new Date(Date.now() + room.player1Timer * 1000))
           timer2.pause()

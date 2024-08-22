@@ -42,6 +42,15 @@ import {
   handlePromotionMoveThunk,
   onSquareClickThunk,
 } from '../../../redux/game/thunk'
+import {
+  captureSound,
+  checkSound,
+  gameOverSound,
+  opponentMoveSound,
+  promoteSound,
+  selfMoveSound,
+} from '../../../services/move_sounds'
+import { selectTournament } from '../../../redux/tournament/tournament.reducer'
 
 const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
@@ -66,7 +75,8 @@ const BotGame: React.FC<{}> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
-      gameDispatch(setWinner(false))
+      gameDispatch(setLoser(true))
+      gameOverSound.play()
     },
   })
 
@@ -75,7 +85,8 @@ const BotGame: React.FC<{}> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
-      gameDispatch(setWinner(false))
+      gameDispatch(setWinner(true))
+      gameOverSound.play()
     },
   })
 
@@ -100,12 +111,23 @@ const BotGame: React.FC<{}> = () => {
       const data = event.data.split(' ')
       let gameCopy = gameState.board
 
-      await delay(getRandomValueFromList([4000]))
+      const botTime = getRandomValueFromList([500, 1000, 1500, 2000, 2500, 3000])
 
-      gameCopy.move({
+      await delay(botTime)
+
+      const move = gameCopy.move({
         from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
         to: data[1].substring(2, 4),
       })
+
+      if (move.captured) {
+        captureSound.play()
+      } else if (gameCopy.isCheckmate() || gameCopy.isCheckmate()) {
+        checkSound.play()
+      } else {
+        opponentMoveSound.play()
+      }
+
       let san = gameState.board.history()?.pop() as string
       gameDispatch(
         setOpponentMove({
@@ -116,7 +138,6 @@ const BotGame: React.FC<{}> = () => {
           history: [...gameState.history, gameCopy.fen()],
         })
       )
-      playSound()
       gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
       gameDispatch(resetMoveSelection())
 
@@ -126,7 +147,7 @@ const BotGame: React.FC<{}> = () => {
             timer2.minutes * 60 * 1000 +
             timer2.seconds * 1000 +
             additionTimePerMove * 1000 -
-            4000
+            botTime
         )
       )
       timer2.pause()
@@ -142,7 +163,13 @@ const BotGame: React.FC<{}> = () => {
   const makeMove = (foundMove: any, square: Square) => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
-    playSound()
+    if (foundMove.captured) {
+      captureSound.play()
+    } else if (newState.board.isCheckmate() || newState.board.isCheckmate()) {
+      checkSound.play()
+    } else {
+      selfMoveSound.play()
+    }
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
     gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     timer1.restart(
@@ -168,6 +195,7 @@ const BotGame: React.FC<{}> = () => {
   useEffect(() => {
     if (gameState.isGameOver || gameState.isGameDraw) {
       setShowPopup(true)
+      gameOverSound.play()
     }
   }, [gameState.isGameOver, gameState.isGameDraw])
 
@@ -186,6 +214,8 @@ const BotGame: React.FC<{}> = () => {
       gameDispatch(setOptionSquares({}))
       return
     }
+
+    promoteSound.play()
 
     gameDispatch(
       handlePromotionMoveThunk({

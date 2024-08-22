@@ -19,6 +19,8 @@ import {
 import { GameReducer } from './type'
 import { convertToFigurineSan } from '../../utils/utils'
 import { socket } from '../../services/socket'
+import { captureSound } from '../../services/move_sounds'
+import { Chess } from 'chess.js'
 export const onSquareClickThunk = (
   square: any,
   wallet: any
@@ -187,7 +189,9 @@ export const handlePromotionMoveThunk = (
           state,
           additionTimePerMove,
           playerTimer1,
-          playerTimer2
+          playerTimer2,
+          gameCopy.isCheck() || gameCopy.isCheckmate(),
+          newMove.captured
         )
         dispatch(switchPlayerTurn())
       }

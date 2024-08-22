@@ -26,7 +26,9 @@ export function emitNewMove(
   gameState: any,
   additionTimePerMove: any,
   playerTimer1: any,
-  playerTimer2: any
+  playerTimer2: any,
+  isCheck: boolean,
+  isCapture: boolean
 ) {
   const turn = gameState.board.turn()
   const fen = gameState.board.fen()
@@ -43,6 +45,8 @@ export function emitNewMove(
     playerTimer1: turn === 'w' ? playerTimer1 : playerTimer1 + additionTimePerMove,
     playerTimer2: turn === 'w' ? playerTimer2 + additionTimePerMove : playerTimer2,
     san,
+    isCheck,
+    isCapture,
   })
 }
 
