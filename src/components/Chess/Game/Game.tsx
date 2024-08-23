@@ -183,12 +183,12 @@ const Game: React.FC<object> = () => {
         foundMove.captured
       )
 
-      if (foundMove.captured) {
-        captureSound.play()
-        return
-      } else if (newState.board.isCheck() || newState.board.isCheckmate()) {
+      if (newState.board.isCheck() || newState.board.isCheckmate()) {
         console.log('check')
         checkSound.play()
+        return
+      } else if (foundMove.captured) {
+        captureSound.play()
         return
       } else {
         selfMoveSound.play()
@@ -427,6 +427,30 @@ const Game: React.FC<object> = () => {
       socket.off('opponentDisconnect')
     }
   }, [])
+
+  const isDraggablePiece = function ({ piece, sourceSquare }: any) {
+    console.log('is draggable')
+    console.log(piece, sourceSquare)
+    return true
+  }
+
+  const onDragOverSquare = function (square: any) {
+    console.log('on drag ' + square)
+  }
+
+  const onPieceDragBegin = function (piece: any, sourceSquare: any) {
+    console.log('on piece drag begin')
+    console.log(piece, sourceSquare)
+  }
+
+  const onPieceDragEnd = function (piece: any, sourceSquare: any) {
+    console.log('on piece drag end')
+    console.log(piece, sourceSquare)
+  }
+
+  const onPieceDrop = function (sourceSquare: any, targetSquare: any, piece: any) {
+    return true
+  }
 
   if (!gameState.board) return <LoadingGame />
 

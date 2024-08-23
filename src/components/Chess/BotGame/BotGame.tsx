@@ -46,6 +46,7 @@ import {
   captureSound,
   checkSound,
   gameOverSound,
+  gameStartSound,
   opponentMoveSound,
   promoteSound,
   selfMoveSound,
@@ -92,6 +93,7 @@ const BotGame: React.FC<{}> = () => {
 
   useEffect(() => {
     gameDispatch(resetGame())
+    gameStartSound.play()
     gameDispatch(setPlayer1(player1))
     gameDispatch(setPlayer2(player2))
     timer1.start()
@@ -120,10 +122,10 @@ const BotGame: React.FC<{}> = () => {
         to: data[1].substring(2, 4),
       })
 
-      if (move.captured) {
-        captureSound.play()
-      } else if (gameCopy.isCheckmate() || gameCopy.isCheckmate()) {
+      if (gameCopy.isCheckmate() || gameCopy.isCheckmate()) {
         checkSound.play()
+      } else if (move.captured) {
+        captureSound.play()
       } else {
         opponentMoveSound.play()
       }
@@ -163,10 +165,10 @@ const BotGame: React.FC<{}> = () => {
   const makeMove = (foundMove: any, square: Square) => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
-    if (foundMove.captured) {
-      captureSound.play()
-    } else if (newState.board.isCheckmate() || newState.board.isCheckmate()) {
+    if (newState.board.isCheckmate() || newState.board.isCheckmate()) {
       checkSound.play()
+    } else if (foundMove.captured) {
+      captureSound.play()
     } else {
       selfMoveSound.play()
     }
