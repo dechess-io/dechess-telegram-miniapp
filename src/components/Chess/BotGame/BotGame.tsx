@@ -253,6 +253,17 @@ const BotGame: React.FC<{}> = () => {
     const foundMove = moves.find((move) => move.to === targetSquare)
     if (!foundMove) return false
     gameCopy.move(foundMove)
+    if (
+      (gameCopy.isCheckmate() || gameCopy.isCheck()) &&
+      !gameCopy.isGameOver() &&
+      !gameCopy.isDraw()
+    ) {
+      checkSound.play()
+    } else if (foundMove.captured && !gameCopy.isGameOver() && !gameCopy.isDraw()) {
+      captureSound.play()
+    } else if (!gameCopy.isGameOver() && !gameCopy.isDraw()) {
+      selfMoveSound.play()
+    }
     timer1.restart(
       new Date(
         Date.now() + timer1.minutes * 60 * 1000 + timer1.seconds * 1000 + additionTimePerMove * 1000

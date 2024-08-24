@@ -431,11 +431,9 @@ const Game: React.FC<object> = () => {
     return true
   }
 
-  const onDragOverSquare = function (square: any) {
-  }
+  const onDragOverSquare = function (square: any) {}
 
-  const onPieceDragBegin = function (piece: any, sourceSquare: any) {
-  }
+  const onPieceDragBegin = function (piece: any, sourceSquare: any) {}
 
   const onPieceDragEnd = function (piece: any, sourceSquare: any) {}
 
@@ -445,6 +443,17 @@ const Game: React.FC<object> = () => {
     const foundMove = moves.find((move) => move.to === targetSquare)
     if (!foundMove) return false
     gameCopy.move(foundMove)
+    if (
+      (gameCopy.isCheckmate() || gameCopy.isCheck()) &&
+      !gameCopy.isGameOver() &&
+      !gameCopy.isDraw()
+    ) {
+      checkSound.play()
+    } else if (foundMove.captured && !gameCopy.isGameOver() && !gameCopy.isDraw()) {
+      captureSound.play()
+    } else if (!gameCopy.isGameOver() && !gameCopy.isDraw()) {
+      selfMoveSound.play()
+    }
     emitNewMove(
       sourceSquare,
       targetSquare,
@@ -456,7 +465,7 @@ const Game: React.FC<object> = () => {
       timer1.minutes * 60 + timer1.seconds,
       timer2.minutes * 60 + timer2.seconds,
       gameCopy.isCheck() || gameCopy.isCheckmate(),
-      false
+      foundMove.captured ? true : false
     )
     gameDispatch(switchPlayerTurn())
 
