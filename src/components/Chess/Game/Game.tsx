@@ -128,10 +128,6 @@ const Game: React.FC<object> = () => {
   const timer1Ref = useRef(timer1)
   const timer2Ref = useRef(timer2)
 
-  const playSound = () => {
-    selfMoveSound.play()
-  }
-
   useEffect(() => {
     timer1Ref.current = timer1
     timer2Ref.current = timer2
@@ -284,10 +280,6 @@ const Game: React.FC<object> = () => {
   }, [gameState.board.fen()])
 
   useEffect(() => {
-    gameStartSound.play()
-  }, [])
-
-  useEffect(() => {
     restApi
       .get('/load-game-v2', {
         params: {
@@ -297,6 +289,7 @@ const Game: React.FC<object> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
+          gameStartSound.play()
           gameDispatch(loadGame(data))
           setStartTime(Date.now())
           timer1.restart(new Date(Date.now() + data.playerTimer1 * 1000), true)
@@ -468,6 +461,7 @@ const Game: React.FC<object> = () => {
         progressBar={((countDown.seconds + countDown.minutes * 60) * 100) / progress}
       />
       <GameNavbar
+        isBot={false}
         user={wallet?.account.address ? wallet?.account.address : ''}
         opponent={
           wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1
@@ -484,7 +478,11 @@ const Game: React.FC<object> = () => {
         subtitle="Your opponent has disconnected"
         onClick={() => setNotificationCloseOnClick(false)}
       />
-      <GameOverPopUp setShowPopup={setShowPopup} showPopup={showPopup && !isPopupDismissed} />
+      <GameOverPopUp
+        setShowPopup={setShowPopup}
+        showPopup={showPopup && !isPopupDismissed}
+        isBotMode={false}
+      />
     </App>
   )
 }

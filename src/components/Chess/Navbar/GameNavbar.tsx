@@ -13,6 +13,7 @@ interface GameNavbarProps {
   opponent: string
   isMoved: boolean
   isWhite: boolean
+  isBot: boolean
 }
 
 const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
@@ -21,6 +22,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
   opponent,
   isMoved,
   isWhite,
+  isBot,
 }) => {
   const wallet = useTonWallet()
 
@@ -110,6 +112,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
         user={user}
         opponent={opponent}
         isWhite={isWhite}
+        isBot={isBot}
       />
 
       {isChatVisible && (

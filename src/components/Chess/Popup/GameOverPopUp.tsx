@@ -8,9 +8,14 @@ import { useTonWallet } from '@tonconnect/ui-react'
 type GameOverPopUpProps = {
   showPopup: boolean
   setShowPopup: any
+  isBotMode: boolean
 }
 
-const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({ showPopup, setShowPopup }) => {
+const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
+  showPopup,
+  setShowPopup,
+  isBotMode,
+}) => {
   const wallet = useTonWallet()
   const { board, isGameOver, isGameDraw, player1, player2, isWinner, isLoser } =
     useAppSelector(selectGame)
@@ -43,11 +48,17 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({ showPopup, setSho
         open={showPopup && (board.isGameOver() || board.isDraw() || isGameOver || isGameDraw)}
         onHide={() => setShowPopup(false)}
         onCancel={() => navigate('/')}
-        onOk={() => navigate('/mode')}
+        onOk={() => {
+          if (isBotMode) {
+            navigate('/bot')
+          } else {
+            navigate('/mode')
+          }
+        }}
         content={renderMessage()}
         title="Game Over"
         okContent="New Game"
-        cancelContent="Game Overview"
+        cancelContent="Main Menu"
       />
     </>
   )

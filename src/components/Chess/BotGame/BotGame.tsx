@@ -66,11 +66,6 @@ const BotGame: React.FC<{}> = () => {
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
 
-  const playSound = () => {
-    const audio = new Audio('/move-self.mp3')
-    audio.play()
-  }
-
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
     autoStart: false,
@@ -165,11 +160,15 @@ const BotGame: React.FC<{}> = () => {
   const makeMove = (foundMove: any, square: Square) => {
     const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
-    if (newState.board.isCheckmate() || newState.board.isCheckmate()) {
+    if (
+      (newState.board.isCheckmate() || newState.board.isCheck()) &&
+      !newState.board.isGameOver() &&
+      !newState.board.isDraw()
+    ) {
       checkSound.play()
-    } else if (foundMove.captured) {
+    } else if (foundMove.captured && !newState.board.isGameOver() && !newState.board.isDraw()) {
       captureSound.play()
-    } else {
+    } else if (!newState.board.isGameOver() && !newState.board.isDraw()) {
       selfMoveSound.play()
     }
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
@@ -271,13 +270,18 @@ const BotGame: React.FC<{}> = () => {
           progressBar={0}
         />
         <GameNavbar
+          isBot={true}
           user={wallet?.account.address ? wallet?.account.address : 'player1'}
           opponent={wallet?.account.address === player1 ? player2 : player1}
           socket={socket}
           isMoved={gameState.moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
         />
-        <GameOverPopUp setShowPopup={setShowPopup} showPopup={showPopup && !isPopupDismissed} />
+        <GameOverPopUp
+          setShowPopup={setShowPopup}
+          showPopup={showPopup && !isPopupDismissed}
+          isBotMode={true}
+        />
       </App>
     )
   }

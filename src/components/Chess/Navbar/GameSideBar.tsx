@@ -20,6 +20,7 @@ interface GameSidebarProps {
   opponent: string
   isMoved: boolean
   isWhite: boolean
+  isBot: boolean
 }
 
 const GameSidebar: React.FC<GameSidebarProps> = ({
@@ -30,6 +31,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
   opponent,
   isMoved,
   isWhite,
+  isBot,
 }) => {
   const { board, isGameDraw, isGameOver } = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
@@ -132,17 +134,19 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
 
   const renderPopups = () => (
     <>
-      {['resign', 'draw', 'abort'].map((action, index) => (
-        <ReactDialog
-          onHide={() => setVisiblePopup(null)}
-          onCancel={() => togglePopup(null)}
-          onOk={() => handlePopupAction(action)}
-          open={visiblePopup === action}
-          content={`Do you want to ${action} the game?`}
-          title={`Game ${action}`}
-          key={index}
-        />
-      ))}
+      {['resign', 'draw', 'abort'].map((action, index) => {
+        return (
+          <ReactDialog
+            onHide={() => setVisiblePopup(null)}
+            onCancel={() => togglePopup(null)}
+            onOk={() => handlePopupAction(action)}
+            open={visiblePopup === action}
+            content={`Do you want to ${action} the game?`}
+            title={`Game ${action}`}
+            key={index}
+          />
+        )
+      })}
 
       <ReactDialog
         open={opponentAction ? true : false}
@@ -179,7 +183,7 @@ const GameSidebar: React.FC<GameSidebarProps> = ({
       {renderPopups()}
       <Actions opened={isSidebarVisible && !visiblePopup} onBackdropClick={() => toggleSidebar()}>
         <ActionsGroup>
-          <ActionsButton onClick={() => togglePopup('draw')}>Draw</ActionsButton>
+          {!isBot && <ActionsButton onClick={() => togglePopup('draw')}>Draw</ActionsButton>}
           {(board as any)._moveNumber < 2 && (
             <ActionsButton onClick={handleAbort}>Abort</ActionsButton>
           )}
