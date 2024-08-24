@@ -4,7 +4,12 @@ import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
-import { indexToSquare, isThreefoldRepetition, setLocalStorage } from '../../../utils/utils'
+import {
+  convertToFigurineSan,
+  indexToSquare,
+  isThreefoldRepetition,
+  setLocalStorage,
+} from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -28,6 +33,7 @@ import {
   setRightClickedSquares,
   setWinner,
   showPromotionDialog,
+  switchPlayerTurn,
 } from '../../../redux/game/action'
 import { emitNewMove } from './util'
 import { useTimer } from 'react-timer-hook'
@@ -422,26 +428,38 @@ const Game: React.FC<object> = () => {
   }, [])
 
   const isDraggablePiece = function ({ piece, sourceSquare }: any) {
-    console.log('is draggable')
-    console.log(piece, sourceSquare)
     return true
   }
 
   const onDragOverSquare = function (square: any) {
-    console.log('on drag ' + square)
   }
 
   const onPieceDragBegin = function (piece: any, sourceSquare: any) {
-    console.log('on piece drag begin')
-    console.log(piece, sourceSquare)
   }
 
-  const onPieceDragEnd = function (piece: any, sourceSquare: any) {
-    console.log('on piece drag end')
-    console.log(piece, sourceSquare)
-  }
+  const onPieceDragEnd = function (piece: any, sourceSquare: any) {}
 
   const onPieceDrop = function (sourceSquare: any, targetSquare: any, piece: any) {
+    const gameCopy = gameState.board
+    const moves = gameState.board.moves({ square: sourceSquare, verbose: true })
+    const foundMove = moves.find((move) => move.to === targetSquare)
+    if (!foundMove) return false
+    gameCopy.move(foundMove)
+    emitNewMove(
+      sourceSquare,
+      targetSquare,
+      true,
+      convertToFigurineSan(foundMove.san, gameCopy.turn()),
+      location.pathname.split('/')[2],
+      gameState,
+      additionTimePerMove,
+      timer1.minutes * 60 + timer1.seconds,
+      timer2.minutes * 60 + timer2.seconds,
+      gameCopy.isCheck() || gameCopy.isCheckmate(),
+      false
+    )
+    gameDispatch(switchPlayerTurn())
+
     return true
   }
 
@@ -459,6 +477,11 @@ const Game: React.FC<object> = () => {
         moveSquares={moveSquares}
         showProgressBar={showProgressBar}
         progressBar={((countDown.seconds + countDown.minutes * 60) * 100) / progress}
+        isDraggablePiece={isDraggablePiece}
+        onDragOverSquare={onDragOverSquare}
+        onPieceDragBegin={onPieceDragBegin}
+        onPieceDragEnd={onPieceDragEnd}
+        onPieceDrop={onPieceDrop}
       />
       <GameNavbar
         isBot={false}

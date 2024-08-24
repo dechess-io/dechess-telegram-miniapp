@@ -20,6 +20,11 @@ interface GameBoardProps {
   player2Timer: number
   showProgressBar: boolean
   progressBar: number
+  isDraggablePiece: any
+  onDragOverSquare: any
+  onPieceDragBegin: any
+  onPieceDragEnd: any
+  onPieceDrop: any
 }
 
 const GameBoardOriginal: React.FC<GameBoardProps> = ({
@@ -31,6 +36,11 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   player2Timer,
   showProgressBar,
   progressBar,
+  isDraggablePiece,
+  onDragOverSquare,
+  onPieceDragBegin,
+  onPieceDragEnd,
+  onPieceDrop,
 }) => {
   const {
     player1,
@@ -105,7 +115,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                     position={board.fen()}
                     id="ClickToMove"
                     animationDuration={200}
-                    arePiecesDraggable={false}
+                    arePiecesDraggable={true}
                     onSquareClick={onSquareClick}
                     onSquareRightClick={onSquareRightClick}
                     onPromotionPieceSelect={onPromotionPieceSelect}
@@ -119,6 +129,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                     customDarkSquareStyle={{
                       backgroundColor: '#B7C0D8',
                     }}
+                    customDropSquareStyle={{}}
                     customSquareStyles={{
                       ...moveSquares,
                       ...optionSquares,
@@ -127,8 +138,12 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                     }}
                     promotionToSquare={moveTo}
                     showPromotionDialog={showPromotionDialog}
-                    isDraggablePiece={() => true}
-                    arePremovesAllowed={true}
+                    isDraggablePiece={isDraggablePiece}
+                    onDragOverSquare={onDragOverSquare}
+                    onPieceDragBegin={onPieceDragBegin}
+                    onPieceDragEnd={onPieceDragEnd}
+                    onPieceDrop={onPieceDrop}
+                    arePremovesAllowed={false}
                   />
                 </div>
                 <PlayerDisplay {...getPlayerDisplayProps(false)} />

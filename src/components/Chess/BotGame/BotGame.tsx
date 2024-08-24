@@ -35,6 +35,7 @@ import {
   showPromotionDialog,
   setIsMove,
   setOptionSquares,
+  setGame,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
 import {
@@ -233,6 +234,37 @@ const BotGame: React.FC<{}> = () => {
     gameDispatch(setRightClickedSquares(square))
   }
 
+  console.log(gameState)
+
+  const isDraggablePiece = function ({ piece, sourceSquare }: any) {
+    if (gameState.turn === 'b') return false
+    return true
+  }
+
+  const onDragOverSquare = function (square: any) {}
+
+  const onPieceDragBegin = function (piece: any, sourceSquare: any) {}
+
+  const onPieceDragEnd = function (piece: any, sourceSquare: any) {}
+
+  const onPieceDrop = function (sourceSquare: any, targetSquare: any, piece: any) {
+    const gameCopy = gameState.board
+    const moves = gameState.board.moves({ square: sourceSquare, verbose: true })
+    const foundMove = moves.find((move) => move.to === targetSquare)
+    if (!foundMove) return false
+    gameCopy.move(foundMove)
+    timer1.restart(
+      new Date(
+        Date.now() + timer1.minutes * 60 * 1000 + timer1.seconds * 1000 + additionTimePerMove * 1000
+      )
+    )
+    timer1.pause()
+    timer2.resume()
+    gameDispatch(switchPlayerTurn())
+    sendPositionToEngine(gameCopy.fen())
+    return true
+  }
+
   useEffect(() => {
     timer1.pause()
     timer2.pause()
@@ -268,6 +300,11 @@ const BotGame: React.FC<{}> = () => {
           moveSquares={{}}
           showProgressBar={false}
           progressBar={0}
+          isDraggablePiece={isDraggablePiece}
+          onDragOverSquare={onDragOverSquare}
+          onPieceDragBegin={onPieceDragBegin}
+          onPieceDragEnd={onPieceDragEnd}
+          onPieceDrop={onPieceDrop}
         />
         <GameNavbar
           isBot={true}
