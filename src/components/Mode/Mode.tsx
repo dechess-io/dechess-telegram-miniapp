@@ -144,7 +144,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
         <Page className="overflow-auto hide-scrollbar">
           <Header />
           <Block strong style={{ paddingRight: '0', paddingLeft: '0' }}>
-            <div className="flex flex-col pt-4 bg-[#041d21]">
+            <div className="flex flex-col pt-10 bg-[#041d21]">
               <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
                 <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
                   {loading && (

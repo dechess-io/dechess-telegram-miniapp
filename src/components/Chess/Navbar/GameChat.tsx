@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react'
 import Header from '../../Header/Header'
 import { MdClose, MdSend } from 'react-icons/md'
@@ -26,10 +26,13 @@ const GameChat: React.FC<GameChatProps> = ({
   userId,
   socket,
 }) => {
+  const pageRef = useRef()
+  const initiallyScrolled = useRef(false)
+
   const handleSendClick = () => {
     const newMessage = {
       sender: userId,
-      message: messageText.replace('g', '<br>').trim(),
+      message: messageText,
       viewedAt: null,
     }
     setMessages((prev: Message[]) => [...prev, newMessage] as Message[])
@@ -80,6 +83,19 @@ const GameChat: React.FC<GameChatProps> = ({
       return part.value
     })
 
+  const scrollToBottom = () => {
+    const pageElement = pageRef.current.current || pageRef.current.el
+    pageElement.scrollTo({
+      top: pageElement.scrollHeight - pageElement.offsetHeight,
+      behavior: initiallyScrolled.current ? 'smooth' : 'auto',
+    })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+    initiallyScrolled.current = true
+  }, [messages])
+
   useEffect(() => {
     isChatVisible &&
       setMessages(
@@ -90,7 +106,7 @@ const GameChat: React.FC<GameChatProps> = ({
   }, [])
 
   return (
-    <Page component="div" className="z-50 fixed hide-scrollbar space-y-[50px]">
+    <Page component="div" className="z-50 fixed hide-scrollbar space-y-[50px]" ref={pageRef}>
       <Header />
       <Messages className="hide-scrollbar">
         <MessagesTitle>{currentDate}</MessagesTitle>

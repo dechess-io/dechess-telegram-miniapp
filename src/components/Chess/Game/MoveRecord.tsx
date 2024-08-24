@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
+import cn from '../../../services/cn'
 
 type MoveRecordProps = {}
 
@@ -18,7 +19,13 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
   return (
     <div
       ref={moveListRef}
-      className="bg-blue-gradient-1 flex items-center text-xs gap-4 text-white overflow-x-auto whitespace-nowrap bg-opacity-80 px-4 scrollbar-hide"
+      className={cn(
+        'flex items-center text-xs gap-4 text-white overflow-x-auto whitespace-nowrap bg-opacity-80 pl-2 pr-6 scrollbar-hide min-h-[16px]',
+        {
+          'bg-blue-gradient-1': moves.length > 0,
+          'bg-transparent': moves.length === 0,
+        }
+      )}
     >
       {moves.map((move, index) => {
         if (index >= moveIndex) return
