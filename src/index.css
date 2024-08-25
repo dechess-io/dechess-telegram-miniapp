@@ -164,13 +164,13 @@ body {
 }
 
 /* Button connect wallet */
-#ton-connect-button {
+#login #ton-connect-button {
   width: 100% !important;
   height: 100%;
   opacity: 0;
 }
 
-#ton-connect-button * {
+#login #ton-connect-button * {
   width: 100% !important;
   height: 100%;
 }

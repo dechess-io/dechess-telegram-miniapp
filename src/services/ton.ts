@@ -52,6 +52,7 @@ class TonProofDemoApiService {
           body: JSON.stringify(reqBody),
         })
       ).json()
+      console.log(response)
       console.log('7s200:checkproof', response)
       if (response?.data) {
         // console.log(1)
