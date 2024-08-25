@@ -36,7 +36,7 @@ import {
   showPromotionDialog,
   switchPlayerTurn,
 } from '../../../redux/game/action'
-import { emitNewMove, isCheckMate } from './util'
+import { emitNewMove, isCheckMate, isPromotionMove } from './util'
 import { useTimer } from 'react-timer-hook'
 
 import {
@@ -432,9 +432,13 @@ const Game: React.FC<object> = () => {
     return true
   }
 
-  const onDragOverSquare = function (square: any) {}
+  const onDragOverSquare = function (square: any) {
+    gameDispatch(setMoveTo(square))
+  }
 
-  const onPieceDragBegin = function (piece: any, sourceSquare: any) {}
+  const onPieceDragBegin = function (piece: any, sourceSquare: any) {
+    gameDispatch(setMoveFrom(sourceSquare))
+  }
 
   const onPieceDragEnd = function (piece: any, sourceSquare: any) {}
 
@@ -443,7 +447,12 @@ const Game: React.FC<object> = () => {
     const moves = gameState.board.moves({ square: sourceSquare, verbose: true })
     const foundMove = moves.find((move) => move.to === targetSquare)
     if (!foundMove) return false
-    gameCopy.move(foundMove)
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q',
+    })
+
     if (
       (gameCopy.isCheckmate() || gameCopy.isCheck()) &&
       !gameCopy.isGameOver() &&
@@ -455,6 +464,7 @@ const Game: React.FC<object> = () => {
     } else if (!gameCopy.isGameOver() && !gameCopy.isDraw()) {
       selfMoveSound.play()
     }
+
     gameDispatch(setGameHistory([...gameState.history, gameCopy.fen()]))
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
     gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
