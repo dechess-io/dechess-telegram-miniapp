@@ -4,7 +4,10 @@ import { ConnectionSettings } from '../Connect/ConnectionSettings'
 
 const Login = () => {
   return (
-    <div id='login' className="w-full flex flex-col items-center justify-center text-center text-white">
+    <div
+      id="login"
+      className="w-full flex flex-col items-center justify-center text-center text-white"
+    >
       <Block
         style={{
           paddingRight: '0',

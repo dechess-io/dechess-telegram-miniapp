@@ -135,6 +135,7 @@ const BotGame: React.FC<{}> = () => {
       )
       gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
       gameDispatch(resetMoveSelection())
+      gameOverSound.play()
 
       timer2.restart(
         new Date(
@@ -176,6 +177,11 @@ const BotGame: React.FC<{}> = () => {
         Date.now() + timer1.minutes * 60 * 1000 + timer1.seconds * 1000 + additionTimePerMove * 1000
       )
     )
+    if (newState.board.isGameOver()) {
+      gameDispatch(setWinner(true))
+      gameDispatch(setGameOver(true))
+      gameOverSound.play()
+    }
     timer1.pause()
     timer2.resume()
     sendPositionToEngine(newState.board.fen())
@@ -334,6 +340,7 @@ const BotGame: React.FC<{}> = () => {
           setShowPopup={setShowPopup}
           showPopup={showPopup && !isPopupDismissed}
           isBotMode={true}
+          setIsPopupDismissed={setIsPopupDismissed}
         />
       </>
     )
