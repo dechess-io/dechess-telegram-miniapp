@@ -1,68 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import App from './App'
-import Game from './components/Chess/Game/Game'
-import Mode from './components/Mode/Mode'
+import { RouterProvider } from 'react-router-dom'
 import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
-// import  Telegram from 'telegram-webapps'
-// import './styles/main.scss'
 
-// import { createNetworkConfig, SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
-// import { getFullnodeUrl } from '@mysten/sui/client'
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
-import BotGame from './components/Chess/BotGame/BotGame'
-import Puzzle from './components/Chess/Puzzle/Puzzle'
-import PuzzleGame from './components/Chess/Puzzle/PuzzleGame'
 import eruda from 'eruda'
-// import './index.css'
+import { router } from './routes'
 
 eruda.init()
 WebApp.ready()
 WebApp.expand()
 WebApp.MainButton.enable()
 WebApp.enableClosingConfirmation()
-// (Telegram as any).disableVerticalSwipes();
-
-// const networkConfig = {
-//   testnet: {
-//     url: 'https://fullnode.testnet.sui.io:443',
-//   },
-//   mainnet: {
-//     url: 'https://fullnode.mainnet.sui.io:443',
-//   },
-// }
-// const queryClient = new QueryClient()
-
-const router = createBrowserRouter([
-  {
-    children: [
-      {
-        path: '/',
-        element: <App />,
-      },
-      { path: '/game/:id', element: <Game /> },
-      { path: '/mode', element: <Mode isBotMode={false} /> },
-      { path: '/bot', element: <Mode isBotMode={true} /> },
-      { path: '/game-bot', element: <BotGame /> },
-      { path: '/puzzle', element: <Puzzle /> },
-      // { path: '/tournament', element: <TournamentBoard /> },
-      // { path: "/tournament", element: <Tournament2 /> },
-    ],
-  },
-])
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig}>
-          <WalletProvider> */}
       <TonConnectUIProvider
         manifestUrl="https://miniapp.dechess.io/tonconnect-manifest.json"
         uiPreferences={{ theme: THEME.DARK }}
@@ -110,10 +67,6 @@ root.render(
       >
         <RouterProvider router={router}></RouterProvider>
       </TonConnectUIProvider>
-
-      {/* </WalletProvider>
-        </SuiClientProvider>
-      </QueryClientProvider> */}
     </Provider>
   </React.StrictMode>
 )

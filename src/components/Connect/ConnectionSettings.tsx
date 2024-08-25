@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { TonConnectButton, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react'
+import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../../services/ton'
 import useInterval from '../../hooks/useInterval'
 
@@ -10,8 +10,6 @@ export const resolverError = (key: string, type: string, message: string) => {
 export function ConnectionSettings() {
   const firstProofLoading = useRef<boolean>(true)
 
-  const [data, setData] = useState({})
-  const wallet = useTonWallet()
   const [authorized, setAuthorized] = useState(false)
   const [tonConnectUI] = useTonConnectUI()
   const recreateProofPayload = useCallback(async () => {
@@ -38,11 +36,7 @@ export function ConnectionSettings() {
   useEffect(
     () =>
       tonConnectUI.onStatusChange(async (w) => {
-        if (!w) {
-          // TonProofDemoApi.reset()
-          // setAuthorized(false)
-          return
-        }
+        if (!w) return
 
         if (w.connectItems?.tonProof) {
           await TonProofDemoApi.checkProof((w.connectItems.tonProof as any).proof, w.account)
@@ -58,15 +52,6 @@ export function ConnectionSettings() {
       }),
     [tonConnectUI]
   )
-
-  const handleClick = useCallback(async () => {
-    if (!wallet) {
-      return
-    }
-    const response = await TonProofDemoApi.getAccountInfo(wallet.account)
-
-    setData(response)
-  }, [wallet])
 
   if (authorized) {
     return (

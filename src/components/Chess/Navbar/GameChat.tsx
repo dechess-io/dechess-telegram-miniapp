@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react'
-import Header from '../../Header/Header'
+import Header from '../../../layouts/Header'
 import { MdClose, MdSend } from 'react-icons/md'
 
 interface GameChatProps {

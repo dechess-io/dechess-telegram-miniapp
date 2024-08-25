@@ -1,16 +1,13 @@
-import { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useState } from 'react'
 import { Chess, Square } from 'chess.js'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import { convertToFigurineSan, getRandomValueFromList, indexToSquare } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
-import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from '../Game/Board'
-import { App, Block, Page } from 'konsta/react'
-import { isAndroid } from 'react-device-detect'
 import { engine } from '../../../services/worker'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { socket } from '../../../services/socket'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import {
@@ -22,9 +19,6 @@ import {
   setOpponentMove,
   switchPlayerTurn,
   setTurn,
-  setGameOver,
-  setWinner,
-  setLoser,
   setKingSquares,
   resetKingSquares,
   setGameHistory,
@@ -149,14 +143,11 @@ const PuzzleGame: React.FC<{ fen: string }> = ({ fen }) => {
     }
   }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
 
-  const theme = isAndroid ? 'material' : 'ios'
-
   if (!gameState.board) {
     return <LoadingGame />
   } else {
     return (
-      <App theme={theme}>
-        <Header />
+      <>
         <GameBoard
           player1Timer={0}
           player2Timer={0}
@@ -175,7 +166,7 @@ const PuzzleGame: React.FC<{ fen: string }> = ({ fen }) => {
           isWhite={player1 === wallet?.account.address}
         />
         <GameOverPopUp setShowPopup={setShowPopup} showPopup={showPopup && !isPopupDismissed} />
-      </App>
+      </>
     )
   }
 }

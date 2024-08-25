@@ -1,5 +1,5 @@
-import { useEffect, useState, useReducer, useMemo, useCallback, useRef } from 'react'
-import { Chess, Square } from 'chess.js'
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
+import { Square } from 'chess.js'
 import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
@@ -11,14 +11,13 @@ import {
   setLocalStorage,
 } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
-import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
-import { App, Block, Notification } from 'konsta/react'
+import { Notification } from 'konsta/react'
 import { isAndroid } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
-import { selectGame, squares } from '../../../redux/game/reducer'
+import { selectGame } from '../../../redux/game/reducer'
 import {
   loadGame,
   resetKingSquares,
@@ -57,7 +56,6 @@ import WebApp from '@twa-dev/sdk'
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
-  const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
   const location = useLocation()
   const wallet = useTonWallet()
   const [moveSquares] = useState({})
@@ -475,8 +473,7 @@ const Game: React.FC<object> = () => {
   if (!gameState.board) return <LoadingGame />
 
   return (
-    <App theme={theme}>
-      <Header />
+    <>
       <GameBoard
         player1Timer={timer1.minutes * 60 + timer1.seconds}
         player2Timer={timer2.minutes * 60 + timer2.seconds}
@@ -515,7 +512,7 @@ const Game: React.FC<object> = () => {
         showPopup={showPopup && !isPopupDismissed}
         isBotMode={false}
       />
-    </App>
+    </>
   )
 }
 
