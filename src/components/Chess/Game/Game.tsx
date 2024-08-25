@@ -22,11 +22,14 @@ import { selectGame, squares } from '../../../redux/game/reducer'
 import {
   loadGame,
   resetKingSquares,
+  setCurrentMoveIndex,
+  setGameHistory,
   setGameOver,
   setIsMove,
   setKingSquares,
   setLoser,
   setMoveFrom,
+  setMoves,
   setMoveTo,
   setOpponentMove,
   setOptionSquares,
@@ -35,7 +38,7 @@ import {
   showPromotionDialog,
   switchPlayerTurn,
 } from '../../../redux/game/action'
-import { emitNewMove } from './util'
+import { emitNewMove, isCheckMate } from './util'
 import { useTimer } from 'react-timer-hook'
 
 import {
@@ -123,7 +126,8 @@ const Game: React.FC<object> = () => {
 
   useEffect(() => {
     if (gameState.isGameOver) {
-      console.log(chatId)
+      timer1.pause()
+      timer2.pause()
       socket.emit('chatId', {
         chatId: chatId,
         gameId: location.pathname.split('/')[2],
@@ -273,7 +277,7 @@ const Game: React.FC<object> = () => {
   )
 
   useEffect(() => {
-    if (gameState.board.isCheck() || gameState.board.isCheckmate()) {
+    if (isCheckMate(gameState.board)) {
       gameDispatch(resetKingSquares())
       if ((gameState.board as any)._isKingAttacked('w')) {
         gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
@@ -454,6 +458,9 @@ const Game: React.FC<object> = () => {
     } else if (!gameCopy.isGameOver() && !gameCopy.isDraw()) {
       selfMoveSound.play()
     }
+    gameDispatch(setGameHistory([...gameState.history, gameCopy.fen()]))
+    gameDispatch(setMoves([...gameState.moves, foundMove.san]))
+    gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     emitNewMove(
       sourceSquare,
       targetSquare,
@@ -498,7 +505,6 @@ const Game: React.FC<object> = () => {
         opponent={
           wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1
         }
-        socket={socket}
         isMoved={gameState.moves.length !== 0}
         isWhite={gameState.player1 === wallet?.account.address}
       />

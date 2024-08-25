@@ -271,14 +271,19 @@ const BotGame: React.FC<{}> = () => {
     )
     timer1.pause()
     timer2.resume()
+    gameDispatch(setGameHistory([...gameState.history, gameCopy.fen()]))
+    gameDispatch(setMoves([...gameState.moves, foundMove.san]))
+    gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     gameDispatch(switchPlayerTurn())
     sendPositionToEngine(gameCopy.fen())
     return true
   }
 
   useEffect(() => {
-    timer1.pause()
-    timer2.pause()
+    if (gameState.isGameOver) {
+      timer1.pause()
+      timer2.pause()
+    }
   }, [gameState.isGameOver, gameState.isWinner, gameState.isLoser])
 
   useEffect(() => {
@@ -321,7 +326,6 @@ const BotGame: React.FC<{}> = () => {
           isBot={true}
           user={wallet?.account.address ? wallet?.account.address : 'player1'}
           opponent={wallet?.account.address === player1 ? player2 : player1}
-          socket={socket}
           isMoved={gameState.moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
         />
