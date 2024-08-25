@@ -1,5 +1,4 @@
 import { Square } from 'chess.js'
-import { getRemainingTime, getTimeFromLocalStorage } from '../../../utils/utils'
 import { socket } from '../../../services/socket'
 
 export const isPromotionMove = (move: any, square: Square) => {

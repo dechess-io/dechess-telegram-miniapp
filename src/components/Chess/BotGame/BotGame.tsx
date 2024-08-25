@@ -1,16 +1,13 @@
-import { useEffect, useState, useRef, useReducer } from 'react'
-import { Chess, Square } from 'chess.js'
+import { useEffect, useState } from 'react'
+import { Square } from 'chess.js'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import { convertToFigurineSan, getRandomValueFromList, indexToSquare } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
-import Header from '../../Header/Header'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from '../Game/Board'
-import { App, Block, Page } from 'konsta/react'
-import { isAndroid } from 'react-device-detect'
 import { engine } from '../../../services/worker'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { socket } from '../../../services/socket'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import {
@@ -294,14 +291,11 @@ const BotGame: React.FC<{}> = () => {
     }
   }, [gameState.board.isCheck() || gameState.board.isCheckmate()])
 
-  const theme = isAndroid ? 'material' : 'ios'
-
   if (!gameState.board) {
     return <LoadingGame />
   } else {
     return (
-      <App theme={theme}>
-        <Header />
+      <>
         <GameBoard
           player1Timer={timer1.minutes * 60 + timer1.seconds}
           player2Timer={timer2.minutes * 60 + timer2.seconds}
@@ -330,7 +324,7 @@ const BotGame: React.FC<{}> = () => {
           showPopup={showPopup && !isPopupDismissed}
           isBotMode={true}
         />
-      </App>
+      </>
     )
   }
 }

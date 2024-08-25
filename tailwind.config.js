@@ -2,6 +2,7 @@ const konstaConfig = require('konsta/config')
 
 module.exports = konstaConfig({
   mode: 'jit',
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
@@ -47,6 +48,9 @@ module.exports = konstaConfig({
       colors: {
         btnprimary: 'rgba(141, 28, 254, 1)',
         t1: 'rgb(239,250,13)',
+        black: {
+          '1a': '#1E1C1A',
+        },
         gray: {
           100: '#f2f4f7',
           200: '#e1e4e9',
@@ -142,8 +146,8 @@ module.exports = konstaConfig({
       },
     },
     fontFamily: {
-      larken: 'Larken, sans-serif',
-      ibm: 'IBM Plex Mono',
+      planet: 'Planet Gamers',
+      spaceGrotesk: 'Space Grotesk',
     },
   },
   plugins: [require('tailwind-scrollbar-hide')],

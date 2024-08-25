@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Page, Messagebar, Messages, Message, MessagesTitle, Link, Icon } from 'konsta/react'
-import Header from '../../Header/Header'
+import Header from '../../../layouts/Header'
 import { MdClose, MdSend } from 'react-icons/md'
 
 interface GameChatProps {
@@ -122,7 +122,7 @@ const GameChat: React.FC<GameChatProps> = ({
               bubbleReceivedIos: 'bg-gray-800 shadow-general',
               bubbleReceivedMd: 'bg-gray-800 shadow-general',
             }}
-            className="font-medium font-ibm"
+            className="font-medium"
             // avatar={
             //   message.type === 'received' && (
             //     <img

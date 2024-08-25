@@ -21,17 +21,17 @@ const Progress = ({ totalGames, wins, losses }: Props) => {
         <div className={`semi-circle -rotate-[279deg]`}></div>
         <div className="semi-circle-overlay">
           <div className="text">
-            <span className="font-ibm pr-2">Game</span>
-            <span className="font-ibm pr-2">{totalGames}</span>
+            <span className="pr-2">Game</span>
+            <span className="pr-2">{totalGames}</span>
           </div>
         </div>
         <div className="labels gap-14 items-start">
           <div className="label win text-white">
-            <div className="count win font-ibm">{wins}</div>
+            <div className="count win">{wins}</div>
             <div className="flex justify-center items-center">Win</div>
           </div>
           <div className="label lose ">
-            <div className="count lose font-ibm">{losses}</div>
+            <div className="count lose">{losses}</div>
             <div className="flex justify-center items-center">Lose</div>
           </div>
         </div>

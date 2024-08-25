@@ -1,7 +1,5 @@
-import { App, BlockTitle, List, ListItem, Block } from 'konsta/react'
-import Header from '../../Header/Header'
-import { useEffect, useMemo, useState } from 'react'
-import { isAndroid } from 'react-device-detect'
+import { List, ListItem } from 'konsta/react'
+import { useEffect, useState } from 'react'
 import PuzzleGame from './PuzzleGame'
 
 interface ChessGame {
@@ -15,7 +13,6 @@ interface ChessGame {
 }
 
 const Puzzle: React.FC = () => {
-  const theme = useMemo(() => (isAndroid ? 'material' : 'ios'), [])
   const [showPuzzle, setShowPuzzle] = useState(true)
   const [fen, setFen] = useState('')
 
@@ -43,21 +40,18 @@ const Puzzle: React.FC = () => {
   }
 
   return (
-    <App theme={theme}>
-      <Header />
-      <List strongIos outlineIos>
-        {showPuzzle &&
-          chessGames.map((game: any, index: any) => (
-            <ListItem
-              media={<img src="/Logo.svg" className="h-4 w-4" />}
-              link
-              title={`Problem ${index + 1}`}
-              onClick={() => handleClick(game.fen)}
-            />
-          ))}
-        {!showPuzzle && <PuzzleGame fen={fen} />}
-      </List>
-    </App>
+    <List strongIos outlineIos>
+      {showPuzzle &&
+        chessGames.map((game: any, index: any) => (
+          <ListItem
+            media={<img src="/logo.svg" className="h-4 w-4" />}
+            link
+            title={`Problem ${index + 1}`}
+            onClick={() => handleClick(game.fen)}
+          />
+        ))}
+      {!showPuzzle && <PuzzleGame fen={fen} />}
+    </List>
   )
 }
 

@@ -26,7 +26,7 @@ const renderButton = (
         }`}
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
       >
-        <span className="text-white font-ibm w-10 sm:w-14 truncate sm:text-base text-sm">
+        <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">
           {label}
         </span>
       </Button>
@@ -45,7 +45,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
     <div className="pt-2">
       <div className="flex flex-row items-center pl-4">
         <img src={imgSrc} alt={title} className="h-24 w-24" />
-        <span className="text-white pl-2 font-ibm">{title}</span>
+        <span className="text-white pl-2">{title}</span>
       </div>
       <div className="flex flex-row">
         {buttons.map((button: any) =>
