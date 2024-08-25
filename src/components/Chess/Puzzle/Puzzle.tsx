@@ -44,7 +44,7 @@ const Puzzle: React.FC = () => {
       {showPuzzle &&
         chessGames.map((game: any, index: any) => (
           <ListItem
-            media={<img src="/Logo.svg" className="h-4 w-4" />}
+            media={<img src="/logo.svg" className="h-4 w-4" />}
             link
             title={`Problem ${index + 1}`}
             onClick={() => handleClick(game.fen)}

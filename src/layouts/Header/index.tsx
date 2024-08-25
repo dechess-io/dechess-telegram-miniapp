@@ -13,7 +13,7 @@ const Header: React.FC = () => {
         data.pathname === '/mode' ? (
           <button onClick={() => navigate('/')}>
             <img
-              className="max-w-[45px] max-h-[45px] border-none rounded-xl justify-start flex-1"
+              className="max-w-[90px] max-h-[45px] border-none rounded-xl justify-start flex-1"
               src="/arrow-right.svg"
               alt="Transca Vault Logo"
             />
@@ -21,7 +21,7 @@ const Header: React.FC = () => {
         ) : (
           <button onClick={() => navigate('/')}>
             <img
-              className="max-w-[45px] max-h-[45px] border-none rounded-xl opacity-0 pointer-events-none"
+              className="max-w-[90px] max-h-[45px] border-none rounded-xl opacity-0 pointer-events-none"
               src="/arrow-right.svg"
               alt="Arrow Icon"
             />
@@ -43,8 +43,8 @@ const Header: React.FC = () => {
             }}
           >
             <img
-              className="max-w-[45px] max-h-[45px] border-none rounded-xl"
-              src="/Logo.png"
+              className="max-w-[90px] max-h-[45px] border-none rounded-xl"
+              src="/logo.png"
               alt="Transca Vault Logo"
             />
           </div>

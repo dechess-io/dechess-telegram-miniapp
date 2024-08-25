@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { Square } from 'chess.js'
 import { useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
@@ -15,7 +15,6 @@ import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
 import { Notification } from 'konsta/react'
-import { isAndroid } from 'react-device-detect'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
 import {
@@ -501,7 +500,7 @@ const Game: React.FC<object> = () => {
       />
       <Notification
         opened={notificationCloseOnClick}
-        icon={<img src="/Logo.svg" className="h-4 w-4" />}
+        icon={<img src="/logo.svg" className="h-4 w-4" />}
         title="Dechess"
         titleRightText="now"
         subtitle="Your opponent has disconnected"
