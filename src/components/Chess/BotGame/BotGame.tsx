@@ -116,6 +116,7 @@ const BotGame: React.FC<{}> = () => {
       const move = gameCopy.move({
         from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
         to: data[1].substring(2, 4),
+        promotion: 'q',
       })
 
       if (gameCopy.isCheckmate() || gameCopy.isCheckmate()) {
@@ -241,9 +242,13 @@ const BotGame: React.FC<{}> = () => {
     return true
   }
 
-  const onDragOverSquare = function (square: any) {}
+  const onDragOverSquare = function (square: any) {
+    gameDispatch(setMoveTo(square))
+  }
 
-  const onPieceDragBegin = function (piece: any, sourceSquare: any) {}
+  const onPieceDragBegin = function (piece: any, sourceSquare: any) {
+    gameDispatch(setMoveFrom(sourceSquare))
+  }
 
   const onPieceDragEnd = function (piece: any, sourceSquare: any) {}
 
@@ -252,7 +257,6 @@ const BotGame: React.FC<{}> = () => {
     const moves = gameState.board.moves({ square: sourceSquare, verbose: true })
     const foundMove = moves.find((move) => move.to === targetSquare)
     if (!foundMove) return false
-    gameCopy.move(foundMove)
     if (
       (gameCopy.isCheckmate() || gameCopy.isCheck()) &&
       !gameCopy.isGameOver() &&
