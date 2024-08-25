@@ -49,7 +49,6 @@ import {
   promoteSound,
   selfMoveSound,
 } from '../../../services/move_sounds'
-import { selectTournament } from '../../../redux/tournament/tournament.reducer'
 
 const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
@@ -232,10 +231,9 @@ const BotGame: React.FC<{}> = () => {
     gameDispatch(setRightClickedSquares(square))
   }
 
-  console.log(gameState)
-
   const isDraggablePiece = function ({ piece, sourceSquare }: any) {
-    if (gameState.turn === 'b') return false
+    if (piece[0] === 'b') return false
+    if (gameState.moveIndex !== gameState.history.length - 1) return false
     return true
   }
 
@@ -254,6 +252,11 @@ const BotGame: React.FC<{}> = () => {
     const moves = gameState.board.moves({ square: sourceSquare, verbose: true })
     const foundMove = moves.find((move) => move.to === targetSquare)
     if (!foundMove) return false
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q',
+    })
     if (
       (gameCopy.isCheckmate() || gameCopy.isCheck()) &&
       !gameCopy.isGameOver() &&

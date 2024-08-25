@@ -429,6 +429,10 @@ const Game: React.FC<object> = () => {
   }, [])
 
   const isDraggablePiece = function ({ piece, sourceSquare }: any) {
+    if (piece[0] != 'w' && gameState.player1 === wallet?.account.address) return false
+    if (piece[0] != 'b' && gameState.player2 === wallet?.account.address) return false
+    if (gameState.moveIndex !== gameState.history.length - 1) return false
+
     return true
   }
 
