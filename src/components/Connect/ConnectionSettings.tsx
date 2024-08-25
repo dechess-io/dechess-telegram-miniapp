@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../../services/ton'
 import useInterval from '../../hooks/useInterval'
+import { useLocation } from 'react-router-dom'
 
 export const resolverError = (key: string, type: string, message: string) => {
   return { [key]: { type, message } }
 }
 
 export function ConnectionSettings() {
+  const location = useLocation()
   const firstProofLoading = useRef<boolean>(true)
 
   const [authorized, setAuthorized] = useState(false)
@@ -49,6 +51,9 @@ export function ConnectionSettings() {
         }
 
         setAuthorized(true)
+        if (location.pathname === '/login') {
+          window.location.href = '/'
+        }
       }),
     [tonConnectUI]
   )

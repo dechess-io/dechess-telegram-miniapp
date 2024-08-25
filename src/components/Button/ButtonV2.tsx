@@ -1,6 +1,7 @@
 import React, { PropsWithChildren } from 'react'
 
-import bgButton from '@/public/images/bg-button.svg'
+import bgButtonGray from '/images/bg-btn-gray.png'
+import bgButtonWhite from '/images/bg-btn-white.png'
 
 import Icons from '../Icons'
 import cn from '../../services/cn'
@@ -14,8 +15,9 @@ const ButtonV2: React.FC<
     type?: 'button' | 'submit' | 'reset'
     size?: 'medium' | 'large'
     loading?: boolean
+    kind?: 'primary' | 'secondary'
   }>
-> = ({ children, onClick, className, disabled, hide, type, loading, size = 'medium' }) => {
+> = ({ children, onClick, className, disabled, hide, type, loading, kind = 'primary' }) => {
   if (hide) {
     return null
   }
@@ -23,27 +25,28 @@ const ButtonV2: React.FC<
     <button
       type={type || 'button'}
       className={cn(
-        'cursor-pointer rounded font-planet relative flex items-center justify-center gap-2 group',
+        'font-planet relative flex items-center justify-center gap-2 group',
         className,
         {
-          'w-[12rem] h-[3rem] lg:w-[14.813rem] lg:h-[4.625rem] text-normal': size === 'medium',
-          'w-[20.625rem] h-[5rem] text-xl': size === 'large',
-        },
-        {
-          'bg-blue-300 active:bg-blue-300': disabled,
+          'cursor-default': disabled,
+          'cursor-pointer': !disabled,
         }
       )}
       onClick={onClick}
       disabled={loading || disabled}
     >
       <img
-        src={bgButton}
-        width={237}
-        height={74}
-        className="w-[150px] lg:w-full lg:h-full"
+        src={kind === 'primary' ? bgButtonWhite : bgButtonGray}
+        width={354}
+        height={57}
         alt="dechess-btn-background"
       />
-      <span className="absolute inset-0 z-[1] text-black-1a flex justify-center items-center text-base lg:text-[24px]">
+      <span
+        className={cn('absolute inset-0 z-[1] flex justify-center items-center text-[24px]', {
+          'text-black-1a': kind === 'primary',
+          'text-white': kind === 'secondary',
+        })}
+      >
         {loading ? <Icons.spinner className="animate-spin" size={20} /> : null} {children}
       </span>
     </button>

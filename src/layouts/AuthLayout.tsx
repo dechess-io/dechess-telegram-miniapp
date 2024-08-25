@@ -4,7 +4,7 @@ import { Page } from 'konsta/react'
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <KonstaApp theme={'ios'}>
+    <KonstaApp className="dark" theme={'ios'}>
       <Page className="overflow-auto hide-scrollbar">{children}</Page>
     </KonstaApp>
   )

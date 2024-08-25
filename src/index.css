@@ -162,3 +162,15 @@ body {
 .react-dialog > .hairline-b::after {
   @apply hidden;
 }
+
+/* Button connect wallet */
+#ton-connect-button {
+  width: 100% !important;
+  height: 100%;
+  opacity: 0;
+}
+
+#ton-connect-button * {
+  width: 100% !important;
+  height: 100%;
+}
