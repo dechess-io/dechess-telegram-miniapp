@@ -49,7 +49,6 @@ import {
   promoteSound,
   selfMoveSound,
 } from '../../../services/move_sounds'
-import { selectTournament } from '../../../redux/tournament/tournament.reducer'
 
 const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
@@ -113,6 +112,7 @@ const BotGame: React.FC<{}> = () => {
       const move = gameCopy.move({
         from: data[1].substring(0, 2) ? data[1].substring(0, 2) : '',
         to: data[1].substring(2, 4),
+        promotion: 'q',
       })
 
       if (gameCopy.isCheckmate() || gameCopy.isCheckmate()) {
@@ -231,16 +231,19 @@ const BotGame: React.FC<{}> = () => {
     gameDispatch(setRightClickedSquares(square))
   }
 
-  console.log(gameState)
-
   const isDraggablePiece = function ({ piece, sourceSquare }: any) {
-    if (gameState.turn === 'b') return false
+    if (piece[0] === 'b') return false
+    if (gameState.moveIndex !== gameState.history.length - 1) return false
     return true
   }
 
-  const onDragOverSquare = function (square: any) {}
+  const onDragOverSquare = function (square: any) {
+    gameDispatch(setMoveTo(square))
+  }
 
-  const onPieceDragBegin = function (piece: any, sourceSquare: any) {}
+  const onPieceDragBegin = function (piece: any, sourceSquare: any) {
+    gameDispatch(setMoveFrom(sourceSquare))
+  }
 
   const onPieceDragEnd = function (piece: any, sourceSquare: any) {}
 
@@ -249,7 +252,11 @@ const BotGame: React.FC<{}> = () => {
     const moves = gameState.board.moves({ square: sourceSquare, verbose: true })
     const foundMove = moves.find((move) => move.to === targetSquare)
     if (!foundMove) return false
-    gameCopy.move(foundMove)
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q',
+    })
     if (
       (gameCopy.isCheckmate() || gameCopy.isCheck()) &&
       !gameCopy.isGameOver() &&
@@ -268,14 +275,19 @@ const BotGame: React.FC<{}> = () => {
     )
     timer1.pause()
     timer2.resume()
+    gameDispatch(setGameHistory([...gameState.history, gameCopy.fen()]))
+    gameDispatch(setMoves([...gameState.moves, foundMove.san]))
+    gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     gameDispatch(switchPlayerTurn())
     sendPositionToEngine(gameCopy.fen())
     return true
   }
 
   useEffect(() => {
-    timer1.pause()
-    timer2.pause()
+    if (gameState.isGameOver) {
+      timer1.pause()
+      timer2.pause()
+    }
   }, [gameState.isGameOver, gameState.isWinner, gameState.isLoser])
 
   useEffect(() => {
@@ -315,7 +327,6 @@ const BotGame: React.FC<{}> = () => {
           isBot={true}
           user={wallet?.account.address ? wallet?.account.address : 'player1'}
           opponent={wallet?.account.address === player1 ? player2 : player1}
-          socket={socket}
           isMoved={gameState.moves.length !== 0}
           isWhite={player1 === wallet?.account.address}
         />

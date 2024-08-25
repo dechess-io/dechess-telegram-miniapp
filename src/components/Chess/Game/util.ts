@@ -65,3 +65,7 @@ export const isEligibleToPlay = (gameState: any, wallet: any) => {
     (gameState.player2 === wallet?.account.address && (gameState.board as any)._turn === 'b')
   return isPlayerTurn
 }
+
+export const isCheckMate = (board: any) => {
+  return board.isCheck() || board.isCheckmate()
+}
