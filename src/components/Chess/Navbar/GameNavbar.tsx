@@ -6,9 +6,9 @@ import { Chess } from 'chess.js'
 import { Block, Icon, Tabbar, TabbarLink } from 'konsta/react'
 import { useAppDispatch } from '../../../redux/store'
 import { setNextMove, setPreviousMove } from '../../../redux/game/action'
+import { socket } from '../../../services/socket'
 
 interface GameNavbarProps {
-  socket: any
   user: string
   opponent: string
   isMoved: boolean
@@ -17,7 +17,6 @@ interface GameNavbarProps {
 }
 
 const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
-  socket,
   user,
   opponent,
   isMoved,
