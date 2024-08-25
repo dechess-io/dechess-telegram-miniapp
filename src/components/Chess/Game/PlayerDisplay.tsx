@@ -21,13 +21,13 @@ const PlayerDisplay: React.FC<PlayerDisplayProps> = ({
     <div className="flex justify-between">
       <div className="flex justify-start items-center space-x-2">
         <img src={imageSrc} alt="avatar" width={30} height={30} />
-        <p className={`font-bold text-[14px] ${textColor} font-ibm`}>{name}</p>
+        <p className={`font-bold text-[14px] ${textColor}`}>{name}</p>
       </div>
       <div
         className={`flex justify-center items-center border ${timeBoxClass} rounded-lg w-[100px] h-[40px]`}
       >
         <img src={clockIconSrc} className="pr-1" alt="clock-icon" />
-        <div className={`font-ibm ${textColor}`}>{time}</div>
+        <div className={`${textColor}`}>{time}</div>
       </div>
     </div>
   )

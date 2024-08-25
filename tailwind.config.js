@@ -142,8 +142,8 @@ module.exports = konstaConfig({
       },
     },
     fontFamily: {
-      larken: 'Larken, sans-serif',
-      ibm: 'IBM Plex Mono',
+      planet: 'Planet Gamers',
+      spaceGrotesk: 'Space Grotesk',
     },
   },
   plugins: [require('tailwind-scrollbar-hide')],

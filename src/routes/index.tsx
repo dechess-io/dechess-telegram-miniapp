@@ -7,6 +7,7 @@ import Game from '../components/Chess/Game/Game'
 import Mode from '../components/Mode/Mode'
 import BotGame from '../components/Chess/BotGame/BotGame'
 import Puzzle from '../components/Chess/Puzzle/Puzzle'
+import AuthLayout from '../layouts/AuthLayout'
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +26,11 @@ export const router = createBrowserRouter([
       },
       {
         path: '/login',
-        element: <Login />,
+        element: (
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        ),
       },
       {
         path: '/game/:id',

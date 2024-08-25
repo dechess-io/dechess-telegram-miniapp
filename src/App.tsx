@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import Progress from './components/ProgressChart/Progress'
 import { hasJWT } from './utils/utils'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { socket } from './services/socket.ts'
 import './index.css'
 import ActionButton from './components/Button/ActionButton.tsx'
@@ -50,12 +50,15 @@ function App() {
     })
   }
 
-  const actionButtonsConfig = [
-    { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
-    { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
-    { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
-    { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/puzzle' },
-  ]
+  const actionButtonsConfig = useMemo(
+    () => [
+      { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
+      { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
+      { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
+      { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/puzzle' },
+    ],
+    []
+  )
 
   const createActionButton = (config: any) => (
     <ActionButton
@@ -90,7 +93,7 @@ function App() {
                 <div className="flex-auto rounded-lg">
                   <div>
                     <div>
-                      <h3 className="font-ibm text-[16px] pb-4">Elo Rating</h3>
+                      <h3 className="text-[16px] pb-4">Elo Rating</h3>
                     </div>
                     <div className="flex flex-col justify-between">
                       <GameModeButton title="Rabbit" imageSrc="/QuickLock.svg" rating={500} />
@@ -107,7 +110,7 @@ function App() {
               </div>
               <Button
                 onClick={handlePlayClick}
-                className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 font-ibm "
+                className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 "
                 disabled={!hasJWT()}
               >
                 <span className="text-sm md:text-base lg:text-lg">Play</span>

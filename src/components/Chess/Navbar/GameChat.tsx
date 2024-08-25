@@ -122,7 +122,7 @@ const GameChat: React.FC<GameChatProps> = ({
               bubbleReceivedIos: 'bg-gray-800 shadow-general',
               bubbleReceivedMd: 'bg-gray-800 shadow-general',
             }}
-            className="font-medium font-ibm"
+            className="font-medium"
             // avatar={
             //   message.type === 'received' && (
             //     <img

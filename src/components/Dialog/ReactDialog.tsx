@@ -28,7 +28,7 @@ const ReactDialog = ({
   return (
     <Dialog
       className={cn(
-        'react-dialog min-w-[20rem] bg-black-linear border border-gray-800 shadow-general py-4 px-4 font-ibm',
+        'react-dialog min-w-[20rem] bg-black-linear border border-gray-800 shadow-general py-4 px-4',
         className
       )}
       opened={open}

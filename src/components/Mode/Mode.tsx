@@ -141,7 +141,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
             {loading && (
               <>
                 <GameSpinner />
-                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 font-ibm rounded-lg">
+                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 rounded-lg">
                   <Block>
                     <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
 
@@ -181,10 +181,10 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
               <Block>
                 <Button
                   onClick={onCreateGame}
-                  className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200 font-ibm"
+                  className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200"
                   disabled={!hasJWT() || !activeButton}
                 >
-                  <span className="text-black font-ibm">Start game</span>
+                  <span className="text-black">Start game</span>
                 </Button>
               </Block>
             </div>
