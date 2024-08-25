@@ -9,12 +9,14 @@ type GameOverPopUpProps = {
   showPopup: boolean
   setShowPopup: any
   isBotMode: boolean
+  setIsPopupDismissed: any
 }
 
 const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
   showPopup,
   setShowPopup,
   isBotMode,
+  setIsPopupDismissed,
 }) => {
   const wallet = useTonWallet()
   const { board, isGameOver, isGameDraw, player1, player2, isWinner, isLoser } =
@@ -46,7 +48,10 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
       <ReactDialog
         className="min-w-[22rem]"
         open={showPopup && (board.isGameOver() || board.isDraw() || isGameOver || isGameDraw)}
-        onHide={() => setShowPopup(false)}
+        onHide={() => {
+          setIsPopupDismissed(true)
+          setShowPopup(false)
+        }}
         onCancel={() => navigate('/')}
         onOk={() => {
           if (isBotMode) {

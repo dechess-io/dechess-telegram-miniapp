@@ -529,6 +529,7 @@ const Game: React.FC<object> = () => {
       <GameOverPopUp
         setShowPopup={setShowPopup}
         showPopup={showPopup && !isPopupDismissed}
+        setIsPopupDismissed={setIsPopupDismissed}
         isBotMode={false}
       />
     </>

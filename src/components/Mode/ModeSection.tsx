@@ -26,9 +26,7 @@ const renderButton = (
         }`}
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
       >
-        <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">
-          {label}
-        </span>
+        <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">{label}</span>
       </Button>
     </div>
   )
