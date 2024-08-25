@@ -44,7 +44,7 @@ const Header: React.FC = () => {
           >
             <img
               className="max-w-[90px] max-h-[45px] border-none rounded-xl"
-              src="/logo.png"
+              src="/Logo.png"
               alt="Transca Vault Logo"
             />
           </div>

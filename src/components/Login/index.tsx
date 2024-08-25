@@ -16,7 +16,7 @@ const Login = () => {
       >
         <div className="flex items-center justify-center h-full">
           <div>
-            <img src="/logo.png" alt="dechess-logo" />
+            <img src="/Logo.png" alt="dechess-logo" />
           </div>
         </div>
         <div className="px-10 grid gap-2">

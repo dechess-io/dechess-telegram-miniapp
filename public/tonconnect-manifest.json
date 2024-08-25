@@ -2,6 +2,6 @@
   "name": "Dechess",
   "description": "A built in Chess platform on Telegram",
   "url": "https://miniapp.dechess.io",
-  "iconUrl": "https://miniapp.dechess.io/logo.png",
+  "iconUrl": "https://miniapp.dechess.io/Logo.png",
   "permissions": ["ton_account", "ton_send"]
 }

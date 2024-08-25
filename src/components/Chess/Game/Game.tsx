@@ -500,7 +500,7 @@ const Game: React.FC<object> = () => {
       />
       <Notification
         opened={notificationCloseOnClick}
-        icon={<img src="/logo.svg" className="h-4 w-4" />}
+        icon={<img src="/Logo.svg" className="h-4 w-4" />}
         title="Dechess"
         titleRightText="now"
         subtitle="Your opponent has disconnected"
