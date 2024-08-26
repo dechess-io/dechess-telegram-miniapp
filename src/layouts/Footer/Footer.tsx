@@ -7,8 +7,8 @@ const Footer: React.FC = () => {
         active
         icon={
           <Icon
-            ios={<img className="w-[20px] h-[20px]" src="/home-icon.svg" />}
-            material={<img className="w-[20px] h-[20px]" src="/home-icon.svg" />}
+            ios={<img className="w-[40px] h-[40px]" src="/Pawn.png" />}
+            material={<img className="w-[40px] h-[40px]" src="/Pawn.png" />}
           />
         }
         label="Home"
@@ -16,8 +16,8 @@ const Footer: React.FC = () => {
       <TabbarLink
         icon={
           <Icon
-            ios={<img className="w-[20px] h-[20px]" src="/game-icon.svg" />}
-            material={<img className="w-[20px] h-[20px]" src="/game-icon.svg" />}
+            ios={<img className="w-[40px] h-[40px]" src="/Money.png" />}
+            material={<img className="w-[40px] h-[40px]" src="/Money.png" />}
           />
         }
         label="Mini Game"
@@ -25,8 +25,8 @@ const Footer: React.FC = () => {
       <TabbarLink
         icon={
           <Icon
-            ios={<img className="w-[20px] h-[20px]" src="/wallet-icon.svg" />}
-            material={<img className="w-[20px] h-[20px]" src="/wallet-icon.svg" />}
+            ios={<img className="w-[40px] h-[40px]" src="/Wallet.png" />}
+            material={<img className="w-[40px] h-[40px]" src="/Wallet.png" />}
           />
         }
         label="Wallet"

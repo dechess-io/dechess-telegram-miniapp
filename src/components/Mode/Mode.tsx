@@ -134,9 +134,24 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   }
 
   return (
-    <Block strong style={{ paddingRight: '0', paddingLeft: '0' }}>
-      <div className="flex flex-col pt-10 bg-[#041d21]">
-        <div className="border-none rounded-xl bg-[#041d21] min-h-screen">
+    <Block
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#041d21',
+        backgroundImage: 'url(/mode-bg.png)',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      <div className="flex flex-col pt-10 ">
+        <div className="border-none rounded-xlmin-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
             {loading && (
               <>
@@ -181,10 +196,16 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
               <Block>
                 <Button
                   onClick={onCreateGame}
-                  className="bg-blue-gradient text-black font-bold py-2 px-6 rounded-lg h-64 w-[370px] border-b-4 border-blue-200"
+                  className="text-black   h-80 w-[370px]"
                   disabled={!hasJWT() || !activeButton}
+                  style={{
+                    backgroundImage: 'url(/images/bg-btn-white.png)',
+                    backgroundSize: 'contain',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
                 >
-                  <span className="text-black">Start game</span>
+                  <span style={{ color: 'black' }}>Start game</span>
                 </Button>
               </Block>
             </div>

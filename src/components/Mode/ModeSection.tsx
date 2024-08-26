@@ -17,14 +17,17 @@ const renderButton = (
   handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
 ) => {
   return (
-    <div className="flex-auto p-1" key={buttonId}>
+    <div className="flex-auto p-1 " key={buttonId}>
       <Button
-        className={`font-bold py-2 px-6 rounded-lg h-54 w-30 ${
-          activeButton === buttonId
-            ? 'bg-blue-gradient border-b-4 border-blue-200'
-            : 'bg-grey-100 border-b-4 border-grey-200'
-        }`}
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
+        style={{
+          backgroundImage: activeButton === buttonId ? 'url(/enable-button.png)' : 'url(/Mode.png)',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          height: '100px',
+          width: '100px',
+        }}
       >
         <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">{label}</span>
       </Button>
