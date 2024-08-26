@@ -19,14 +19,23 @@ const renderButton = (
   return (
     <div className="flex-auto p-1 " key={buttonId}>
       <Button
+        className="focus:outline-none active:outline-none active:bg-transparent hover:bg-transparent"
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
         style={{
-          backgroundImage: activeButton === buttonId ? 'url(/enable-button.png)' : 'url(/Mode.png)',
+          backgroundImage:
+            activeButton === buttonId ? 'url(/gold-mode.svg)' : 'url(/normal-mode.svg)',
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           height: '100px',
           width: '100px',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundImage = 'url(/gray-mode.svg)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundImage =
+            activeButton === buttonId ? 'url(/gray-mode.svg)' : 'url(/normal-mode.svg)'
         }}
       >
         <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">{label}</span>

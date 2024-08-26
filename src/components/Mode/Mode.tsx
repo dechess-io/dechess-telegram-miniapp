@@ -145,7 +145,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#041d21',
-        backgroundImage: 'url(/mode-bg.png)',
+        backgroundImage: 'url(/mode-bg.svg)',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
