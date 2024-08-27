@@ -6,6 +6,7 @@ type ModeSectionProps = {
   buttons: any
   activeButton: string | null
   handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
+  isActive: boolean
 }
 
 const renderButton = (
@@ -14,12 +15,14 @@ const renderButton = (
   timeStep: number,
   additionTime: number,
   activeButton: string | null,
-  handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
+  handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void,
+  isActive: boolean
 ) => {
   return (
     <div className="flex-auto p-1 " key={buttonId}>
       <Button
         className="focus:outline-none active:outline-none active:bg-transparent hover:bg-transparent"
+        disabled={!isActive}
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
         style={{
           backgroundImage:
@@ -52,6 +55,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
   buttons,
   activeButton,
   handleButtonClick,
+  isActive
 }) => {
   return (
     <div className="pt-2">
@@ -67,7 +71,8 @@ const ModeSection: React.FC<ModeSectionProps> = ({
             button.time,
             button.increment,
             activeButton,
-            handleButtonClick
+            handleButtonClick,
+            isActive
           )
         )}
       </div>

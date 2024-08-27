@@ -55,7 +55,7 @@ function App() {
       { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
       { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
       { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
-      { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/puzzle' },
+      { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/' },
     ],
     []
   )

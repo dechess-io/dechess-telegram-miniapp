@@ -177,6 +177,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 buttons={buttonsData.bullet}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
+                isActive={false}
               />
               <ModeSection
                 imgSrc="/Thunder.svg"
@@ -184,6 +185,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 buttons={buttonsData.blitz}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
+                isActive={true}
               />
               <ModeSection
                 imgSrc="/QuickLock.svg"
@@ -191,6 +193,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 buttons={buttonsData.rapid}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
+                isActive={false}
               />
 
               <Block>

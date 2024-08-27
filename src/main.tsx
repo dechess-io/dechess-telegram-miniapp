@@ -9,7 +9,7 @@ import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
 import eruda from 'eruda'
 import { router } from './routes'
 
-eruda.init()
+// eruda.init()
 WebApp.ready()
 WebApp.expand()
 WebApp.MainButton.enable()
