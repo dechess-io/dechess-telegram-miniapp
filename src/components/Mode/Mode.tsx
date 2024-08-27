@@ -140,7 +140,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
         top: 0,
         left: 0,
         width: '100vw',
-        height: '100vh',
+        height: '90vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -196,7 +196,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
               <Block>
                 <Button
                   onClick={onCreateGame}
-                  className="text-black   h-80 w-[370px]"
+                  className="text-black h-80 w-[370px] active:bg-transparent hover:bg-transparent"
                   disabled={!hasJWT() || !activeButton}
                   style={{
                     backgroundImage: 'url(/images/bg-btn-white.png)',

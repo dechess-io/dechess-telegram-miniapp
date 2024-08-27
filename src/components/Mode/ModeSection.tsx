@@ -27,18 +27,20 @@ const renderButton = (
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          height: '100px',
-          width: '100px',
+          height: '80px',
+          width: '80px',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundImage = 'url(/gray-mode.svg)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundImage =
-            activeButton === buttonId ? 'url(/gray-mode.svg)' : 'url(/normal-mode.svg)'
+            activeButton === buttonId ? 'url(/gold-mode.svg)' : 'url(/normal-mode.svg)'
         }}
       >
-        <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">{label}</span>
+        <span className="text-white w-10 sm:w-14 truncate sm:text-sm text-sm lg:text-sm md:text-sm">
+          {label}
+        </span>
       </Button>
     </div>
   )

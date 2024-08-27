@@ -49,7 +49,7 @@ const GameSpinner: React.FC<object> = () => {
             <img src="/Vector.svg" width="60" height="60" />
             <img
               className="absolute left-1/2 top-1/2 -translate-x-[45%] -translate-y-1/2"
-              src="/Subtract.svg"
+              src="/images/logo.svg"
               width="25"
               height="25"
             />
