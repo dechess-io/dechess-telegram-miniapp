@@ -7,9 +7,10 @@ import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from '../Game/Board'
 import { engine } from '../../../services/worker'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { socket } from '../../../services/socket'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
+
 import {
   resetGame,
   resetMoveSelection,
@@ -49,12 +50,14 @@ import {
   promoteSound,
   selfMoveSound,
 } from '../../../services/move_sounds'
+import Header from '../../../layouts/Header'
 
 const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
   const location = useLocation()
   const gameDispatch = useAppDispatch()
   const queryParams = new URLSearchParams(location.search)
+  const navigate = useNavigate()
 
   const wallet = useTonWallet()
   const [player1] = useState(wallet?.account.address ? wallet.account.address : 'player1')
@@ -313,6 +316,7 @@ const BotGame: React.FC<{}> = () => {
   } else {
     return (
       <>
+        <Header />
         <GameBoard
           player1Timer={timer1.minutes * 60 + timer1.seconds}
           player2Timer={timer2.minutes * 60 + timer2.seconds}

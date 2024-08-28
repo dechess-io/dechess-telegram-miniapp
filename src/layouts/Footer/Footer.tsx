@@ -1,6 +1,9 @@
 import { Icon, Tabbar, TabbarLink } from 'konsta/react'
+import { useNavigate } from 'react-router-dom'
 
 const Footer: React.FC = () => {
+  const navigate = useNavigate()
+
   return (
     <Tabbar labels icons className="left-0 bottom-0 fixed">
       <TabbarLink
@@ -11,6 +14,7 @@ const Footer: React.FC = () => {
             material={<img className="w-[40px] h-[40px]" src="/Pawn.svg" />}
           />
         }
+        onClick={() => navigate('/')}
         label="Home"
       />
       <TabbarLink
