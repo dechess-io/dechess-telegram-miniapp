@@ -7,4 +7,8 @@ export const socket = io('https://api.dechess.io', {
     Authorization: token !== null ? token : '',
   },
   autoConnect: true,
+  reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax : 5000,
+    reconnectionAttempts: 5
 })
