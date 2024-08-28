@@ -135,7 +135,6 @@ const BotGame: React.FC<{}> = () => {
       )
       gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
       gameDispatch(resetMoveSelection())
-      gameOverSound.play()
 
       timer2.restart(
         new Date(

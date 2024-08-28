@@ -55,7 +55,7 @@ const MainPage: React.FC<{}> = ({}) => {
 
         <div className="grid grid-cols-2  w-full max-w-[500px]">
           <div className="text-center cursor-pointer">
-            <img src={arena_svg} alt="DeChess Arena" className="mx-auto max-w-[120px]" />
+            <img src={arena_svg} alt="DeChess Bot" className="mx-auto max-w-[120px]" onClick={() => navigate('/bot')}/>
           </div>
           <div className="text-center cursor-pointer">
             <img src={quest_svg} alt="Treasure Quest" className="mx-auto  max-w-[120px]" />
