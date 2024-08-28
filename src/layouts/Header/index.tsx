@@ -8,7 +8,7 @@ const Header: React.FC = () => {
 
   return (
     <Navbar
-      className="fixed top-0 z-50 w-full mx-auto"
+      className="fixed top-0 z-50 w-full mx-auto bg-transparent"
       left={
         data.pathname === '/mode' ? (
           <button onClick={() => navigate('/')}>
@@ -27,11 +27,6 @@ const Header: React.FC = () => {
             />
           </button>
         )
-      }
-      right={
-        <div className="flex-1 flex justify-end">
-          <ConnectionSettings />
-        </div>
       }
       centerTitle={true}
       title={

@@ -54,6 +54,7 @@ import {
   selfMoveSound,
 } from '../../../services/move_sounds'
 import WebApp from '@twa-dev/sdk'
+import Header from '../../../layouts/Header'
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -494,6 +495,7 @@ const Game: React.FC<object> = () => {
 
   return (
     <>
+      <Header />
       <GameBoard
         player1Timer={timer1.minutes * 60 + timer1.seconds}
         player2Timer={timer2.minutes * 60 + timer2.seconds}
