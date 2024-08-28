@@ -8,73 +8,80 @@ import { usePopups } from '../components/Chess/Popup/PopupProvider'
 import Popup from '../components/Chess/Popup/Popup'
 import Input from '../components/Input/Input'
 import { useNavigate } from 'react-router-dom'
+import { useTonWallet } from '@tonconnect/ui-react'
 
 const Login: React.FC<{}> = ({}) => {
   const dispatch = useAppDispatch()
   const { addPopup, removeAll } = usePopups()
   const navigate = useNavigate()
-
+  const wallet = useTonWallet()
   useEffect(() => {
-    dispatch(
-      getUserInfo({
-        cb: async (data) => {
-          return addPopup({
-            Component: () => {
-              const [referralCode, setReferralCode] = useState('')
-              const [submiting, setSubmiting] = useState(false)
-              const onHandleSubmitEarlyAccessCode = async () => {
-                setSubmiting(true)
-                if (referralCode.length < 6) {
-                  setSubmiting(false)
-                  return
-                }
-                await dispatch(
-                  submitEarlyAccessCode({
-                    code: referralCode,
-                    cb: (data) => {
-                      if (data.status === 200) {
-                        setSubmiting(false)
-                        removeAll()
-                        navigate('/')
-                      } else {
-                        setSubmiting(false)
-                      }
-                    },
-                  })
-                )
-              }
-              const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setReferralCode(e.target.value)
-              }
-              return (
-                <Popup className={`text-white`}>
-                  <div className="flex flex-col space-y-3 justify-center items-center pl-2 text-center">
-                    <h1 className="font-planet pt-2">Get started for free!</h1>
-                    <div>
-                      Enter your referral code to get exclusive in-game items and start playing now!
-                      Limited time offer.
-                    </div>
-                    <Input
-                      className="px-12"
-                      value={referralCode}
-                      onChange={handleInputChange}
-                      placeholder=""
-                      name={'refferal_code'}
-                    />
-                    <div className="p-4">
-                      <ButtonV2 loading={submiting} onClick={onHandleSubmitEarlyAccessCode}>
-                        Enter
-                      </ButtonV2>
-                    </div>
-                  </div>
-                </Popup>
-              )
-            },
-          })
-        },
-      })
-    )
-  }, [])
+    if (wallet !== null) {
+      dispatch(
+        getUserInfo({
+          cb: async (data) => {
+            if (data.isEarly === false) {
+              return addPopup({
+                Component: () => {
+                  const [referralCode, setReferralCode] = useState('')
+                  const [submiting, setSubmiting] = useState(false)
+                  const onHandleSubmitEarlyAccessCode = async () => {
+                    setSubmiting(true)
+                    if (referralCode.length < 6) {
+                      setSubmiting(false)
+                      return
+                    }
+                    await dispatch(
+                      submitEarlyAccessCode({
+                        code: referralCode,
+                        cb: (data) => {
+                          if (data.status === 200) {
+                            setSubmiting(false)
+                            removeAll()
+                            navigate('/')
+                          } else {
+                            setSubmiting(false)
+                          }
+                        },
+                      })
+                    )
+                  }
+                  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    setReferralCode(e.target.value)
+                  }
+                  return (
+                    <Popup className={`text-white`}>
+                      <div className="flex flex-col space-y-3 justify-center items-center pl-2 text-center">
+                        <h1 className="font-planet pt-2">Get started for free!</h1>
+                        <div>
+                          Enter your referral code to get exclusive in-game items and start playing
+                          now! Limited time offer.
+                        </div>
+                        <Input
+                          className="px-12"
+                          value={referralCode}
+                          onChange={handleInputChange}
+                          placeholder=""
+                          name={'refferal_code'}
+                        />
+                        <div className="p-4">
+                          <ButtonV2 loading={submiting} onClick={onHandleSubmitEarlyAccessCode}>
+                            Enter
+                          </ButtonV2>
+                        </div>
+                      </div>
+                    </Popup>
+                  )
+                },
+              })
+            } else {
+              navigate('/')
+            }
+          },
+        })
+      )
+    }
+  }, [wallet])
 
   return (
     <div

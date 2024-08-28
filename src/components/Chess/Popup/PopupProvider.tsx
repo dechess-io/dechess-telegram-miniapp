@@ -55,13 +55,13 @@ const PopupProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
       {popups.length > 0 && (
         <div
           className="fixed z-40 inset-0 overflow-y-auto"
-          onClick={(e) => {
-            if (e.target !== popupBackgroundService.current) {
-              return
-            }
-            if (popups[popups.length - 1].closeWhenClickOutside === false) return
-            removePopup(popups[popups.length - 1].key)
-          }}
+          // onClick={(e) => {
+          //   if (e.target !== popupBackgroundService.current) {
+          //     return
+          //   }
+          //   if (popups[popups.length - 1].closeWhenClickOutside === false) return
+          //   removePopup(popups[popups.length - 1].key)
+          // }}
         >
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity" aria-hidden="true">
