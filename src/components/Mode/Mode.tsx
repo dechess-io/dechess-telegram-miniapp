@@ -84,6 +84,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   }, [totalSeconds])
 
   const handleCancel = () => {
+    console.log('log')
     socket.emit('cancelCreateGame', (response: any) => {
       if (response.status === 200) {
         setLoading(false)
@@ -155,13 +156,14 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
             {loading && (
               <>
-                <GameSpinner />
-                <div className="fixed inset-0 flex flex-col items-center justify-center bg-opacity-50 z-50 rounded-lg">
+                <div className="fixed inset-0 flex flex-col items-center justify-center z-50 bg-opacity-70 bg-black-1a">
+                  <GameSpinner />
+
                   <Block>
                     <div className="time-counter pb-[10px]">{formatTime(totalSeconds)}</div>
 
                     <Button
-                      className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg bg-grey-300 border-b-4 border-grey-200"
+                      className="cancel-button flex items-center justify-center text-center font-bold py-2 px-6 rounded-lg bg-grey-300 border-b-4 border-grey-200 relative z-[99]"
                       onClick={handleCancel}
                     >
                       Cancel
