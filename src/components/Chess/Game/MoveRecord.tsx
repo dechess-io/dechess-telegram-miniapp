@@ -17,20 +17,22 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
   }, [moves])
 
   return (
-    <div
-      ref={moveListRef}
-      className={cn(
-        'flex items-center text-xs gap-4 text-white overflow-x-auto whitespace-nowrap bg-opacity-80 pl-2 pr-6 scrollbar-hide min-h-[16px]',
-        {
-          'bg-blue-gradient-1': moves.length > 0,
-          'bg-transparent': moves.length === 0,
-        }
-      )}
-    >
-      {moves.map((move, index) => {
-        if (index >= moveIndex) return
-        return <p key={index}>{`${index % 2 === 0 ? index / 2 + 1 + '. ' : ''}${move}`}</p>
-      })}
+    <div className="relative rounded overflow-hidden min-h-[16px]">
+      <div
+        ref={moveListRef}
+        className={cn(
+          'flex items-center text-xs gap-4 text-white overflow-x-auto whitespace-nowrap bg-opacity-80 pl-2 pr-4 scrollbar-hide absolute inset-0',
+          {
+            'bg-blue-gradient-1': moves.length > 0,
+            'bg-transparent': moves.length === 0,
+          }
+        )}
+      >
+        {moves.map((move, index) => {
+          if (index >= moveIndex) return
+          return <p key={index}>{`${index % 2 === 0 ? index / 2 + 1 + '. ' : ''}${move}`}</p>
+        })}
+      </div>
     </div>
   )
 }

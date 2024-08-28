@@ -96,7 +96,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
         <div className="flex flex-col pt-10 lg:pt-6 justify-start bg-[#041d21] h-screen">
           <div className="flex justify-center items-center">
             <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-1 overflow-hidden">
                 {showProgressBar && (
                   <ProgressBar
                     completed={progressBar}
