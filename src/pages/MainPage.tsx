@@ -63,7 +63,9 @@ const MainPage: React.FC<{}> = ({}) => {
 
       {/* Play Now Button */}
       <div className="mt-8 w-full text-center">
-        <ButtonV2 className="mx-auto" onClick={() => navigate("/mode")}>Play Now</ButtonV2>
+        <ButtonV2 className="mx-auto" onClick={() => navigate('/mode')}>
+          Play Now
+        </ButtonV2>
       </div>
       <FooterV2 activeIndex={0} />
     </div>
