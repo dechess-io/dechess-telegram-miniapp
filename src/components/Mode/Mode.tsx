@@ -173,7 +173,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
             <div>
               <ModeSection
                 imgSrc="/bullet.svg"
-                title="Bullet"
+                title="Bullet (Soon)"
                 buttons={buttonsData.bullet}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
@@ -189,7 +189,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
               />
               <ModeSection
                 imgSrc="/QuickLock.svg"
-                title="Rapid"
+                title="Rapid (Soon)"
                 buttons={buttonsData.rapid}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}

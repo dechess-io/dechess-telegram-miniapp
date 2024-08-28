@@ -41,7 +41,7 @@ const renderButton = (
             activeButton === buttonId ? 'url(/gold-mode.svg)' : 'url(/normal-mode.svg)'
         }}
       >
-        <span className="text-white w-10 sm:w-14 truncate sm:text-sm text-sm lg:text-sm md:text-sm">
+        <span className="text-white w-full sm:w-auto sm:text-sm text-sm lg:text-sm md:text-sm lowercase">
           {label}
         </span>
       </Button>
@@ -55,7 +55,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
   buttons,
   activeButton,
   handleButtonClick,
-  isActive
+  isActive,
 }) => {
   return (
     <div className="pt-2">
