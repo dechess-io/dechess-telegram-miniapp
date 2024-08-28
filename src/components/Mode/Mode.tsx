@@ -7,6 +7,7 @@ import ModeSection from './ModeSection'
 import { Block, Button } from 'konsta/react'
 import { useAppDispatch } from '../../redux/store'
 import { resetGame } from '../../redux/game/action'
+import LOGO_DECHESS from '../../../public/images/logo-dechess.svg'
 
 const buttonsData = {
   bullet: [
@@ -134,23 +135,12 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   }
 
   return (
-    <Block
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '90vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#041d21',
-        backgroundImage: 'url(/mode-bg.svg)',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
+    <div
+      className="h-screen bg-cover bg-center flex flex-col items-center justify-between"
+      style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
-      <div className="flex flex-col pt-10 ">
+      <img className="max-w-[120px] max-h-[40px]" src={LOGO_DECHESS} alt="DeChess Logo" />
+      <div className="flex flex-col">
         <div className="border-none rounded-xlmin-h-screen">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
             {loading && (
@@ -215,7 +205,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
           </div>
         </div>
       </div>
-    </Block>
+    </div>
   )
 }
 
