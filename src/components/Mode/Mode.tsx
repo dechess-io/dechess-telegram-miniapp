@@ -140,7 +140,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
         top: 0,
         left: 0,
         width: '100vw',
-        height: '100vh',
+        height: '90vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -173,10 +173,11 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
             <div>
               <ModeSection
                 imgSrc="/bullet.svg"
-                title="Bullet"
+                title="Bullet (Soon)"
                 buttons={buttonsData.bullet}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
+                isActive={false}
               />
               <ModeSection
                 imgSrc="/Thunder.svg"
@@ -184,19 +185,21 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 buttons={buttonsData.blitz}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
+                isActive={true}
               />
               <ModeSection
                 imgSrc="/QuickLock.svg"
-                title="Rapid"
+                title="Rapid (Soon)"
                 buttons={buttonsData.rapid}
                 handleButtonClick={handleButtonClick}
                 activeButton={activeButton}
+                isActive={false}
               />
 
               <Block>
                 <Button
                   onClick={onCreateGame}
-                  className="text-black   h-80 w-[370px]"
+                  className="text-black h-80 w-[370px] active:bg-transparent hover:bg-transparent"
                   disabled={!hasJWT() || !activeButton}
                   style={{
                     backgroundImage: 'url(/images/bg-btn-white.png)',

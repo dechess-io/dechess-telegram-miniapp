@@ -6,6 +6,7 @@ type ModeSectionProps = {
   buttons: any
   activeButton: string | null
   handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
+  isActive: boolean
 }
 
 const renderButton = (
@@ -14,12 +15,14 @@ const renderButton = (
   timeStep: number,
   additionTime: number,
   activeButton: string | null,
-  handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void
+  handleButtonClick: (buttonId: string, timeStep: number, additionTime: number) => void,
+  isActive: boolean
 ) => {
   return (
     <div className="flex-auto p-1 " key={buttonId}>
       <Button
         className="focus:outline-none active:outline-none active:bg-transparent hover:bg-transparent"
+        disabled={!isActive}
         onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
         style={{
           backgroundImage:
@@ -27,18 +30,20 @@ const renderButton = (
           backgroundSize: 'contain',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          height: '100px',
-          width: '100px',
+          height: '80px',
+          width: '80px',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundImage = 'url(/gray-mode.svg)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundImage =
-            activeButton === buttonId ? 'url(/gray-mode.svg)' : 'url(/normal-mode.svg)'
+            activeButton === buttonId ? 'url(/gold-mode.svg)' : 'url(/normal-mode.svg)'
         }}
       >
-        <span className="text-white w-10 sm:w-14 truncate sm:text-base text-sm">{label}</span>
+        <span className="text-white w-full sm:w-auto sm:text-sm text-sm lg:text-sm md:text-sm lowercase">
+          {label}
+        </span>
       </Button>
     </div>
   )
@@ -50,6 +55,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
   buttons,
   activeButton,
   handleButtonClick,
+  isActive,
 }) => {
   return (
     <div className="pt-2">
@@ -65,7 +71,8 @@ const ModeSection: React.FC<ModeSectionProps> = ({
             button.time,
             button.increment,
             activeButton,
-            handleButtonClick
+            handleButtonClick,
+            isActive
           )
         )}
       </div>

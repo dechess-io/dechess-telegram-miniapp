@@ -7,8 +7,8 @@ const Footer: React.FC = () => {
         active
         icon={
           <Icon
-            ios={<img className="w-[40px] h-[40px]" src="/Pawn.png" />}
-            material={<img className="w-[40px] h-[40px]" src="/Pawn.png" />}
+            ios={<img className="w-[40px] h-[40px]" src="/Pawn.svg" />}
+            material={<img className="w-[40px] h-[40px]" src="/Pawn.svg" />}
           />
         }
         label="Home"
@@ -25,8 +25,8 @@ const Footer: React.FC = () => {
       <TabbarLink
         icon={
           <Icon
-            ios={<img className="w-[40px] h-[40px]" src="/Wallet.png" />}
-            material={<img className="w-[40px] h-[40px]" src="/Wallet.png" />}
+            ios={<img className="w-[40px] h-[40px]" src="/Wallet.svg" />}
+            material={<img className="w-[40px] h-[40px]" src="/Wallet.svg" />}
           />
         }
         label="Wallet"

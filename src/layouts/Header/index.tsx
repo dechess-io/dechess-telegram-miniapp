@@ -8,7 +8,7 @@ const Header: React.FC = () => {
 
   return (
     <Navbar
-      className="bg-[#041d21] fixed top-0 z-50 w-full mx-auto"
+      className="fixed top-0 z-50 w-full mx-auto"
       left={
         data.pathname === '/mode' ? (
           <button onClick={() => navigate('/')}>

@@ -10,7 +10,7 @@ import eruda from 'eruda'
 import { router } from './routes'
 import PopupProvider from './components/Chess/Popup/PopupProvider'
 
-eruda.init()
+// eruda.init()
 WebApp.ready()
 WebApp.expand()
 WebApp.MainButton.enable()
