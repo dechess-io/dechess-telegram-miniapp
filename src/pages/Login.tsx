@@ -20,31 +20,32 @@ const Login: React.FC<{}> = ({}) => {
       dispatch(
         getUserInfo({
           cb: async (data) => {
-            if (data.isEarly === false) {
+            if (true) {
               return addPopup({
                 Component: () => {
                   const [referralCode, setReferralCode] = useState('')
                   const [submiting, setSubmiting] = useState(false)
                   const onHandleSubmitEarlyAccessCode = async () => {
-                    setSubmiting(true)
-                    if (referralCode.length < 6) {
-                      setSubmiting(false)
-                      return
-                    }
-                    await dispatch(
-                      submitEarlyAccessCode({
-                        code: referralCode,
-                        cb: (data) => {
-                          if (data.status === 200) {
-                            setSubmiting(false)
-                            removeAll()
-                            navigate('/')
-                          } else {
-                            setSubmiting(false)
-                          }
-                        },
-                      })
-                    )
+                    setSubmiting(false)
+                    // if (referralCode.length < 6) {
+                    //   setSubmiting(false)
+                    //   return
+                    // }
+                    // await dispatch(
+                    //   submitEarlyAccessCode({
+                    //     code: referralCode,
+                    //     cb: (data) => {
+                    //       if (data.status === 200) {
+                    //         setSubmiting(false)
+                    //         removeAll()
+                    //         navigate('/')
+                    //       } else {
+                    //         setSubmiting(false)
+                    //       }
+                    //     },
+                    //   })
+                    // )
+                    navigate('/')
                   }
                   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     setReferralCode(e.target.value)
