@@ -9,6 +9,7 @@ import GameModeButton from './components/Button/GameModeButton.tsx'
 import ReactDialog from './components/Dialog/ReactDialog.tsx'
 import { Block } from 'konsta/react'
 import Button from './components/Button/Button.tsx'
+import MainMenu from './pages/Login.tsx'
 
 function App() {
   const navigate = useNavigate()
@@ -79,46 +80,7 @@ function App() {
         onOk={handleRejoin}
         onCancel={handleCancel}
       />
-      <Block
-        className="bg-[#041d21] flex flex-col pb-[20px]"
-        style={{ paddingRight: '0', paddingLeft: '0' }}
-      >
-        <div className="border-none rounded-xl">
-          <div className="w-full flex flex-col items-center justify-center text-center text-white">
-            <Block>
-              <div className="flex flex-row bg-[linear-gradient(180deg,_#303030_0%,_#000000_100%)] rounded-lg ">
-                <div className="flex-auto ">
-                  <Progress losses={3} totalGames={10} wins={7} />
-                </div>
-                <div className="flex-auto rounded-lg">
-                  <div>
-                    <div>
-                      <h3 className="text-[16px] pb-4">Elo Rating</h3>
-                    </div>
-                    <div className="flex flex-col justify-between">
-                      <GameModeButton title="Rabbit" imageSrc="/QuickLock.svg" rating={500} />
-                      <GameModeButton title="Bullet" imageSrc="/bullet.svg" rating={500} />
-                      <GameModeButton title="Blitz" imageSrc="/Thunder.svg" rating={500} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Block>
-            <Block>
-              <div className="grid grid-cols-2 gap-2 pb-2" style={{ background: 'transparent' }}>
-                {actionButtonsConfig.map(createActionButton)}
-              </div>
-              <Button
-                onClick={handlePlayClick}
-                className="bg-[linear-gradient(90.15deg,_#67E4FF_0.07%,_#009ED0_98.38%)] text-black font-bold rounded-[16px] border-b-4 border-blue-200 "
-                disabled={!hasJWT()}
-              >
-                <span className="text-sm md:text-base lg:text-lg">Play</span>
-              </Button>
-            </Block>
-          </div>
-        </div>
-      </Block>
+      <MainMenu />
     </>
   )
 }

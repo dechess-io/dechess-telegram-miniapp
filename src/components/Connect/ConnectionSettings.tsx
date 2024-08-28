@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react'
+import {
+  THEME,
+  TonConnect,
+  TonConnectButton,
+  useTonConnectUI,
+  useTonWallet,
+} from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../../services/ton'
 import useInterval from '../../hooks/useInterval'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export const resolverError = (key: string, type: string, message: string) => {
   return { [key]: { type, message } }
@@ -11,9 +17,11 @@ export const resolverError = (key: string, type: string, message: string) => {
 export function ConnectionSettings() {
   const location = useLocation()
   const firstProofLoading = useRef<boolean>(true)
+  const navigate = useNavigate()
 
   const [authorized, setAuthorized] = useState(false)
   const [tonConnectUI] = useTonConnectUI()
+
   const recreateProofPayload = useCallback(async () => {
     if (firstProofLoading.current) {
       tonConnectUI.setConnectRequestParameters({ state: 'loading' })
@@ -40,6 +48,10 @@ export function ConnectionSettings() {
       tonConnectUI.onStatusChange(async (w) => {
         if (!w) return
 
+        if (!localStorage.getItem('token') || localStorage.getItem('token')?.length === 0) {
+          tonConnectUI.setConnectRequestParameters(null)
+        }
+
         if (w.connectItems?.tonProof) {
           await TonProofDemoApi.checkProof((w.connectItems.tonProof as any).proof, w.account)
         }
@@ -52,7 +64,7 @@ export function ConnectionSettings() {
 
         setAuthorized(true)
         if (location.pathname === '/login') {
-          window.location.href = '/'
+          navigate('/')
         }
       }),
     [tonConnectUI]
@@ -60,10 +72,15 @@ export function ConnectionSettings() {
 
   if (authorized) {
     return (
-      <div className="text-white">
+      <div id="ton-connect-button-1">
         <TonConnectButton />
       </div>
     )
   }
-  return <TonConnectButton />
+
+  return (
+    <div id="ton-connect-button-1">
+      <TonConnectButton />
+    </div>
+  )
 }

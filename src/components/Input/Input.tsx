@@ -45,39 +45,42 @@ const Input: React.ForwardRefExoticComponent<
     ref
   ) => {
     return (
-      <input
-        className={cn(
-          `transca--input block w-full px-4 py-3`,
-          `color-light`,
-          `color-light-input`,
-          `color-light-placeholder`,
-          `color-light-border border`,
-          `focus:outline-none`,
-          'disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none',
-          {
-            '': !isError,
-            [`color-light-input-error`]: isError,
-          },
-          {
-            'bg-gray-100': readOnly,
-          },
-          className
-        )}
-        type={type}
-        placeholder={placeholder}
-        autoComplete={autoComplete || undefined}
-        defaultValue={defaultValue}
-        readOnly={readOnly}
-        required={required}
-        ref={ref}
-        step={step}
-        onChange={(e) => {
-          if (onChange) onChange(e)
-          if (ourOnChange) ourOnChange(e)
-        }}
-        {...props}
-        lang="en"
-      />
+      <div className="flex bg-[#5C4033] p-1 border border-none rounded-md">
+        <img src="/input-prefix.svg" alt="" />
+        <input
+          className={cn(
+            `block w-full px-4 py-3 bg-[#5C4033] placeholder-red-50`,
+            // `color-light`,
+            // `color-light-input`,
+            // `color-light-placeholder`,
+            // `color-light-border border`,
+            `focus:outline-none`,
+            'disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none',
+            {
+              '': !isError,
+              [`color-light-input-error`]: isError,
+            },
+            {
+              'bg-gray-100': readOnly,
+            },
+            className
+          )}
+          type={type}
+          placeholder={placeholder}
+          autoComplete={autoComplete || undefined}
+          defaultValue={defaultValue}
+          readOnly={readOnly}
+          required={required}
+          ref={ref}
+          step={step}
+          onChange={(e) => {
+            if (onChange) onChange(e)
+            if (ourOnChange) ourOnChange(e)
+          }}
+          {...props}
+          lang="en"
+        />
+      </div>
     )
   }
 )

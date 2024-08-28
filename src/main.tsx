@@ -8,6 +8,7 @@ import { store } from './redux/store'
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
 import eruda from 'eruda'
 import { router } from './routes'
+import PopupProvider from './components/Chess/Popup/PopupProvider'
 
 eruda.init()
 WebApp.ready()
@@ -65,7 +66,9 @@ root.render(
           twaReturnUrl: 'https://t.me/dechess_bot',
         }}
       >
-        <RouterProvider router={router}></RouterProvider>
+        <PopupProvider>
+          <RouterProvider router={router}></RouterProvider>
+        </PopupProvider>
       </TonConnectUIProvider>
     </Provider>
   </React.StrictMode>

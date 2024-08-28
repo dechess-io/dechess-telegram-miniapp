@@ -178,3 +178,45 @@ body {
   width: 100% !important;
   height: 100%;
 }
+
+#ton-connect-button-1 tc-root,
+#ton-connect-button-1 tc-root div,
+#ton-connect-button-1 tc-root button {
+  background-color: transparent !important;  /* Ensure background is transparent */
+  padding: 0 !important;
+  margin: 0 !important;
+  min-width: 354px !important;  /* Ensure the button container maintains the correct width */
+  max-width: 354px !important;
+  box-shadow: none !important;
+  color: black !important;  /* Text color */
+  font-weight: 700 !important;  /* Increase font weight */
+  font-size: 24px !important;  /* Adjust the font size */
+  text-transform: lowercase !important;
+  font-family: "Planet Gamers" !important;  /* Ensure the custom font is applied */
+  border: none !important;  /* Remove border */
+  display: flex;
+  align-items: center !important;
+  justify-content: center;
+  height: 61px;
+
+}
+
+#ton-connect-button-1 tc-root button {
+  background-image: url('/images/bg-btn-white.png') !important;  /* Use your custom background */
+  /* background-size: contain !important;  Ensure the entire background image is shown */
+  background-position: center center !important;  /* Center the image horizontally and vertically */
+  border-radius: 0 !important;  /* Remove border radius */
+  box-shadow: none !important;
+  background-color: transparent !important;
+  padding: 24px !important;  /* Adjust padding to provide spacing around the text */
+  text-align: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px !important;  /* Adjust the font size */
+
+}
+
+#ton-connect-button-1 tc-root svg {
+  display: none !important;  /* Hide the SVG icon */
+}
