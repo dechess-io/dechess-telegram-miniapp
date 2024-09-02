@@ -15,71 +15,71 @@ function App() {
   const navigate = useNavigate()
   const [showPopup, setShowPopup] = useState(false)
   const [data, setData] = useState<any>()
-  const handlePlayClick = () => {
-    navigate('/mode')
-  }
+  // const handlePlayClick = () => {
+  //   navigate('/mode')
+  // }
 
-  useEffect(() => {
-    socket.emit('reconnect')
-  }, [])
+  // useEffect(() => {
+  //   socket.emit('reconnect')
+  // }, [])
 
-  useEffect(() => {
-    socket.on('rejoinGame', (data) => {
-      if (data.status === 200 && data.game_id) {
-        setData(data)
-        setTimeout(() => {
-          setShowPopup(true)
-        }, 1500)
-      }
-    })
-  }, [])
+  // useEffect(() => {
+  //   socket.on('rejoinGame', (data) => {
+  //     if (data.status === 200 && data.game_id) {
+  //       setData(data)
+  //       setTimeout(() => {
+  //         setShowPopup(true)
+  //       }, 1500)
+  //     }
+  //   })
+  // }, [])
 
-  const handleRejoin = () => {
-    socket.emit('joinGame', { game_id: data.game_id })
-    navigate('/game/' + data.game_id)
-    setShowPopup(false)
-  }
+  // const handleRejoin = () => {
+  //   socket.emit('joinGame', { game_id: data.game_id })
+  //   navigate('/game/' + data.game_id)
+  //   setShowPopup(false)
+  // }
 
-  const handleCancel = () => {
-    setShowPopup(false)
-    socket.emit('resign', {
-      game_id: data.game_id,
-      isGameOver: true,
-      isGameDraw: false,
-      winner: data.opponent,
-      loser: data.user,
-    })
-  }
+  // const handleCancel = () => {
+  //   setShowPopup(false)
+  //   socket.emit('resign', {
+  //     game_id: data.game_id,
+  //     isGameOver: true,
+  //     isGameDraw: false,
+  //     winner: data.opponent,
+  //     loser: data.user,
+  //   })
+  // }
 
-  const actionButtonsConfig = useMemo(
-    () => [
-      { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
-      { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
-      { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
-      { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/' },
-    ],
-    []
-  )
+  // const actionButtonsConfig = useMemo(
+  //   () => [
+  //     { label: 'Leaderboard', iconSrc: '/Rank.svg', navigateTo: '/' },
+  //     { label: 'Quest', iconSrc: '/layer.svg', navigateTo: '/' },
+  //     { label: 'Play Versus Bot', iconSrc: '/ChessBoard.svg', navigateTo: '/bot' },
+  //     { label: 'Puzzles', iconSrc: '/Piece.svg', navigateTo: '/' },
+  //   ],
+  //   []
+  // )
 
-  const createActionButton = (config: any) => (
-    <ActionButton
-      key={config.label}
-      label={config.label}
-      iconSrc={config.iconSrc}
-      onClick={() => navigate(config.navigateTo)}
-    />
-  )
+  // const createActionButton = (config: any) => (
+  //   <ActionButton
+  //     key={config.label}
+  //     label={config.label}
+  //     iconSrc={config.iconSrc}
+  //     onClick={() => navigate(config.navigateTo)}
+  //   />
+  // )
 
   return (
     <>
-      <ReactDialog
+      {/* <ReactDialog
         open={showPopup}
         onHide={() => setShowPopup(false)}
         title=""
         content="You have an unfinished game. Do you want to rejoin?"
         onOk={handleRejoin}
         onCancel={handleCancel}
-      />
+      /> */}
       <MainMenu />
     </>
   )
