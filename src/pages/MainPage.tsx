@@ -33,49 +33,56 @@ const MainPage: React.FC<{}> = ({}) => {
 
   return (
     <div
-      className="h-screen bg-cover bg-center flex flex-col items-center justify-between"
+      className="h-screen bg-cover bg-center flex flex-col items-center justify-between bg-contain"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       {/* Top Header */}
-      <img
-        className="max-w-[120px] max-h-[40px] my-4 md:my-8"
-        src={LOGO_DECHESS}
-        alt="DeChess Logo"
-      />
+      <img className="max-w-[120px] max-h-[40px]" src={LOGO_DECHESS} alt="DeChess Logo" />
 
-      {/* Main Content */}
-      <div className="flex flex-col items-center flex-1 justify-center w-full px-4">
+      <div className="flex flex-col items-center flex-1 justify-center w-full">
         <div className="text-center text-white">
           <img
-            className="w-full max-w-[300px] sm:max-w-[250px] md:max-w-[200px]"
+            className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[300px]"
             src={CHESS_MASTER}
             alt="CHESS_MASTER"
           />
         </div>
 
-        <div className="grid grid-cols-2  w-full max-w-[500px]">
+        <div className="grid grid-cols-2 w-full max-w-[500px] p-1 md:p-4 lg:p-4">
           <div className="text-center cursor-pointer">
             <img
               src={arena_svg}
               alt="DeChess Bot"
-              className="mx-auto max-w-[120px]"
+              className="mx-auto max-w-[120px] md:max-w-[150px]"
               onClick={() => navigate('/bot')}
             />
           </div>
           <div className="text-center cursor-pointer">
-            <img src={quest_svg} alt="Treasure Quest" className="mx-auto  max-w-[120px]" />
+            <img
+              src={quest_svg}
+              alt="Treasure Quest"
+              className="mx-auto max-w-[120px] md:max-w-[150px]"
+            />
           </div>
           <div className="text-center cursor-pointer">
-            <img src={tournament_svg} alt="Tournament" className="mx-auto  max-w-[120px]" />
+            <img
+              src={tournament_svg}
+              alt="Tournament"
+              className="mx-auto max-w-[120px] md:max-w-[150px]"
+            />
           </div>
           <div className="text-center cursor-pointer">
-            <img src={academy_svg} alt="DeChess Academy" className="mx-auto  max-w-[120px]" />
+            <img
+              src={academy_svg}
+              alt="DeChess Academy"
+              className="mx-auto max-w-[120px] md:max-w-[150px]"
+            />
           </div>
         </div>
       </div>
 
       {/* Play Now Button */}
-      <div className="w-full text-center text-black h-80 w-[370px] active:bg-transparent hover:bg-transparent">
+      <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
         <ButtonV2 className="mx-auto" onClick={() => navigate('/mode')}>
           Play Now
         </ButtonV2>

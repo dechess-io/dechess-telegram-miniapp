@@ -37,8 +37,8 @@ const ButtonV2: React.FC<
     >
       <img
         src={kind === 'primary' ? bgButtonWhite : bgButtonGray}
-        width={354}
-        height={57}
+        width={300}
+        height={40}
         alt="dechess-btn-background"
       />
       <span

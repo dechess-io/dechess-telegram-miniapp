@@ -296,7 +296,7 @@ const Game: React.FC<object> = () => {
       .then(async (res) => {
         if (res.status === 200) {
           const data = res.data.game
-          gameStartSound.play()
+          // gameStartSound.play()
           gameDispatch(loadGame(data))
           setStartTime(Date.now())
           timer1.restart(new Date(Date.now() + data.playerTimer1 * 1000), true)
@@ -469,9 +469,6 @@ const Game: React.FC<object> = () => {
       selfMoveSound.play()
     }
 
-    gameDispatch(setGameHistory([...gameState.history, gameCopy.fen()]))
-    gameDispatch(setMoves([...gameState.moves, foundMove.san]))
-    gameDispatch(setCurrentMoveIndex(gameState.moveIndex + 1))
     emitNewMove(
       sourceSquare,
       targetSquare,

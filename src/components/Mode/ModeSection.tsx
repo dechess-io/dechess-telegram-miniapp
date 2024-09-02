@@ -59,7 +59,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
 }) => {
   return (
     <div className="pt-2">
-      <div className="flex flex-row items-center pl-4">
+      <div className="flex flex-row items-center pl-2">
         <img src={imgSrc} alt={title} className="h-24 w-24" />
         <span className="text-white pl-2">{title}</span>
       </div>

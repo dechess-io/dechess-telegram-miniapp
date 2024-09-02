@@ -123,12 +123,12 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
                       // borderRadius: '8px',
                       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                     }}
-                    customLightSquareStyle={{
-                      backgroundColor: '#E8EDF9',
-                    }}
-                    customDarkSquareStyle={{
-                      backgroundColor: '#B7C0D8',
-                    }}
+                    // customLightSquareStyle={{
+                    //   backgroundColor: '#E8EDF9',
+                    // }}
+                    // customDarkSquareStyle={{
+                    //   backgroundColor: '#B7C0D8',
+                    // }}
                     customDropSquareStyle={{}}
                     customSquareStyles={{
                       ...moveSquares,
