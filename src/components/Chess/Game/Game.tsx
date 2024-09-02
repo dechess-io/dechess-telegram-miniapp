@@ -54,6 +54,9 @@ import {
   selfMoveSound,
 } from '../../../services/move_sounds'
 import WebApp from '@twa-dev/sdk'
+import { retrieveLaunchParams } from '@telegram-apps/sdk';
+
+const { initDataRaw } = retrieveLaunchParams();
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -70,6 +73,8 @@ const Game: React.FC<object> = () => {
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
+
+  console.log(initDataRaw);
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
