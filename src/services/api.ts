@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const restApi = axios.create({
-  baseURL: 'http://api.dechess.io',
+  baseURL: 'https://api.dechess.io',
 })
 
 // export const restApi = axios.create({
