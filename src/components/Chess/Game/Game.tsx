@@ -56,7 +56,7 @@ import {
 import WebApp from '@twa-dev/sdk'
 import { retrieveLaunchParams } from '@telegram-apps/sdk'
 import { isTMA } from '@telegram-apps/sdk'
-
+let data: any = {}
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
@@ -73,20 +73,20 @@ const Game: React.FC<object> = () => {
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
 
-  let data: any = {}
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const isTma = await isTMA()
-      if (isTma) {
-        try {
-          data = retrieveLaunchParams()
-        } catch (error) {
-          console.error('Failed to retrieve Telegram launch parameters:', error)
-        }
+  const fetchData = async () => {
+    const isTma = await isTMA()
+    console.log('isTma', isTma)
+    if (isTma) {
+      try {
+        console.log('data', data)
+        data = retrieveLaunchParams()
+      } catch (error) {
+        console.error('Failed to retrieve Telegram launch parameters:', error)
       }
     }
+  }
 
+  useEffect(() => {
     fetchData()
   }, [])
 
@@ -144,6 +144,8 @@ const Game: React.FC<object> = () => {
     if (gameState.isGameOver) {
       timer1.pause()
       timer2.pause()
+      fetchData()
+      console.log(data)
       const chat_id = data?.initData?.user?.id
       console.log('chat_id', chat_id)
       if (chat_id) {
