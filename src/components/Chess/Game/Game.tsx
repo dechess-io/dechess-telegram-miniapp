@@ -57,7 +57,7 @@ import WebApp from '@twa-dev/sdk'
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
 import { isTMA } from '@telegram-apps/sdk'
 
-let data = {};
+let data: any = {};
 const isTma = await isTMA()
 if (isTma) {
     try {
@@ -82,8 +82,6 @@ const Game: React.FC<object> = () => {
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
-
-  console.log(data)
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
@@ -139,10 +137,13 @@ const Game: React.FC<object> = () => {
     if (gameState.isGameOver) {
       timer1.pause()
       timer2.pause()
-      socket.emit('chatId', {
-        chatId: chatId,
-        gameId: location.pathname.split('/')[2],
-      })
+      const chat_id = data?.initData?.user?.id
+      if(chat_id){
+        socket.emit('chatId', {
+          chatId: chatId,
+          gameId: location.pathname.split('/')[2],
+        })
+      }
     }
   }, [gameState.isGameOver])
 
