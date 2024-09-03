@@ -8,9 +8,9 @@ export const socket = io('https://api.dechess.io', {
   },
   autoConnect: true,
   reconnection: true,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax : 5000,
-    reconnectionAttempts: 5
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  reconnectionAttempts: 5,
 })
 
 // export const socket = io('http://localhost:3001', {
@@ -24,9 +24,8 @@ export const socket = io('https://api.dechess.io', {
 //   reconnectionAttempts: 5,
 // })
 
-
 socket.on('connect_error', (error) => {
-  console.error('Connection Error:', error.message);
+  console.error('Connection Error:', error.message)
   // Optionally, disable automatic reconnection if the issue is persistent
-  socket.io.opts.reconnection = false;
-});
+  socket.io.opts.reconnection = false
+})

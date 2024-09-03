@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { Square } from 'chess.js'
-import { useLocation } from 'react-router-dom'
-import { isTma, restApi } from '../../../services/api'
+import { useFetcher, useLocation } from 'react-router-dom'
+import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import {
@@ -54,10 +54,8 @@ import {
   selfMoveSound,
 } from '../../../services/move_sounds'
 import WebApp from '@twa-dev/sdk'
-import { retrieveLaunchParams } from '@telegram-apps/sdk';
+import { retrieveLaunchParams } from '@telegram-apps/sdk'
 import { isTMA } from '@telegram-apps/sdk'
-
-
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -75,16 +73,22 @@ const Game: React.FC<object> = () => {
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
 
-  let data: any = {};
+  let data: any = {}
 
-
-  if (isTma) {
-      try {
-          data = retrieveLaunchParams();
-      } catch (error) {
-          console.error("Failed to retrieve Telegram launch parameters:", error);
+  useEffect(() => {
+    const fetchData = async () => {
+      const isTma = await isTMA()
+      if (isTma) {
+        try {
+          data = retrieveLaunchParams()
+        } catch (error) {
+          console.error('Failed to retrieve Telegram launch parameters:', error)
+        }
       }
-  }
+    }
+
+    fetchData()
+  }, [])
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
@@ -141,8 +145,8 @@ const Game: React.FC<object> = () => {
       timer1.pause()
       timer2.pause()
       const chat_id = data?.initData?.user?.id
-      console.log("chat_id", chat_id)
-      if(chat_id){
+      console.log('chat_id', chat_id)
+      if (chat_id) {
         socket.emit('chatId', {
           chatId: chat_id,
           gameId: location.pathname.split('/')[2],

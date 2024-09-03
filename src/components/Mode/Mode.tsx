@@ -136,7 +136,6 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
   }
 
   return (
-
     <div
       className="h-screen bg-cover bg-center bg-contain flex flex-col"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
@@ -201,7 +200,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   )
 }
 
