@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { Square } from 'chess.js'
 import { useLocation } from 'react-router-dom'
-import { restApi } from '../../../services/api'
+import { isTma, restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
 import {
@@ -57,15 +57,7 @@ import WebApp from '@twa-dev/sdk'
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
 import { isTMA } from '@telegram-apps/sdk'
 
-let data: any = {};
-const isTma = await isTMA()
-if (isTma) {
-    try {
-        data = retrieveLaunchParams();
-    } catch (error) {
-        console.error("Failed to retrieve Telegram launch parameters:", error);
-    }
-}
+
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -82,6 +74,17 @@ const Game: React.FC<object> = () => {
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
+
+  let data: any = {};
+
+
+  if (isTma) {
+      try {
+          data = retrieveLaunchParams();
+      } catch (error) {
+          console.error("Failed to retrieve Telegram launch parameters:", error);
+      }
+  }
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
