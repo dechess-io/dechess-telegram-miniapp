@@ -55,8 +55,17 @@ import {
 } from '../../../services/move_sounds'
 import WebApp from '@twa-dev/sdk'
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
+import { isTMA } from '@telegram-apps/sdk'
 
-const data = retrieveLaunchParams();
+let data = {};
+const isTma = await isTMA()
+if (isTma) {
+    try {
+        data = retrieveLaunchParams();
+    } catch (error) {
+        console.error("Failed to retrieve Telegram launch parameters:", error);
+    }
+}
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
