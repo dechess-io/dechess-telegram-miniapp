@@ -56,7 +56,7 @@ import {
 import WebApp from '@twa-dev/sdk'
 import { retrieveLaunchParams } from '@telegram-apps/sdk';
 
-// const data = retrieveLaunchParams();
+const data = retrieveLaunchParams();
 
 const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
@@ -74,7 +74,7 @@ const Game: React.FC<object> = () => {
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
 
-  // console.log(data)
+  console.log(data)
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
@@ -139,6 +139,8 @@ const Game: React.FC<object> = () => {
 
   const timer1Ref = useRef(timer1)
   const timer2Ref = useRef(timer2)
+
+  console.log(wallet?.account.address)
 
   useEffect(() => {
     timer1Ref.current = timer1

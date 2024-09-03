@@ -2,7 +2,7 @@ import { Icon, Tabbar, TabbarLink } from 'konsta/react'
 
 const Footer: React.FC = () => {
   return (
-    <Tabbar labels icons className="left-0 bottom-0 fixed">
+    <Tabbar labels icons className="left-0 bottom-0 fixed" style={{ backgroundColor: 'transparent' }}>
       <TabbarLink
         active
         icon={
