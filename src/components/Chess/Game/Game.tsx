@@ -141,7 +141,7 @@ const Game: React.FC<object> = () => {
       console.log("chat_id", chat_id)
       if(chat_id){
         socket.emit('chatId', {
-          chatId: chatId,
+          chatId: chat_id,
           gameId: location.pathname.split('/')[2],
         })
       }
