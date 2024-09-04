@@ -63,6 +63,7 @@ const Login: React.FC<{}> = ({}) => {
           if (res.status == 200) {
             console.log('token', res.data)
             localStorage.setItem('token', res.data.data)
+            localStorage.setItem('address', data.initData?.user?.username!)
             navigate('/')
           }
         })

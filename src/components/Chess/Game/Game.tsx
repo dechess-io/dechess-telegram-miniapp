@@ -4,12 +4,7 @@ import { useFetcher, useLocation } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
-import {
-  convertToFigurineSan,
-  indexToSquare,
-  isThreefoldRepetition,
-  setLocalStorage,
-} from '../../../utils/utils'
+import { convertToFigurineSan, isThreefoldRepetition, setLocalStorage } from '../../../utils/utils'
 import LoadingGame from '../../Loading/Loading'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
@@ -20,29 +15,24 @@ import { selectGame } from '../../../redux/game/reducer'
 import {
   loadGame,
   resetKingSquares,
-  setCurrentMoveIndex,
-  setGameHistory,
   setGameOver,
-  setIsMove,
-  setKingSquares,
   setLoser,
   setMoveFrom,
-  setMoves,
   setMoveTo,
   setOpponentMove,
-  setOptionSquares,
   setRightClickedSquares,
   setWinner,
-  showPromotionDialog,
   switchPlayerTurn,
 } from '../../../redux/game/action'
 import { emitNewMove, isCheckMate, isPromotionMove } from './util'
 import { useTimer } from 'react-timer-hook'
 
 import {
-  handleMoveThunk,
-  handlePromotionMoveThunk,
+  moveThunk,
+  promotionMoveThunk,
   onSquareClickThunk,
+  resetMoveSelectionThunk,
+  setKingSquaresThunk,
 } from '../../../redux/game/thunk'
 import {
   captureSound,
@@ -194,7 +184,7 @@ const Game: React.FC<object> = () => {
     (foundMove: any, square: Square) => {
       console.log('makeMove')
 
-      const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+      const newState = gameDispatch(moveThunk({ foundMove, square }))
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
 
       emitNewMove(
@@ -260,18 +250,14 @@ const Game: React.FC<object> = () => {
   const onPromotionPieceSelect = useCallback(
     (piece: any) => {
       if (!piece) {
-        gameDispatch(setMoveFrom(undefined))
-        gameDispatch(setMoveTo(undefined))
-        gameDispatch(showPromotionDialog(false))
-        gameDispatch(setIsMove(false))
-        gameDispatch(setOptionSquares({}))
+        gameDispatch(resetMoveSelectionThunk())
         return
       }
 
       promoteSound.play()
 
       gameDispatch(
-        handlePromotionMoveThunk({
+        promotionMoveThunk({
           piece,
           additionTimePerMove,
           currentPlayerTurn: gameState.playerTurn,
@@ -300,12 +286,7 @@ const Game: React.FC<object> = () => {
 
   useEffect(() => {
     if (isCheckMate(gameState.board)) {
-      gameDispatch(resetKingSquares())
-      if ((gameState.board as any)._isKingAttacked('w')) {
-        gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['w'])))
-      } else if ((gameState.board as any)._isKingAttacked('b')) {
-        gameDispatch(setKingSquares(indexToSquare((gameState.board as any)._kings['b'])))
-      }
+      gameDispatch(setKingSquaresThunk())
     } else {
       gameDispatch(resetKingSquares())
     }

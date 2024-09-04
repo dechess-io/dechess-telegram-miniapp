@@ -27,11 +27,7 @@ import {
   setGame,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
-import {
-  handleMoveThunk,
-  handlePromotionMoveThunk,
-  onSquareClickThunk,
-} from '../../../redux/game/thunk'
+import { moveThunk, promotionMoveThunk, onSquareClickThunk } from '../../../redux/game/thunk'
 
 const PuzzleGame: React.FC<{ fen: string }> = ({ fen }) => {
   const gameState = useAppSelector((state) => state.game)
@@ -87,7 +83,7 @@ const PuzzleGame: React.FC<{ fen: string }> = ({ fen }) => {
   }
 
   const makeMove = (foundMove: any, square: Square) => {
-    const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+    const newState = gameDispatch(moveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
     gameDispatch(setMoves([...gameState.moves, foundMove.san]))
     gameDispatch(setCurrentMoveIndex(gameState.moves.length))
@@ -117,7 +113,7 @@ const PuzzleGame: React.FC<{ fen: string }> = ({ fen }) => {
 
   const onPromotionPieceSelect = (piece: any) => {
     gameDispatch(
-      handlePromotionMoveThunk({
+      promotionMoveThunk({
         piece,
         additionTimePerMove,
         currentPlayerTurn: gameState.playerTurn,

@@ -35,11 +35,7 @@ import {
   setGame,
 } from '../../../redux/game/action'
 import { useTimer } from 'react-timer-hook'
-import {
-  handleMoveThunk,
-  handlePromotionMoveThunk,
-  onSquareClickThunk,
-} from '../../../redux/game/thunk'
+import { moveThunk, promotionMoveThunk, onSquareClickThunk } from '../../../redux/game/thunk'
 import {
   captureSound,
   checkSound,
@@ -157,7 +153,7 @@ const BotGame: React.FC<{}> = () => {
   }
 
   const makeMove = (foundMove: any, square: Square) => {
-    const newState = gameDispatch(handleMoveThunk({ foundMove, square }))
+    const newState = gameDispatch(moveThunk({ foundMove, square }))
     gameDispatch(setGameHistory([...gameState.history, newState.board.fen()]))
     if (
       (newState.board.isCheckmate() || newState.board.isCheck()) &&
@@ -223,7 +219,7 @@ const BotGame: React.FC<{}> = () => {
     promoteSound.play()
 
     gameDispatch(
-      handlePromotionMoveThunk({
+      promotionMoveThunk({
         piece,
         additionTimePerMove,
         currentPlayerTurn: gameState.playerTurn,
