@@ -145,9 +145,7 @@ const Game: React.FC<object> = () => {
       timer1.pause()
       timer2.pause()
       fetchData()
-      console.log(data)
       const chat_id = data?.initData?.user?.id
-      console.log('chat_id', chat_id)
       if (chat_id) {
         socket.emit('chatId', {
           chatId: chat_id,

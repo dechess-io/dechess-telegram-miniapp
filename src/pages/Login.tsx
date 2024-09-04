@@ -10,6 +10,8 @@ import Input from '../components/Input/Input'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useTonWallet } from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../services/ton'
+import { isTMA, LaunchParams, retrieveLaunchParams } from '@telegram-apps/sdk'
+import restApi from '../services/api'
 
 const Login: React.FC<{}> = ({}) => {
   const dispatch = useAppDispatch()
@@ -46,6 +48,27 @@ const Login: React.FC<{}> = ({}) => {
   }
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setReferralCode(e.target.value)
+  }
+
+  const handleTelegramLogin = async () => {
+    const isTma = await isTMA()
+    if (isTma) {
+      const data: LaunchParams = retrieveLaunchParams()
+      console.log('tma', data.initData?.user)
+      restApi
+        .post('/telegram-login', {
+          user: data.initData?.user,
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            console.log('token', res.data)
+            localStorage.setItem('token', res.data.data)
+            navigate('/')
+          }
+        })
+    } else {
+      console.log('not tma')
+    }
   }
 
   useEffect(() => {
@@ -115,8 +138,8 @@ const Login: React.FC<{}> = ({}) => {
 
       {/* Centered Bottom Buttons */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-12 w-full max-w-[354px]">
-        <ButtonV2 kind="secondary" disabled={true} className="w-full mb-4">
-          social (Soon)
+        <ButtonV2 kind="secondary" className="w-full mb-4" onClick={handleTelegramLogin}>
+          Telegram
         </ButtonV2>
         <div className="mb-4">
           <ConnectionSettings />
