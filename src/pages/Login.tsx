@@ -59,7 +59,7 @@ const Login: React.FC<{}> = ({}) => {
       console.log('tma', data.initData?.user)
       restApi
         .post('/telegram-login', {
-          data: data.initData,
+          data: data.initDataRaw,
         })
         .then((res) => {
           if (res.status == 200) {
