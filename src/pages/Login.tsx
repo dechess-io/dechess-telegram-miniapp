@@ -57,14 +57,14 @@ const Login: React.FC<{}> = ({}) => {
       console.log('tma', data.initData?.user)
       restApi
         .post('/telegram-login', {
-          user: data.initData?.user,
+          data: data.initData,
         })
         .then((res) => {
           if (res.status == 200) {
             console.log('token', res.data)
+            location.pathname = '/'
             localStorage.setItem('token', res.data.data)
             localStorage.setItem('address', data.initData?.user?.username!)
-            navigate('/')
           }
         })
     } else {
