@@ -22,6 +22,7 @@ const Login: React.FC<{}> = ({}) => {
   const [referralCode, setReferralCode] = useState('')
   const [submiting, setSubmiting] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
   const token = localStorage.getItem('token')
   const [hasFetched, setHasFetched] = useState(false) // State to track if fetch has been done
 
@@ -51,6 +52,7 @@ const Login: React.FC<{}> = ({}) => {
   }
 
   const handleTelegramLogin = async () => {
+    setLoading(true)
     const isTma = await isTMA()
     if (isTma) {
       const data: LaunchParams = retrieveLaunchParams()
@@ -67,8 +69,12 @@ const Login: React.FC<{}> = ({}) => {
             localStorage.setItem('address', data.initData?.user?.username!)
           }
         })
+        .finally(() => {
+          setLoading(false)
+        })
     } else {
       console.log('not tma')
+      setLoading(false)
     }
   }
 
@@ -139,8 +145,8 @@ const Login: React.FC<{}> = ({}) => {
 
       {/* Centered Bottom Buttons */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-12 w-full max-w-[354px]">
-        <ButtonV2 kind="secondary" className="w-full mb-4" onClick={handleTelegramLogin}>
-          Telegram
+        <ButtonV2 kind="secondary" className="w-full mb-4" onClick={handleTelegramLogin} disabled={loading}>
+            {loading ? 'Logging in...' : 'Telegram'}
         </ButtonV2>
         <div className="mb-4">
           <ConnectionSettings />
