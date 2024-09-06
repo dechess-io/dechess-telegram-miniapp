@@ -92,10 +92,9 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
   return (
     <>
-      <Block strong className="my-0 !py-0 bg-transparent" style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <div className="flex flex-col justify-start h-screen">
+        <div className="flex flex-col justify-start h-screen w-full max-w-[400px]">
           <div className="flex justify-center items-center">
-            <div className="w-full" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+            <div className="h-full max-h-[400px] w-full max-w-[400px] mx-auto" style={{  cursor: 'pointer' }}>
               <div className="flex flex-col space-y-1 overflow-hidden">
                 {showProgressBar && (
                   <ProgressBar
@@ -151,7 +150,6 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
             </div>
           </div>
         </div>
-      </Block>
     </>
   )
 }
