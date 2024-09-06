@@ -93,9 +93,9 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   return (
     <>
       <Card className="bg-transparent">
-        <div className="flex flex-col justify-start min-h-screen">
+        <div className="flex flex-col justify-start h-screen">
           <div className="flex justify-center items-center">
-            <div className="w-full max-w-md mx-auto" style={{ cursor: 'pointer' }}>
+            <div className="w-full" style={{ cursor: 'pointer' }}>
               <div className="flex flex-col space-y-1 overflow-hidden">
                 {showProgressBar && (
                   <ProgressBar
