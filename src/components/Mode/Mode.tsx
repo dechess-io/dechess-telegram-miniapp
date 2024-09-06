@@ -137,7 +137,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
 
   return (
     <div
-      className="h-screen bg-cover bg-center bg-contain flex flex-col"
+      className="h-screen bg-cover bg-center bg-contain"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
@@ -161,7 +161,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 </div>
               </>
             )}
-            <div>
+            <Block>
               <ModeSection
                 imgSrc="/bullet.svg"
                 title="Bullet (Soon)"
@@ -196,7 +196,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                   Play Now
                 </ButtonV2>
               </div>
-            </div>
+            </Block>
           </div>
         </div>
       </div>

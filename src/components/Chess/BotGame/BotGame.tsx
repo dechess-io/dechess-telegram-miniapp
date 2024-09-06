@@ -45,6 +45,7 @@ import {
   promoteSound,
   selfMoveSound,
 } from '../../../services/move_sounds'
+import { Block, Page } from 'konsta/react'
 
 const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
@@ -310,34 +311,44 @@ const BotGame: React.FC<{}> = () => {
   } else {
     return (
       <>
-        <GameBoard
-          player1Timer={timer1.minutes * 60 + timer1.seconds}
-          player2Timer={timer2.minutes * 60 + timer2.seconds}
-          onSquareClick={onSquareClick}
-          onSquareRightClick={onSquareRightClick}
-          onPromotionPieceSelect={onPromotionPieceSelect}
-          moveSquares={{}}
-          showProgressBar={false}
-          progressBar={0}
-          isDraggablePiece={isDraggablePiece}
-          onDragOverSquare={onDragOverSquare}
-          onPieceDragBegin={onPieceDragBegin}
-          onPieceDragEnd={onPieceDragEnd}
-          onPieceDrop={onPieceDrop}
-        />
-        <GameNavbar
-          isBot={true}
-          user={wallet?.account.address ? wallet?.account.address : 'player1'}
-          opponent={wallet?.account.address === player1 ? player2 : player1}
-          isMoved={gameState.moves.length !== 0}
-          isWhite={player1 === wallet?.account.address}
-        />
-        <GameOverPopUp
-          setShowPopup={setShowPopup}
-          showPopup={showPopup && !isPopupDismissed}
-          isBotMode={true}
-          setIsPopupDismissed={setIsPopupDismissed}
-        />
+        <Page
+          className="h-screen bg-cover bg-center flex flex-col items-center justify-between bg-contain"
+          style={{ backgroundImage: 'url(./images/bg-game.png)' }}
+        >
+          <img
+            className="max-w-[120px] max-h-[40px]"
+            src="/images/logo-dechess.svg"
+            alt="DeChess Logo"
+          />
+          <GameBoard
+            player1Timer={timer1.minutes * 60 + timer1.seconds}
+            player2Timer={timer2.minutes * 60 + timer2.seconds}
+            onSquareClick={onSquareClick}
+            onSquareRightClick={onSquareRightClick}
+            onPromotionPieceSelect={onPromotionPieceSelect}
+            moveSquares={{}}
+            showProgressBar={false}
+            progressBar={0}
+            isDraggablePiece={isDraggablePiece}
+            onDragOverSquare={onDragOverSquare}
+            onPieceDragBegin={onPieceDragBegin}
+            onPieceDragEnd={onPieceDragEnd}
+            onPieceDrop={onPieceDrop}
+          />
+          <GameNavbar
+            isBot={true}
+            user={wallet?.account.address ? wallet?.account.address : 'player1'}
+            opponent={wallet?.account.address === player1 ? player2 : player1}
+            isMoved={gameState.moves.length !== 0}
+            isWhite={player1 === wallet?.account.address}
+          />
+          <GameOverPopUp
+            setShowPopup={setShowPopup}
+            showPopup={showPopup && !isPopupDismissed}
+            isBotMode={true}
+            setIsPopupDismissed={setIsPopupDismissed}
+          />
+        </Page>
       </>
     )
   }

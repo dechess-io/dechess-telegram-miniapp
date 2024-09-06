@@ -2,14 +2,8 @@ import { Icon, Tabbar, TabbarLink } from 'konsta/react'
 
 const Footer: React.FC = () => {
   return (
-    <Tabbar
-      labels
-      icons
-      className="left-0 bottom-0 fixed"
-      style={{ backgroundColor: 'transparent' }}
-    >
+    <Tabbar labels icons className="left-0 bottom-0 fixed">
       <TabbarLink
-        active
         icon={
           <Icon
             ios={<img className="w-[40px] h-[40px]" src="/Pawn.svg" />}

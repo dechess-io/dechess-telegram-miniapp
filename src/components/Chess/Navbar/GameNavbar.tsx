@@ -59,49 +59,47 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
 
   return (
     <>
-      <Block component="div" className="h-[10px] fixed">
-        <Tabbar icons className="left-0 bottom-0 fixed">
-          <TabbarLink
-            active
-            onClick={toggleSidebar}
-            icon={
-              <Icon
-                ios={<img className="w-[20px] h-[20px]" src="/Hamburger-menu.svg" />}
-                material={<img className="w-[20px] h-[20px]" src="/Hamburger-menu.svg" />}
-              />
-            }
-          />
-          <TabbarLink
-            onClick={toggleChat}
-            icon={
-              <Icon
-                badge={badge}
-                badgeColors={{ bg: 'bg-blue-gradient' }}
-                ios={<img className="w-[20px] h-[20px]" src="/Message.svg" />}
-                material={<img className="w-[20px] h-[20px]" src="/Message.svg" />}
-              />
-            }
-          />
-          <TabbarLink
-            onClick={() => gameDispatch(setPreviousMove())}
-            icon={
-              <Icon
-                ios={<img className="w-[20px] h-[20px]" src="/arrow-left-1.svg" />}
-                material={<img className="w-[20px] h-[20px]" src="/arrow-left-1.svg" />}
-              />
-            }
-          />
-          <TabbarLink
-            onClick={() => gameDispatch(setNextMove())}
-            icon={
-              <Icon
-                ios={<img className="w-[20px] h-[20px]" src="/arrow-right-1.svg" />}
-                material={<img className="w-[20px] h-[20px]" src="/arrow-right-1.svg" />}
-              />
-            }
-          />
-        </Tabbar>
-      </Block>
+      <Tabbar icons className="left-0 bottom-0 fixed">
+        <TabbarLink
+          active
+          onClick={toggleSidebar}
+          icon={
+            <Icon
+              ios={<img className="w-[20px] h-[20px]" src="/Hamburger-menu.svg" />}
+              material={<img className="w-[20px] h-[20px]" src="/Hamburger-menu.svg" />}
+            />
+          }
+        />
+        <TabbarLink
+          onClick={toggleChat}
+          icon={
+            <Icon
+              badge={badge}
+              badgeColors={{ bg: 'bg-blue-gradient' }}
+              ios={<img className="w-[20px] h-[20px]" src="/Message.svg" />}
+              material={<img className="w-[20px] h-[20px]" src="/Message.svg" />}
+            />
+          }
+        />
+        <TabbarLink
+          onClick={() => gameDispatch(setPreviousMove())}
+          icon={
+            <Icon
+              ios={<img className="w-[20px] h-[20px]" src="/arrow-left-1.svg" />}
+              material={<img className="w-[20px] h-[20px]" src="/arrow-left-1.svg" />}
+            />
+          }
+        />
+        <TabbarLink
+          onClick={() => gameDispatch(setNextMove())}
+          icon={
+            <Icon
+              ios={<img className="w-[20px] h-[20px]" src="/arrow-right-1.svg" />}
+              material={<img className="w-[20px] h-[20px]" src="/arrow-right-1.svg" />}
+            />
+          }
+        />
+      </Tabbar>
 
       <GameSidebar
         isMoved={isMoved}

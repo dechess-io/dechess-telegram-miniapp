@@ -92,66 +92,64 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
   return (
     <>
-      <Block strong className="my-0 !py-0" style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <div className="flex flex-col pt-10 lg:pt-6 justify-start bg-[#041d21] h-screen">
-          <div className="flex justify-center items-center">
-            <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
-              <div className="flex flex-col space-y-1 overflow-hidden">
-                {showProgressBar && (
-                  <ProgressBar
-                    completed={progressBar}
-                    bgColor="#93d3fb"
-                    height="10px"
-                    borderRadius="0"
-                    isLabelVisible={false}
-                    baseBgColor="black"
-                  />
-                )}
-                <MoveRecord />
-                <PlayerDisplay {...getPlayerDisplayProps(true)} />
-                <div className="relative border-8 border-white rounded-lg">
-                  <Board
-                    boardOrientation={isOrientation}
-                    position={board.fen()}
-                    id="ClickToMove"
-                    animationDuration={200}
-                    arePiecesDraggable={true}
-                    onSquareClick={onSquareClick}
-                    onSquareRightClick={onSquareRightClick}
-                    onPromotionPieceSelect={onPromotionPieceSelect}
-                    customBoardStyle={{
-                      // borderRadius: '8px',
-                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
-                    }}
-                    // customLightSquareStyle={{
-                    //   backgroundColor: '#E8EDF9',
-                    // }}
-                    // customDarkSquareStyle={{
-                    //   backgroundColor: '#B7C0D8',
-                    // }}
-                    customDropSquareStyle={{}}
-                    customSquareStyles={{
-                      ...moveSquares,
-                      ...optionSquares,
-                      ...kingSquares,
-                      ...rightClickedSquares,
-                    }}
-                    promotionToSquare={moveTo}
-                    showPromotionDialog={showPromotionDialog}
-                    isDraggablePiece={isDraggablePiece}
-                    onDragOverSquare={onDragOverSquare}
-                    onPieceDragBegin={onPieceDragBegin}
-                    onPieceDragEnd={onPieceDragEnd}
-                    onPieceDrop={onPieceDrop}
-                    arePremovesAllowed={false}
-                  />
-                </div>
-                <PlayerDisplay {...getPlayerDisplayProps(false)} />
+      <div className="flex flex-col justify-start h-screen">
+        <div className="flex justify-center items-center">
+          <div className="" style={{ height: '400px', width: '400px', cursor: 'pointer' }}>
+            <div className="flex flex-col space-y-1 overflow-hidden">
+              {showProgressBar && (
+                <ProgressBar
+                  completed={progressBar}
+                  bgColor="#93d3fb"
+                  height="10px"
+                  borderRadius="0"
+                  isLabelVisible={false}
+                  baseBgColor="black"
+                />
+              )}
+              <MoveRecord />
+              <PlayerDisplay {...getPlayerDisplayProps(true)} />
+              <div className="relative border-8 border-[#E1C16E] rounded-lg">
+                <Board
+                  boardOrientation={isOrientation}
+                  position={board.fen()}
+                  id="ClickToMove"
+                  animationDuration={200}
+                  arePiecesDraggable={true}
+                  onSquareClick={onSquareClick}
+                  onSquareRightClick={onSquareRightClick}
+                  onPromotionPieceSelect={onPromotionPieceSelect}
+                  customBoardStyle={{
+                    // borderRadius: '8px',
+                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+                  }}
+                  customLightSquareStyle={{
+                    backgroundColor: '#E1C16E',
+                  }}
+                  // customDarkSquareStyle={{
+                  //   backgroundColor: '#FFFFF0',
+                  // }}
+                  customDropSquareStyle={{}}
+                  customSquareStyles={{
+                    ...moveSquares,
+                    ...optionSquares,
+                    ...kingSquares,
+                    ...rightClickedSquares,
+                  }}
+                  promotionToSquare={moveTo}
+                  showPromotionDialog={showPromotionDialog}
+                  isDraggablePiece={isDraggablePiece}
+                  onDragOverSquare={onDragOverSquare}
+                  onPieceDragBegin={onPieceDragBegin}
+                  onPieceDragEnd={onPieceDragEnd}
+                  onPieceDrop={onPieceDrop}
+                  arePremovesAllowed={false}
+                />
               </div>
+              <PlayerDisplay {...getPlayerDisplayProps(false)} />
             </div>
           </div>
         </div>
-      </Block>
+      </div>
     </>
   )
 }

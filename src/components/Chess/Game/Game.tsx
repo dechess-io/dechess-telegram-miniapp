@@ -9,7 +9,7 @@ import LoadingGame from '../../Loading/Loading'
 import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from './Board'
-import { Notification } from 'konsta/react'
+import { Notification, Page } from 'konsta/react'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
 import {
@@ -497,44 +497,54 @@ const Game: React.FC<object> = () => {
 
   return (
     <>
-      <GameBoard
-        player1Timer={timer1.minutes * 60 + timer1.seconds}
-        player2Timer={timer2.minutes * 60 + timer2.seconds}
-        onSquareClick={onSquareClicks}
-        onSquareRightClick={onSquareRightClick}
-        onPromotionPieceSelect={onPromotionPieceSelect}
-        moveSquares={moveSquares}
-        showProgressBar={showProgressBar}
-        progressBar={((countDown.seconds + countDown.minutes * 60) * 100) / progress}
-        isDraggablePiece={isDraggablePiece}
-        onDragOverSquare={onDragOverSquare}
-        onPieceDragBegin={onPieceDragBegin}
-        onPieceDragEnd={onPieceDragEnd}
-        onPieceDrop={onPieceDrop}
-      />
-      <GameNavbar
-        isBot={false}
-        user={wallet?.account.address ? wallet?.account.address : ''}
-        opponent={
-          wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1
-        }
-        isMoved={gameState.moves.length !== 0}
-        isWhite={gameState.player1 === wallet?.account.address}
-      />
-      <Notification
-        opened={notificationCloseOnClick}
-        icon={<img src="/Logo.svg" className="h-4 w-4" />}
-        title="Dechess"
-        titleRightText="now"
-        subtitle="Your opponent has disconnected"
-        onClick={() => setNotificationCloseOnClick(false)}
-      />
-      <GameOverPopUp
-        setShowPopup={setShowPopup}
-        showPopup={showPopup && !isPopupDismissed}
-        setIsPopupDismissed={setIsPopupDismissed}
-        isBotMode={false}
-      />
+      <Page
+        className="h-screen bg-cover bg-center flex flex-col items-center justify-between bg-contain"
+        style={{ backgroundImage: 'url(./images/bg-game.png)' }}
+      >
+        <img
+          className="max-w-[120px] max-h-[40px]"
+          src="/images/logo-dechess.svg"
+          alt="DeChess Logo"
+        />
+        <GameBoard
+          player1Timer={timer1.minutes * 60 + timer1.seconds}
+          player2Timer={timer2.minutes * 60 + timer2.seconds}
+          onSquareClick={onSquareClicks}
+          onSquareRightClick={onSquareRightClick}
+          onPromotionPieceSelect={onPromotionPieceSelect}
+          moveSquares={moveSquares}
+          showProgressBar={showProgressBar}
+          progressBar={((countDown.seconds + countDown.minutes * 60) * 100) / progress}
+          isDraggablePiece={isDraggablePiece}
+          onDragOverSquare={onDragOverSquare}
+          onPieceDragBegin={onPieceDragBegin}
+          onPieceDragEnd={onPieceDragEnd}
+          onPieceDrop={onPieceDrop}
+        />
+        <GameNavbar
+          isBot={false}
+          user={wallet?.account.address ? wallet?.account.address : ''}
+          opponent={
+            wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1
+          }
+          isMoved={gameState.moves.length !== 0}
+          isWhite={gameState.player1 === wallet?.account.address}
+        />
+        <Notification
+          opened={notificationCloseOnClick}
+          icon={<img src="/Logo.svg" className="h-4 w-4" />}
+          title="Dechess"
+          titleRightText="now"
+          subtitle="Your opponent has disconnected"
+          onClick={() => setNotificationCloseOnClick(false)}
+        />
+        <GameOverPopUp
+          setShowPopup={setShowPopup}
+          showPopup={showPopup && !isPopupDismissed}
+          setIsPopupDismissed={setIsPopupDismissed}
+          isBotMode={false}
+        />
+      </Page>
     </>
   )
 }

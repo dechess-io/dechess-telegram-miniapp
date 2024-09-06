@@ -146,8 +146,13 @@ const Login: React.FC<{}> = ({}) => {
 
       {/* Centered Bottom Buttons */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-12 w-full max-w-[354px]">
-        <ButtonV2 kind="secondary" className="w-full mb-4" onClick={handleTelegramLogin} disabled={loading}>
-            {loading ? 'Logging in...' : 'Telegram'}
+        <ButtonV2
+          kind="secondary"
+          className="w-full mb-4"
+          onClick={handleTelegramLogin}
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Telegram'}
         </ButtonV2>
         <div className="mb-4">
           <ConnectionSettings />

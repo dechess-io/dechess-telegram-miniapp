@@ -12,7 +12,7 @@ const MainLayout = ({ children, isFooter = true }: { children: ReactNode; isFoot
       <Page className="overflow-auto hide-scrollbar">
         {/* <Header /> */}
         {children}
-        {isFooter && <Footer />}
+        {/* {isFooter && <Footer />} */}
       </Page>
     </KonstaApp>
   )
