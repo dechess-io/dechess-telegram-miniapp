@@ -6,7 +6,7 @@ import academy_svg from '../../public/main/academy.svg'
 import arena_svg from '../../public/main/arena.svg'
 import quest_svg from '../../public/main/quest.svg'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../index.css'
 import ButtonV2 from '../components/Button/ButtonV2'
 import FooterV2 from '../layouts/Footer/FooterV2'
@@ -14,11 +14,17 @@ import { RootState, useAppDispatch, useAppSelector } from '../redux/store'
 import { getUserInfo } from '../redux/account/account.reducer'
 import LoadingGame from '../components/Loading/Loading'
 import { useNavigate } from 'react-router-dom'
-import { App } from 'konsta/react'
+import Dialog from '../components/Chess/Popup/Dialog'
 
 const MainPage: React.FC<{}> = ({}) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const [modePopup, setModePopup] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  const toggleDialog = () => {
+    setIsOpen(!isOpen)
+  }
   // useEffect(() => {
   //   dispatch(
   //     getUserInfo({
@@ -83,13 +89,17 @@ const MainPage: React.FC<{}> = ({}) => {
 
       {/* Play Now Button */}
       <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
-        <ButtonV2 className="mx-auto" onClick={() => navigate('/mode')}>
+        <ButtonV2 className="mx-auto" onClick={toggleDialog}>
           Play Now
         </ButtonV2>
       </div>
       {/* <div className='pt-5'>
         <FooterV2 activeIndex={0} />
       </div> */}
+
+      <Dialog isOpen={isOpen} onClose={toggleDialog}>
+        ...
+      </Dialog>
     </div>
   )
 }
