@@ -39,11 +39,11 @@ const MainPage: React.FC<{}> = ({}) => {
 
   return (
     <div
-      className="h-screen bg-cover bg-center flex flex-col items-center justify-between bg-contain"
+      className="h-screen bg-centerbg-contain"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       {/* Top Header */}
-      <img className="max-w-[120px] max-h-[40px]" src={LOGO_DECHESS} alt="DeChess Logo" />
+      <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
 
       <div className="flex flex-col items-center flex-1 justify-center w-full">
         <div className="text-center text-white">
@@ -93,13 +93,11 @@ const MainPage: React.FC<{}> = ({}) => {
           Play Now
         </ButtonV2>
       </div>
-      {/* <div className='pt-5'>
-        <FooterV2 activeIndex={0} />
-      </div> */}
 
-      <Dialog isOpen={isOpen} onClose={toggleDialog}>
-        ...
-      </Dialog>
+      <div className="flex item-center justify-center">
+        <FooterV2 activeIndex={0} />
+      </div>
+      <Dialog isOpen={isOpen} onClose={toggleDialog}></Dialog>
     </div>
   )
 }

@@ -24,7 +24,7 @@ const FooterV2: React.FC<{ activeIndex: number }> = ({ activeIndex }) => {
   return (
     <>
       <div
-        className="absolute bottom-0 w-full py-4 max-w-[428px] bg-cover bg-center"
+        className="fixed  bottom-0 w-full py-2 max-h-[80px] max-w-[428px] bg-cover bg-center mx-auto"
         style={{ backgroundImage: 'url(./Footer.png)' }}
       >
         <div className="flex justify-around items-center text-white">

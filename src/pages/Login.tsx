@@ -132,7 +132,7 @@ const Login: React.FC<{}> = ({}) => {
   // }
   return (
     <div
-      className="relative h-screen w-full mx-auto bg-center bg-cover bg-no-repeat"
+      className="relative h-screen  w-full mx-auto bg-center bg-cover bg-no-repeat"
       style={{ backgroundImage: 'url(./images/bg-main.png)' }}
     >
       {/* Centered Logo */}
@@ -140,7 +140,7 @@ const Login: React.FC<{}> = ({}) => {
         <img
           src={LOGO_DECHESS}
           alt="Logo"
-          className="w-full max-w-[362px] sm:max-w-[150px] md:max-w-[250px] lg:max-w-[300px] xl:max-w-[350px] max-w-[150px]"
+          className="w-full max-w-[162px] sm:max-w-[150px] md:max-w-[250px] lg:max-w-[300px] xl:max-w-[350px] max-w-[350px]"
         />
       </div>
 

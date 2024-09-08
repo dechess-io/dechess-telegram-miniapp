@@ -34,7 +34,7 @@ const ModeButton: React.FC<{
 
   return (
     <Button
-      className="focus:outline-none active:outline-none active:bg-transparent hover:bg-transparent"
+      className="focus:outline-none active:outline-none "
       disabled={!isActive}
       onClick={() => handleButtonClick(buttonId, timeStep, additionTime)}
       style={{

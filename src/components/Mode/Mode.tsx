@@ -9,6 +9,7 @@ import { useAppDispatch } from '../../redux/store'
 import { resetGame } from '../../redux/game/action'
 import LOGO_DECHESS from '../../../public/images/logo-dechess.svg'
 import ButtonV2 from '../Button/ButtonV2'
+import FooterV2 from '../../layouts/Footer/FooterV2'
 
 const buttonsData = {
   bullet: [
@@ -137,7 +138,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
 
   return (
     <div
-      className="h-screen bg-cover bg-center bg-contain"
+      className="h-screen bg-center bg-contain"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
@@ -195,6 +196,9 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 >
                   Play Now
                 </ButtonV2>
+              </div>
+              <div className="flex item-center justify-center">
+                <FooterV2 activeIndex={0} />
               </div>
             </Block>
           </div>

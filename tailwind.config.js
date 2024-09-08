@@ -46,6 +46,10 @@ module.exports = konstaConfig({
         8: '8px',
       },
       colors: {
+        'md-light-surface-2': 'transparent',
+        'md-light-on-secondary-container': 'yellow',
+        'md-light-primary': 'transparent',
+        'md-light-on-surface-variant': 'white',
         btnprimary: 'rgba(141, 28, 254, 1)',
         t1: 'rgb(239,250,13)',
         black: {

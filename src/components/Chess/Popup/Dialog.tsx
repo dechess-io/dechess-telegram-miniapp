@@ -4,10 +4,9 @@ import { useNavigate } from 'react-router-dom'
 interface DialogProps {
   isOpen: boolean
   onClose: () => void
-  children: ReactNode // ReactNode allows any valid JSX or string content
 }
 
-const Dialog: React.FC<DialogProps> = ({ isOpen, onClose, children }) => {
+const Dialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
   const navitate = useNavigate()
 
   if (!isOpen) return null
