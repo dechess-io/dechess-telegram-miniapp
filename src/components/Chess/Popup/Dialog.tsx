@@ -44,7 +44,7 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
             backgroundPosition: 'center',
             width: '20vw',
             maxWidth: '180px',
-            minWidth: '90px',
+            minWidth: '120px',
             minHeight: '30px',
           }}
         ></div>
@@ -56,7 +56,7 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
             backgroundPosition: 'center',
             width: '40vw',
             maxWidth: '320px',
-            minWidth: '190px',
+            minWidth: '240px',
             minHeight: '66px',
           }}
           onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')} // Shrinks when clicked
@@ -73,7 +73,7 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
             backgroundPosition: 'center',
             width: '40vw',
             maxWidth: '320px',
-            minWidth: '190px',
+            minWidth: '240px',
             minHeight: '66px',
           }}
           onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')} // Shrinks when clicked

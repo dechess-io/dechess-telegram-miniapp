@@ -135,7 +135,6 @@ const Login: React.FC<{}> = ({}) => {
       className="relative h-screen  w-full mx-auto bg-center bg-cover bg-no-repeat"
       style={{ backgroundImage: 'url(./images/bg-main.png)' }}
     >
-      {/* Centered Logo */}
       <div className="flex flex-col items-center justify-center h-full">
         <img
           src={LOGO_DECHESS}
@@ -144,7 +143,6 @@ const Login: React.FC<{}> = ({}) => {
         />
       </div>
 
-      {/* Centered Bottom Buttons */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-12 w-full max-w-[354px]">
         <ButtonV2
           kind="secondary"

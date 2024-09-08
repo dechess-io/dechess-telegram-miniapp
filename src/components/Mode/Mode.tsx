@@ -143,7 +143,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
     >
       <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
       <div className="flex flex-col">
-        <div className="border-none rounded-xlmin-h-screen">
+        <div className="border-none">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
             {loading && (
               <>

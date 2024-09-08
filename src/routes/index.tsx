@@ -10,7 +10,7 @@ import MainPage from '../pages/MainPage'
 import Login from '../pages/Login'
 import WalletPage from '../pages/WalletPage'
 import ReferralPage from '../pages/ReferralPage'
-import ProfilePage from '../pages/ProfilePage'
+import ProfilePage from '../pages/Profile/ProfilePage'
 
 export const router = createBrowserRouter([
   {

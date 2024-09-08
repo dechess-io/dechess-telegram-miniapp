@@ -39,61 +39,58 @@ const MainPage: React.FC<{}> = ({}) => {
 
   return (
     <div
-      className="h-screen bg-centerbg-contain"
+      className="h-screen bg-centerbg-contain  flex flex-col"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
-      {/* Top Header */}
       <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
-
-      <div className="flex flex-col items-center flex-1 justify-center w-full">
-        <div className="text-center text-white">
+      <div className="flex flex-col items-center justify-center  mx-auto flex-grow">
+        <div className="">
           <img
-            className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[300px]"
+            className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[300px] mx-auto"
             src={CHESS_MASTER}
             alt="CHESS_MASTER"
           />
+
+          <div className="grid grid-cols-2 w-full max-w-[500px] p-1 md:p-4 lg:p-4 mx-auto ">
+            <div className="text-center cursor-pointer">
+              <img
+                src={arena_svg}
+                alt="DeChess Bot"
+                className="mx-auto max-w-[120px] md:max-w-[150px]"
+                onClick={() => navigate('/bot')}
+              />
+            </div>
+            <div className="text-center cursor-pointer">
+              <img
+                src={quest_svg}
+                alt="Treasure Quest"
+                className="mx-auto max-w-[120px] md:max-w-[150px]"
+              />
+            </div>
+            <div className="text-center cursor-pointer">
+              <img
+                src={tournament_svg}
+                alt="Tournament"
+                className="mx-auto max-w-[120px] md:max-w-[150px]"
+              />
+            </div>
+            <div className="text-center cursor-pointer">
+              <img
+                src={academy_svg}
+                alt="DeChess Academy"
+                className="mx-auto max-w-[120px] md:max-w-[150px]"
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 w-full max-w-[500px] p-1 md:p-4 lg:p-4">
-          <div className="text-center cursor-pointer">
-            <img
-              src={arena_svg}
-              alt="DeChess Bot"
-              className="mx-auto max-w-[120px] md:max-w-[150px]"
-              onClick={() => navigate('/bot')}
-            />
-          </div>
-          <div className="text-center cursor-pointer">
-            <img
-              src={quest_svg}
-              alt="Treasure Quest"
-              className="mx-auto max-w-[120px] md:max-w-[150px]"
-            />
-          </div>
-          <div className="text-center cursor-pointer">
-            <img
-              src={tournament_svg}
-              alt="Tournament"
-              className="mx-auto max-w-[120px] md:max-w-[150px]"
-            />
-          </div>
-          <div className="text-center cursor-pointer">
-            <img
-              src={academy_svg}
-              alt="DeChess Academy"
-              className="mx-auto max-w-[120px] md:max-w-[150px]"
-            />
-          </div>
+        {/* Play Now Button */}
+        <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
+          <ButtonV2 className="mx-auto" onClick={toggleDialog}>
+            Play Now
+          </ButtonV2>
         </div>
       </div>
-
-      {/* Play Now Button */}
-      <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
-        <ButtonV2 className="mx-auto" onClick={toggleDialog}>
-          Play Now
-        </ButtonV2>
-      </div>
-
       <div className="flex item-center justify-center">
         <FooterV2 activeIndex={0} />
       </div>
