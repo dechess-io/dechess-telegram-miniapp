@@ -25,25 +25,28 @@ const MainPage: React.FC<{}> = ({}) => {
   const toggleDialog = () => {
     setIsOpen(!isOpen)
   }
-  // useEffect(() => {
-  //   dispatch(
-  //     getUserInfo({
-  //       cb: (data) => {
-  //         if (!data || data.isEarly === false) {
-  //           navigate('/login')
-  //         }
-  //       },
-  //     })
-  //   )
-  // }, [])
+
+  useEffect(() => {
+    dispatch(
+      getUserInfo({
+        cb: (data) => {
+          if (data && data.isEarly === true) {
+            return
+          } else if (data.isEarly === false) {
+            navigate('/login')
+          }
+        },
+      })
+    )
+  }, [])
 
   return (
     <div
-      className="h-screen bg-centerbg-contain  flex flex-col"
+      className="h-screen bg-centerbg-contain flex flex-col"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
-      <div className="flex flex-col items-center justify-center  mx-auto flex-grow">
+      <div className="flex flex-col items-center justify-center mx-auto my-2">
         <div className="">
           <img
             className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[300px] mx-auto"
@@ -51,7 +54,7 @@ const MainPage: React.FC<{}> = ({}) => {
             alt="CHESS_MASTER"
           />
 
-          <div className="grid grid-cols-2 w-full max-w-[500px] p-1 md:p-4 lg:p-4 mx-auto ">
+          <div className="grid grid-cols-2 w-full max-w-[500px] gap-2 p-1 md:p-4 lg:p-4 mx-auto ">
             <div className="text-center cursor-pointer">
               <img
                 src={arena_svg}
