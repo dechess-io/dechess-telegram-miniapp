@@ -61,15 +61,12 @@ const Game: React.FC<object> = () => {
   const [startTime, setStartTime] = useState(0)
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
-  const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
   const navigate = useNavigate()
 
   const fetchData = async () => {
     const isTma = await isTMA()
-    console.log('isTma', isTma)
     if (isTma) {
       try {
-        console.log('data', data)
         data = retrieveLaunchParams()
       } catch (error) {
         console.error('Failed to retrieve Telegram launch parameters:', error)
@@ -80,6 +77,8 @@ const Game: React.FC<object> = () => {
   useEffect(() => {
     fetchData()
   }, [])
+
+  console.log(gameState)
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
@@ -155,7 +154,6 @@ const Game: React.FC<object> = () => {
   const timer1Ref = useRef(timer1)
   const timer2Ref = useRef(timer2)
 
-  console.log(wallet?.account.address)
 
   useEffect(() => {
     timer1Ref.current = timer1
@@ -192,7 +190,6 @@ const Game: React.FC<object> = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = useCallback(
     (foundMove: any, square: Square) => {
-      console.log('makeMove')
 
       const newState = gameDispatch(moveThunk({ foundMove, square }))
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
@@ -212,7 +209,6 @@ const Game: React.FC<object> = () => {
       )
 
       if (newState.board.isCheck() || newState.board.isCheckmate()) {
-        console.log('check')
         checkSound.play()
         return
       } else if (foundMove.captured) {
@@ -236,7 +232,6 @@ const Game: React.FC<object> = () => {
 
   const onSquareClicks = useCallback(
     (square: any) => {
-      console.log('squareClick')
       if (gameState.moveIndex !== gameState.history.length - 1) return
       const { isMove, foundMove } = gameDispatch(
         onSquareClickThunk(
@@ -556,27 +551,27 @@ const Game: React.FC<object> = () => {
           }
           opponent={
             wallet
-              ? wallet?.account.address === gameState.player1
+              ? (wallet?.account.address === gameState.player1
                 ? gameState.player2
-                : gameState.player1
-              : WebApp?.initDataUnsafe?.user?.id.toString()! === gameState.player1
+                : gameState.player1)
+              : (WebApp?.initDataUnsafe?.user?.id.toString()! === gameState.player1
                 ? gameState.player2
-                : gameState.player1
+                : gameState.player1)
           }
           isMoved={gameState.moves.length !== 0}
           isWhite={
-            gameState.player1 === wallet?.account.address ||
-            gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString()!
+           wallet ? (gameState.player1 === wallet?.account.address) :
+            (gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString()!)
           }
         />
-        <Notification
+        {/* <Notification
           opened={notificationCloseOnClick}
           icon={<img src="/Logo.svg" className="h-4 w-4" />}
           title="Dechess"
           titleRightText="now"
           subtitle="Your opponent has disconnected"
           onClick={() => setNotificationCloseOnClick(false)}
-        />
+        /> */}
         <GameOverPopUp
           setShowPopup={setShowPopup}
           showPopup={showPopup && !isPopupDismissed}

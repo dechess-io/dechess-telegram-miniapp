@@ -25,7 +25,6 @@ const ReactDialog = ({
   cancelContent?: string
   buttons?: React.ReactNode
 }) => {
-  console.log(okContent)
   return (
     <Dialog
       className={cn(

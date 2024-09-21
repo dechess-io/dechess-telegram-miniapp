@@ -54,7 +54,6 @@ const Login: React.FC<{}> = ({}) => {
     const isTma = await isTMA()
     if (isTma) {
       const data: LaunchParams = retrieveLaunchParams()
-      console.log('tma', data.initData?.user)
       restApi
         .post('/telegram-login', {
           data: data.initDataRaw,
@@ -63,7 +62,6 @@ const Login: React.FC<{}> = ({}) => {
         .then((res) => {
           if (res.status == 200) {
             setTimeout(() => {
-              console.log('token', res.data)
               location.pathname = '/'
               localStorage.setItem('data', JSON.stringify(data))
               localStorage.setItem('token', res.data.data)

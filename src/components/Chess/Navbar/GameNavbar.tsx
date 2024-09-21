@@ -25,6 +25,10 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
 }) => {
   const wallet = useTonWallet()
 
+  console.log("user " + user)
+  console.log("opppent" + opponent)
+  console.log("isWhite " + isWhite)
+
   const gameDispatch = useAppDispatch()
 
   const [messages, setMessages] = useState<Message[]>([])
