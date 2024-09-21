@@ -60,7 +60,7 @@ const MainPage: React.FC<{}> = ({}) => {
                 src={arena_svg}
                 alt="DeChess Bot"
                 className="mx-auto max-w-[120px] md:max-w-[150px]"
-                onClick={() => navigate('/bot')}
+                onClick={toggleDialog}
               />
             </div>
             <div className="text-center cursor-pointer">
@@ -89,7 +89,7 @@ const MainPage: React.FC<{}> = ({}) => {
 
         {/* Play Now Button */}
         <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
-          <ButtonV2 className="mx-auto" onClick={toggleDialog}>
+          <ButtonV2 className="mx-auto" onClick={() => navigate("/mode")}>
             Play Now
           </ButtonV2>
         </div>

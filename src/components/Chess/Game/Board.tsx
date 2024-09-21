@@ -10,6 +10,7 @@ import { Block, Card } from 'konsta/react'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
 import ProgressBar from '@ramonak/react-progress-bar'
+import WebApp from '@twa-dev/sdk'
 
 interface GameBoardProps {
   onSquareClick: (square: Square) => void
@@ -59,9 +60,13 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   const wallet = useTonWallet()
 
   const isOrientation = useMemo(
-    () => (wallet?.account.address === player1 ? 'white' : 'black'),
+    () => ((wallet?.account.address === player1 || WebApp?.initDataUnsafe?.user?.id.toString() === player1) ? 'white' : 'black'),
     [player1, wallet?.account.address]
   )
+
+  const shortenName = (name: string) => {
+    return name.substring(0, Math.min(name.length,20))
+  }
 
   const getPlayerDisplayProps = (isTop: boolean) => {
     const isPlayer1 = wallet?.account.address === player1
@@ -80,7 +85,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
     return {
       imageSrc: playerImage,
-      name: truncateSuiTx(playerName || ''),
+      name: shortenName(playerName),
       time: playerTime,
       timeBoxClass: isTop
         ? 'bg-grey-100 border-b-4 border-grey-200'

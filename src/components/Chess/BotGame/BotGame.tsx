@@ -54,11 +54,13 @@ const BotGame: React.FC<{}> = () => {
   const queryParams = new URLSearchParams(location.search)
 
   const wallet = useTonWallet()
-  const [player1] = useState(wallet?.account.address ? wallet.account.address : 'player1')
+  const [player1] = useState(wallet?.account.address)
   const [player2] = useState('bot')
   const [showPopup, setShowPopup] = useState(false)
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
+
+
 
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
@@ -81,18 +83,35 @@ const BotGame: React.FC<{}> = () => {
   })
 
   useEffect(() => {
-    gameDispatch(resetGame())
-    gameStartSound.play()
-    gameDispatch(setPlayer1(player1))
-    gameDispatch(setPlayer2(player2))
-    timer1.start()
-    if (gameState.turn === 'w') {
+    const waitForWallet = async () => {
+      while (!wallet?.account?.address) {
+        // Wait until wallet has a value
+        await delay(100);  // Check every 100ms
+      }
+  
+      setPlayer1(wallet.account.address); // Set player1 once wallet is ready
+      gameDispatch(setPlayer1(wallet.account.address)); // Dispatch player1 to the store
+      gameDispatch(setPlayer2(player2)); // Dispatch player2 (bot) to the store
+    };
+  
+    waitForWallet();
+  }, [wallet, player2, gameDispatch]);
+
+  useEffect(() => {
+      gameDispatch(resetGame())
+      gameStartSound.play()
+      gameDispatch(setPlayer1(player1!))
+      gameDispatch(setPlayer2(player2))
       timer1.start()
-      timer2.pause()
-    } else if (gameState.turn === 'b') {
-      timer2.start()
-      timer1.pause()
-    }
+      if (gameState.turn === 'w') {
+        timer1.start()
+        timer2.pause()
+      } else if (gameState.turn === 'b') {
+        timer2.start()
+        timer1.pause()
+      }
+    
+
   }, [])
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -186,7 +205,7 @@ const BotGame: React.FC<{}> = () => {
 
   const onSquareClick = (square: Square) => {
     if (gameState.moveIndex !== gameState.history.length - 1) return
-    const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet))
+    const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet?.account.address))
     if (isMove) {
       gameDispatch(setTurn('b'))
       gameDispatch(switchPlayerTurn())
@@ -338,7 +357,7 @@ const BotGame: React.FC<{}> = () => {
           <GameNavbar
             isBot={true}
             user={wallet?.account.address ? wallet?.account.address : 'player1'}
-            opponent={wallet?.account.address === player1 ? player2 : player1}
+            opponent={wallet?.account.address === player1 ? player2! : player1!}
             isMoved={gameState.moves.length !== 0}
             isWhite={player1 === wallet?.account.address}
           />

@@ -49,7 +49,7 @@ export function emitNewMove(
   })
 }
 
-export const isEligibleToPlay = (gameState: any, wallet: any) => {
+export const isEligibleToPlay = (gameState: any, address: any) => {
   if (
     gameState.isGameDraw ||
     gameState.isGameOver ||
@@ -61,8 +61,8 @@ export const isEligibleToPlay = (gameState: any, wallet: any) => {
   // if (currentMoveIndex < gameState.history.length) return false
 
   const isPlayerTurn =
-    (gameState.player1 === wallet?.account.address && (gameState.board as any)._turn === 'w') ||
-    (gameState.player2 === wallet?.account.address && (gameState.board as any)._turn === 'b')
+    (gameState.player1 === address && (gameState.board as any)._turn === 'w') ||
+    (gameState.player2 ===address && (gameState.board as any)._turn === 'b')
   return isPlayerTurn
 }
 

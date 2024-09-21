@@ -141,7 +141,10 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
       className="h-screen bg-center bg-contain"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
-      <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
+      <div className="flex flex-row">
+        <img  className='mx-h-[20px]' src='/Icon.png' onClick={() => navigate("/")}/>
+        <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
+      </div>
       <div className="flex flex-col">
         <div className="border-none">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
@@ -196,9 +199,6 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 >
                   Play Now
                 </ButtonV2>
-              </div>
-              <div className="flex item-center justify-center">
-                <FooterV2 activeIndex={0} />
               </div>
             </Block>
           </div>

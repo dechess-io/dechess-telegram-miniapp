@@ -5,13 +5,13 @@ import { ConnectionSettings } from '../components/Connect/ConnectionSettings'
 import { RootState, store, useAppDispatch, useAppSelector } from '../redux/store'
 import { getUserInfo, submitEarlyAccessCode } from '../redux/account/account.reducer'
 import { usePopups } from '../components/Chess/Popup/PopupProvider'
-import Popup from '../components/Chess/Popup/Popup'
-import Input from '../components/Input/Input'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useTonWallet } from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../services/ton'
 import { isTMA, LaunchParams, retrieveLaunchParams } from '@telegram-apps/sdk'
 import restApi from '../services/api'
+import Input from '../components/Input/Input'
+import { Popup } from 'konsta/react'
 
 const Login: React.FC<{}> = ({}) => {
   const dispatch = useAppDispatch()
@@ -64,8 +64,10 @@ const Login: React.FC<{}> = ({}) => {
           if (res.status == 200) {
             console.log('token', res.data)
             location.pathname = '/'
+            localStorage.setItem('data',JSON.stringify(data))
             localStorage.setItem('token', res.data.data)
             localStorage.setItem('address', data.initData?.user?.username!)
+            localStorage.setItem('user', JSON.stringify(data.initData?.user))
           }
         })
         .finally(() => {

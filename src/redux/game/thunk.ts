@@ -25,11 +25,11 @@ import { captureSound } from '../../services/move_sounds'
 import { Chess } from 'chess.js'
 export const onSquareClickThunk = (
   square: any,
-  wallet: any
+  address: any
 ): ThunkAction<GameReducer, RootState, unknown, AnyAction> => {
   return (dispatch, getState) => {
     const state = getState().game
-    if (!isEligibleToPlay(state, wallet)) return getState().game
+    if (!isEligibleToPlay(state, address)) return getState().game
 
     dispatch(setRightClickedSquares({}))
 
