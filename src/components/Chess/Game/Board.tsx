@@ -61,10 +61,14 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
   const isOrientation = useMemo(
     () =>
-      wallet?.account.address === player1 || WebApp?.initDataUnsafe?.user?.id.toString() === player1
+      (
+        wallet
+          ? wallet?.account.address === player1
+          : WebApp?.initDataUnsafe?.user?.id.toString() === player1
+      )
         ? 'white'
         : 'black',
-    [player1, wallet?.account.address]
+    [player1, wallet?.account.address, WebApp?.initDataUnsafe?.user?.id]
   )
 
   const getPlayerDisplayProps = (isTop: boolean) => {
@@ -84,7 +88,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
     return {
       imageSrc: playerImage,
-      name: wallet ? truncateSuiTx(playerName) : playerName,
+      name: playerName.length > 20 ? truncateSuiTx(playerName) : playerName,
       time: playerTime,
       timeBoxClass: isTop
         ? 'bg-grey-100 border-b-4 border-grey-200'
