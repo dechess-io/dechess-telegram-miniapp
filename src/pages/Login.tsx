@@ -67,7 +67,7 @@ const Login: React.FC<{}> = ({}) => {
               location.pathname = '/'
               localStorage.setItem('data', JSON.stringify(data))
               localStorage.setItem('token', res.data.data)
-              localStorage.setItem('address', data.initData?.user?.username!)
+              localStorage.setItem('address', data.initData?.user?.id.toString()!)
               localStorage.setItem('user', JSON.stringify(data.initData?.user))
             }, 1500)
           }
