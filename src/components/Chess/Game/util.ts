@@ -62,7 +62,7 @@ export const isEligibleToPlay = (gameState: any, address: any) => {
 
   const isPlayerTurn =
     (gameState.player1 === address && (gameState.board as any)._turn === 'w') ||
-    (gameState.player2 ===address && (gameState.board as any)._turn === 'b')
+    (gameState.player2 === address && (gameState.board as any)._turn === 'b')
   return isPlayerTurn
 }
 

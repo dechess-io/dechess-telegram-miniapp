@@ -11,7 +11,7 @@ import { TonProofDemoApi } from '../services/ton'
 import { isTMA, LaunchParams, retrieveLaunchParams } from '@telegram-apps/sdk'
 import restApi from '../services/api'
 import Input from '../components/Input/Input'
-import { Popup } from 'konsta/react'
+import Popup from '../components/Chess/Popup/Popup'
 
 const Login: React.FC<{}> = ({}) => {
   const dispatch = useAppDispatch()
@@ -62,12 +62,14 @@ const Login: React.FC<{}> = ({}) => {
         })
         .then((res) => {
           if (res.status == 200) {
-            console.log('token', res.data)
-            location.pathname = '/'
-            localStorage.setItem('data',JSON.stringify(data))
-            localStorage.setItem('token', res.data.data)
-            localStorage.setItem('address', data.initData?.user?.username!)
-            localStorage.setItem('user', JSON.stringify(data.initData?.user))
+            setTimeout(() => {
+              console.log('token', res.data)
+              location.pathname = '/'
+              localStorage.setItem('data', JSON.stringify(data))
+              localStorage.setItem('token', res.data.data)
+              localStorage.setItem('address', data.initData?.user?.username!)
+              localStorage.setItem('user', JSON.stringify(data.initData?.user))
+            }, 1500)
           }
         })
         .finally(() => {

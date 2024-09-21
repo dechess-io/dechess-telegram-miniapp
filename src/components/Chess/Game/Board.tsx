@@ -60,12 +60,15 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   const wallet = useTonWallet()
 
   const isOrientation = useMemo(
-    () => ((wallet?.account.address === player1 || WebApp?.initDataUnsafe?.user?.id.toString() === player1) ? 'white' : 'black'),
+    () =>
+      wallet?.account.address === player1 || WebApp?.initDataUnsafe?.user?.id.toString() === player1
+        ? 'white'
+        : 'black',
     [player1, wallet?.account.address]
   )
 
   const shortenName = (name: string) => {
-    return name.substring(0, Math.min(name.length,20))
+    return name.substring(0, Math.min(name.length, 20))
   }
 
   const getPlayerDisplayProps = (isTop: boolean) => {

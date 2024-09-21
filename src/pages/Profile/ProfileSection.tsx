@@ -1,8 +1,8 @@
-import { LaunchParams } from "@telegram-apps/sdk"
-import WebApp from "@twa-dev/sdk"
-import { useEffect, useState } from "react"
-import restApi from "../../services/api"
-import { getAvatarName } from "../../utils/utils"
+import { LaunchParams } from '@telegram-apps/sdk'
+import WebApp from '@twa-dev/sdk'
+import { useEffect, useState } from 'react'
+import restApi from '../../services/api'
+import { getAvatarName } from '../../utils/utils'
 
 interface ProfileAvatarProps {
   avatarUrl: string
@@ -31,14 +31,18 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({ avatarUrl, frameUrl }) =>
     >
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-11 h-11 bg-gray-300 rounded-full pb-2">
-          <img src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name}`} alt="Avatar" className="rounded-full" />
+          <img
+            src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${name}`}
+            alt="Avatar"
+            className="rounded-full"
+          />
         </div>
       </div>
     </div>
   )
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({username}) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ username }) => {
   return (
     <div className="flex flex-row items-center justify-center space-x-2">
       <span className="text-sm text-white">{username}</span>
@@ -49,19 +53,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({username}) => {
 
 const ProfileSection: React.FC = () => {
   const [user, setUser] = useState<any>('')
-  
 
   useEffect(() => {
     restApi
-        .post('/telegram-profile-image', {
-          'user_id' : WebApp.initDataUnsafe.user?.id,
-        })
-        .then((res) => {
-          if (res.status == 200) {
-           const data = res.data 
-          }
-        })
-        
+      .post('/telegram-profile-image', {
+        user_id: WebApp.initDataUnsafe.user?.id,
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          const data = res.data
+        }
+      })
   })
 
   return (
@@ -80,9 +82,8 @@ const ProfileSection: React.FC = () => {
         minHeight: '172px',
       }}
     >
-      
-        <ProfileAvatar avatarUrl={user.photoUrl} frameUrl="./images/avatar-frame.png" />
-        <ProfileHeader username={user.username}/>
+      <ProfileAvatar avatarUrl={user.photoUrl} frameUrl="./images/avatar-frame.png" />
+      <ProfileHeader username={user.username} />
       <div
         className="mx-auto my-auto"
         style={{

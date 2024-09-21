@@ -89,7 +89,7 @@ const MainPage: React.FC<{}> = ({}) => {
 
         {/* Play Now Button */}
         <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
-          <ButtonV2 className="mx-auto" onClick={() => navigate("/mode")}>
+          <ButtonV2 className="mx-auto" onClick={() => navigate('/mode')}>
             Play Now
           </ButtonV2>
         </div>

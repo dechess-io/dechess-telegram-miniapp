@@ -85,7 +85,10 @@ const Game: React.FC<object> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
-      if (wallet?.account.address === gameState.player1 || WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player1) {
+      if (
+        wallet?.account.address === gameState.player1 ||
+        WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player1
+      ) {
         gameDispatch(setLoser(true))
         gameOverSound.play()
         socket.emit('gameOver', {
@@ -110,7 +113,10 @@ const Game: React.FC<object> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
-      if (wallet?.account.address === gameState.player2 || WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player2) {
+      if (
+        wallet?.account.address === gameState.player2 ||
+        WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player2
+      ) {
         gameDispatch(setLoser(true))
         gameOverSound.play()
         socket.emit('gameOver', {
@@ -161,7 +167,10 @@ const Game: React.FC<object> = () => {
     onExpire: () => {
       gameDispatch(setGameOver(true))
       gameDispatch(setWinner(true))
-      if (wallet?.account.address === gameState.player1 || WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player1) {
+      if (
+        wallet?.account.address === gameState.player1 ||
+        WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player1
+      ) {
         gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
@@ -228,7 +237,12 @@ const Game: React.FC<object> = () => {
     (square: any) => {
       console.log('squareClick')
       if (gameState.moveIndex !== gameState.history.length - 1) return
-      const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, wallet ? wallet.account?.address : WebApp?.initDataUnsafe?.user?.id.toString()))
+      const { isMove, foundMove } = gameDispatch(
+        onSquareClickThunk(
+          square,
+          wallet ? wallet.account?.address : WebApp?.initDataUnsafe?.user?.id.toString()
+        )
+      )
       if (isMove) {
         makeMove(foundMove, square)
       }
@@ -435,8 +449,18 @@ const Game: React.FC<object> = () => {
   }, [])
 
   const isDraggablePiece = function ({ piece, sourceSquare }: any) {
-    if (piece[0] != 'w' && (gameState.player1 === wallet?.account.address || gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString())) return false
-    if (piece[0] != 'b' && (gameState.player2 === wallet?.account.address || gameState.player2 === WebApp?.initDataUnsafe?.user?.id.toString())) return false
+    if (
+      piece[0] != 'w' &&
+      (gameState.player1 === wallet?.account.address ||
+        gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString())
+    )
+      return false
+    if (
+      piece[0] != 'b' &&
+      (gameState.player2 === wallet?.account.address ||
+        gameState.player2 === WebApp?.initDataUnsafe?.user?.id.toString())
+    )
+      return false
     if (gameState.moveIndex !== gameState.history.length - 1) return false
 
     return true
@@ -523,13 +547,25 @@ const Game: React.FC<object> = () => {
         />
         <GameNavbar
           isBot={false}
-          user={wallet?.account.address ? wallet?.account.address : WebApp?.initDataUnsafe?.user?.id.toString()!}
+          user={
+            wallet?.account.address
+              ? wallet?.account.address
+              : WebApp?.initDataUnsafe?.user?.id.toString()!
+          }
           opponent={
-            wallet ? (wallet?.account.address === gameState.player1 ? gameState.player2 : gameState.player1)
-            : ( WebApp?.initDataUnsafe?.user?.id.toString()! === gameState.player1 ? gameState.player2 : gameState.player1)
+            wallet
+              ? wallet?.account.address === gameState.player1
+                ? gameState.player2
+                : gameState.player1
+              : WebApp?.initDataUnsafe?.user?.id.toString()! === gameState.player1
+                ? gameState.player2
+                : gameState.player1
           }
           isMoved={gameState.moves.length !== 0}
-          isWhite={gameState.player1 === wallet?.account.address || gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString()!}
+          isWhite={
+            gameState.player1 === wallet?.account.address ||
+            gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString()!
+          }
         />
         <Notification
           opened={notificationCloseOnClick}

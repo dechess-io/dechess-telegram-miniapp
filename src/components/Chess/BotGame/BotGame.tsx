@@ -60,8 +60,6 @@ const BotGame: React.FC<{}> = () => {
   const [isPopupDismissed, setIsPopupDismissed] = useState(false)
   const [additionTimePerMove] = useState(Number(queryParams.get('increment')))
 
-
-
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + Number(queryParams.get('time')) * 60 * 1000),
     autoStart: false,
@@ -86,32 +84,30 @@ const BotGame: React.FC<{}> = () => {
     const waitForWallet = async () => {
       while (!wallet?.account?.address) {
         // Wait until wallet has a value
-        await delay(100);  // Check every 100ms
+        await delay(100) // Check every 100ms
       }
-  
-      setPlayer1(wallet.account.address); // Set player1 once wallet is ready
-      gameDispatch(setPlayer1(wallet.account.address)); // Dispatch player1 to the store
-      gameDispatch(setPlayer2(player2)); // Dispatch player2 (bot) to the store
-    };
-  
-    waitForWallet();
-  }, [wallet, player2, gameDispatch]);
+
+      setPlayer1(wallet.account.address) // Set player1 once wallet is ready
+      gameDispatch(setPlayer1(wallet.account.address)) // Dispatch player1 to the store
+      gameDispatch(setPlayer2(player2)) // Dispatch player2 (bot) to the store
+    }
+
+    waitForWallet()
+  }, [wallet, player2, gameDispatch])
 
   useEffect(() => {
-      gameDispatch(resetGame())
-      gameStartSound.play()
-      gameDispatch(setPlayer1(player1!))
-      gameDispatch(setPlayer2(player2))
+    gameDispatch(resetGame())
+    gameStartSound.play()
+    gameDispatch(setPlayer1(player1!))
+    gameDispatch(setPlayer2(player2))
+    timer1.start()
+    if (gameState.turn === 'w') {
       timer1.start()
-      if (gameState.turn === 'w') {
-        timer1.start()
-        timer2.pause()
-      } else if (gameState.turn === 'b') {
-        timer2.start()
-        timer1.pause()
-      }
-    
-
+      timer2.pause()
+    } else if (gameState.turn === 'b') {
+      timer2.start()
+      timer1.pause()
+    }
   }, [])
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

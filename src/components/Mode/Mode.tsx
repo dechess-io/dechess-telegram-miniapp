@@ -142,7 +142,7 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       <div className="flex flex-row">
-        <img  className='mx-h-[20px]' src='/Icon.png' onClick={() => navigate("/")}/>
+        <img className="mx-h-[20px]" src="/Icon.png" onClick={() => navigate('/')} />
         <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
       </div>
       <div className="flex flex-col">
