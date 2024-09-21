@@ -25,6 +25,7 @@ const ReactDialog = ({
   cancelContent?: string
   buttons?: React.ReactNode
 }) => {
+  console.log(okContent)
   return (
     <Dialog
       className={cn(
@@ -50,7 +51,7 @@ const ReactDialog = ({
         ) : (
           <div className="flex items-center w-full gap-2">
             <DialogButton
-              className="bg-blue-gradient w-full rounded-xl after:hidden h-9 ios:text-black material:text-black shadow-general text-sm font-medium"
+              className="bg-blue-gradient w-full ios:text-white material:text-white rounded-xl h-9 shadow-general text-sm font-medium"
               onClick={onOk}
             >
               {okContent || 'Yes'}
