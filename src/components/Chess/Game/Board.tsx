@@ -67,10 +67,6 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
     [player1, wallet?.account.address]
   )
 
-  const shortenName = (name: string) => {
-    return name.substring(0, Math.min(name.length, 20))
-  }
-
   const getPlayerDisplayProps = (isTop: boolean) => {
     const isPlayer1 = wallet?.account.address === player1
     const isPlayer2 = wallet?.account.address === player2
@@ -88,7 +84,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
     return {
       imageSrc: playerImage,
-      name: shortenName(playerName),
+      name: wallet ? truncateSuiTx(playerName) : playerName,
       time: playerTime,
       timeBoxClass: isTop
         ? 'bg-grey-100 border-b-4 border-grey-200'

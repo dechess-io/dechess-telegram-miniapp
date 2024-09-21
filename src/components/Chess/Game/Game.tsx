@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { Square } from 'chess.js'
-import { useFetcher, useLocation } from 'react-router-dom'
+import { useFetcher, useLocation, useNavigate } from 'react-router-dom'
 import { restApi } from '../../../services/api'
 import { socket } from '../../../services/socket'
 import GameOverPopUp from '../Popup/GameOverPopUp'
@@ -62,6 +62,7 @@ const Game: React.FC<object> = () => {
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
   const [chatId, setChatId] = useState(WebApp.initDataUnsafe.chat?.id)
+  const navigate = useNavigate()
 
   const fetchData = async () => {
     const isTma = await isTMA()
@@ -522,13 +523,14 @@ const Game: React.FC<object> = () => {
   return (
     <>
       <Page
-        className="h-screen bg-cover bg-center flex flex-col items-center justify-between bg-contain"
-        style={{ backgroundImage: 'url(./images/bg-game.png)' }}
+        className="h-screen bg-center flex flex-col items-center justify-between bg-contain bg-repeat"
+        style={{ backgroundImage: 'url(/bg-game.png)' }}
       >
         <img
-          className="max-w-[120px] max-h-[40px]"
+          className="max-w-[120px] max-h-[40px] mx-auto"
           src="/images/logo-dechess.svg"
           alt="DeChess Logo"
+          onClick={() => navigate('/')}
         />
         <GameBoard
           player1Timer={timer1.minutes * 60 + timer1.seconds}

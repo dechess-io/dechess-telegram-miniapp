@@ -32,7 +32,7 @@ const MainPage: React.FC<{}> = ({}) => {
         cb: (data) => {
           if (data && data.isEarly === true) {
             return
-          } else if (data.isEarly === false) {
+          } else if (data.isEarly === false && !localStorage.getItem('address')) {
             navigate('/login')
           }
         },
@@ -42,7 +42,7 @@ const MainPage: React.FC<{}> = ({}) => {
 
   return (
     <div
-      className="h-screen bg-centerbg-contain flex flex-col"
+      className="h-screen bg-center bg-contain flex flex-col"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
       <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
@@ -57,7 +57,7 @@ const MainPage: React.FC<{}> = ({}) => {
           <div className="grid grid-cols-2 w-full max-w-[500px] gap-2 p-1 md:p-4 lg:p-4 mx-auto ">
             <div className="text-center cursor-pointer">
               <img
-                src={arena_svg}
+                src="/main/arena.png"
                 alt="DeChess Bot"
                 className="mx-auto max-w-[120px] md:max-w-[150px]"
                 onClick={toggleDialog}
@@ -65,21 +65,21 @@ const MainPage: React.FC<{}> = ({}) => {
             </div>
             <div className="text-center cursor-pointer">
               <img
-                src={quest_svg}
+                src="/main/quest.png"
                 alt="Treasure Quest"
                 className="mx-auto max-w-[120px] md:max-w-[150px]"
               />
             </div>
             <div className="text-center cursor-pointer">
               <img
-                src={tournament_svg}
+                src="/main/tournament.png"
                 alt="Tournament"
                 className="mx-auto max-w-[120px] md:max-w-[150px]"
               />
             </div>
             <div className="text-center cursor-pointer">
               <img
-                src={academy_svg}
+                src="/main/academy.png"
                 alt="DeChess Academy"
                 className="mx-auto max-w-[120px] md:max-w-[150px]"
               />
