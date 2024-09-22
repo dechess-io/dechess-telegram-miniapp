@@ -28,11 +28,11 @@ const Header: React.FC = () => {
           </button>
         )
       }
-      right={
-        <div className="flex-1 flex justify-end">
-          <ConnectionSettings />
-        </div>
-      }
+      // right={
+      //   <div className="flex-1 flex justify-end">
+      //     <ConnectionSettings />
+      //   </div>
+      // }
       centerTitle={true}
       title={
         <div className="flex items-center justify-between">

@@ -53,7 +53,7 @@ module.exports = konstaConfig({
         btnprimary: 'rgba(141, 28, 254, 1)',
         t1: 'rgb(239,250,13)',
         black: {
-          '1a': '#1E1C1A',
+          100: '#000000',
         },
         gray: {
           100: '#f2f4f7',
