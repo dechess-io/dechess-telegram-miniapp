@@ -3,7 +3,6 @@ import React, { useEffect } from 'react'
 import ReactDialog from '../../Dialog/ReactDialog'
 import { useAppSelector } from '../../../redux/store'
 import { selectGame } from '../../../redux/game/reducer'
-import { useTonWallet } from '@tonconnect/ui-react'
 
 type GameOverPopUpProps = {
   showPopup: boolean
@@ -18,7 +17,7 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
   isBotMode,
   setIsPopupDismissed,
 }) => {
-  const wallet = useTonWallet()
+  const address = localStorage.getItem('address')
   const { board, isGameOver, isGameDraw, player1, player2, isWinner, isLoser } =
     useAppSelector(selectGame)
   const navigate = useNavigate()
@@ -36,8 +35,8 @@ const GameOverPopUpOriginal: React.FC<GameOverPopUpProps> = ({
     if (board.isDraw() || isGameDraw) return 'Draw!'
     if (board.isGameOver() || isGameOver) {
       const playerWon =
-        (player1 === wallet?.account.address && (board as any)._turn === 'b') ||
-        (player2 === wallet?.account.address && (board as any)._turn === 'w')
+        (player1 === address && (board as any)._turn === 'b') ||
+        (player2 === address && (board as any)._turn === 'w')
       return playerWon ? 'You Win!' : 'You Lose!'
     }
     return null

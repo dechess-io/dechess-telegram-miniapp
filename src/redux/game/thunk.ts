@@ -20,13 +20,12 @@ import {
 } from './action'
 import { GameReducer } from './type'
 import { convertToFigurineSan, indexToSquare } from '../../utils/utils'
-import { socket } from '../../services/socket'
-import { captureSound } from '../../services/move_sounds'
-import { Chess } from 'chess.js'
+
 export const onSquareClickThunk = (
   square: any,
   address: any
 ): ThunkAction<GameReducer, RootState, unknown, AnyAction> => {
+  console.log('onClick')
   return (dispatch, getState) => {
     const state = getState().game
     if (!isEligibleToPlay(state, address)) return getState().game
@@ -48,6 +47,7 @@ export const onSquareClickThunk = (
 export const moveFromSelectionThunk = (
   payload: any
 ): ThunkAction<void, RootState, unknown, AnyAction> => {
+  console.log('moveFrom')
   return (dispatch, getState) => {
     const state = getState().game // Adjust 'game' to match your reducer's name
 
@@ -61,6 +61,7 @@ export const moveFromSelectionThunk = (
 export const moveToSelectionThunk = (
   payload: any
 ): ThunkAction<void, RootState, unknown, AnyAction> => {
+  console.log('moveTo')
   return (dispatch, getState) => {
     const state = getState().game
 
@@ -88,6 +89,7 @@ export const moveToSelectionThunk = (
 export const moveThunk = (
   payload: any
 ): ThunkAction<GameReducer, RootState, unknown, AnyAction> => {
+  console.log('moveThunk')
   return (dispatch, getState) => {
     const state = getState().game
     const { foundMove, square } = payload
@@ -170,6 +172,7 @@ export const promotionMoveThunk = (
 }
 
 export const resetMoveSelectionThunk = (): ThunkAction<void, RootState, unknown, AnyAction> => {
+  console.log('resetSelection')
   return (dispatch, getState) => {
     dispatch(setMoveFrom(undefined))
     dispatch(setMoveTo(undefined))

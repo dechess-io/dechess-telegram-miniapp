@@ -58,13 +58,11 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   const [name2] = useState(getAvatarName())
   const address = localStorage.getItem('address')
 
-  const wallet = useTonWallet()
-
   const isOrientation = useMemo(() => (address === player1 ? 'white' : 'black'), [player1, address])
 
   const getPlayerDisplayProps = (isTop: boolean) => {
-    const isPlayer1 = wallet?.account.address === player1
-    const isPlayer2 = wallet?.account.address === player2
+    const isPlayer1 = address === player1
+    const isPlayer2 = address === player2
     const isWhite = isOrientation === 'white'
     let playerName, playerImage, playerTime
     if (isTop) {

@@ -23,7 +23,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
   isWhite,
   isBot,
 }) => {
-  const wallet = useTonWallet()
+  const address = localStorage.getItem('address')
 
   const gameDispatch = useAppDispatch()
 
@@ -34,10 +34,9 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
   const badge = useMemo(
     () =>
       messages?.length > 0
-        ? messages.filter((z) => !z.viewedAt && z.sender !== wallet?.account?.address).length ||
-          undefined
+        ? messages.filter((z) => !z.viewedAt && z.sender !== address).length || undefined
         : undefined,
-    [messages, wallet?.account?.address]
+    [messages, address]
   )
 
   useEffect(() => {
@@ -118,7 +117,7 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
           setIsChatVisible={toggleChat}
           messages={messages}
           setMessages={setMessages}
-          userId={wallet?.account.address ? wallet?.account.address : ''}
+          userId={address ? address : ''}
         />
       )}
     </>

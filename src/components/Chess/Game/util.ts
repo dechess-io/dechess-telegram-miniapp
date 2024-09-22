@@ -31,7 +31,7 @@ export function emitNewMove(
 ) {
   const turn = gameState.board.turn()
   const fen = gameState.board.fen()
-
+  console.log(turn + 'Hello')
   socket.emit('move', {
     from,
     to,

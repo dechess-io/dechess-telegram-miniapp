@@ -80,8 +80,6 @@ const Game: React.FC<object> = () => {
     fetchData()
   }, [])
 
-  console.log(gameState)
-
   const timer1 = useTimer({
     expiryTimestamp: new Date(Date.now() + 60 * 1000 * 2),
     autoStart: false,
