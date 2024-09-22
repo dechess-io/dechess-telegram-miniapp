@@ -51,7 +51,6 @@ const Game: React.FC<object> = () => {
   const gameState = useAppSelector(selectGame)
   const gameDispatch = useAppDispatch()
   const location = useLocation()
-  const wallet = useTonWallet()
   const [moveSquares] = useState({})
   const [showPopup, setShowPopup] = useState(false)
   const [isStartGame, setIsStartGame] = useState(false)
@@ -62,6 +61,9 @@ const Game: React.FC<object> = () => {
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [progress, setProgress] = useState(120)
   const navigate = useNavigate()
+  const address = localStorage.getItem('address')
+
+  console.log(address)
 
   const fetchData = async () => {
     const isTma = await isTMA()
@@ -85,10 +87,7 @@ const Game: React.FC<object> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
-      if (
-        wallet?.account.address === gameState.player1 ||
-        WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player1
-      ) {
+      if (address === gameState.player1) {
         gameDispatch(setLoser(true))
         gameOverSound.play()
         socket.emit('gameOver', {
@@ -113,10 +112,7 @@ const Game: React.FC<object> = () => {
     autoStart: false,
     onExpire: () => {
       gameDispatch(setGameOver(true))
-      if (
-        wallet?.account.address === gameState.player2 ||
-        WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player2
-      ) {
+      if (address === gameState.player2) {
         gameDispatch(setLoser(true))
         gameOverSound.play()
         socket.emit('gameOver', {
@@ -154,7 +150,6 @@ const Game: React.FC<object> = () => {
   const timer1Ref = useRef(timer1)
   const timer2Ref = useRef(timer2)
 
-
   useEffect(() => {
     timer1Ref.current = timer1
     timer2Ref.current = timer2
@@ -166,10 +161,7 @@ const Game: React.FC<object> = () => {
     onExpire: () => {
       gameDispatch(setGameOver(true))
       gameDispatch(setWinner(true))
-      if (
-        wallet?.account.address === gameState.player1 ||
-        WebApp?.initDataUnsafe?.user?.id.toString() === gameState.player1
-      ) {
+      if (address === gameState.player1) {
         gameOverSound.play()
         socket.emit('gameOver', {
           game_id: location.pathname.split('/')[2],
@@ -190,7 +182,6 @@ const Game: React.FC<object> = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const makeMove = useCallback(
     (foundMove: any, square: Square) => {
-
       const newState = gameDispatch(moveThunk({ foundMove, square }))
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
 
@@ -233,12 +224,7 @@ const Game: React.FC<object> = () => {
   const onSquareClicks = useCallback(
     (square: any) => {
       if (gameState.moveIndex !== gameState.history.length - 1) return
-      const { isMove, foundMove } = gameDispatch(
-        onSquareClickThunk(
-          square,
-          wallet ? wallet.account?.address : WebApp?.initDataUnsafe?.user?.id.toString()
-        )
-      )
+      const { isMove, foundMove } = gameDispatch(onSquareClickThunk(square, address))
       if (isMove) {
         makeMove(foundMove, square)
       }
@@ -345,12 +331,6 @@ const Game: React.FC<object> = () => {
   }, [gameState.isGameOver, gameState.isGameDraw])
 
   useEffect(() => {
-    if (wallet) {
-      setLocalStorage('address', wallet.account?.address)
-    }
-  }, [wallet])
-
-  useEffect(() => {
     if (isGameContinue()) {
       if (gameState.playerTurn === gameState.player1 && timer1.minutes * 60 + timer1.seconds > 0) {
         timer1.resume()
@@ -408,31 +388,31 @@ const Game: React.FC<object> = () => {
         }
       }
     })
-    socket.on('opponentDisconnect', () => {
-      setNotificationCloseOnClick(true)
-      setTimeout(() => {
-        setNotificationCloseOnClick(false)
-      }, 2000)
+    // socket.on('opponentDisconnect', () => {
+    //   setNotificationCloseOnClick(true)
+    //   setTimeout(() => {
+    //     setNotificationCloseOnClick(false)
+    //   }, 2000)
 
-      setShowProgressBar(true)
-      timer1.pause()
-      timer2.pause()
-      let countDownTime: any = new Date(
-        Date.now() + (countDown.minutes * 60 + countDown.seconds) * 1000
-      )
-      const { minutes: timer1Minutes, seconds: timer1Seconds } = timer1Ref.current
-      const { minutes: timer2Minutes, seconds: timer2Seconds } = timer2Ref.current
-      let userTime = Math.min(
-        timer1Minutes * 60 + timer1Seconds,
-        timer2Minutes * 60 + timer2Seconds
-      )
+    //   setShowProgressBar(true)
+    //   timer1.pause()
+    //   timer2.pause()
+    //   let countDownTime: any = new Date(
+    //     Date.now() + (countDown.minutes * 60 + countDown.seconds) * 1000
+    //   )
+    //   const { minutes: timer1Minutes, seconds: timer1Seconds } = timer1Ref.current
+    //   const { minutes: timer2Minutes, seconds: timer2Seconds } = timer2Ref.current
+    //   let userTime = Math.min(
+    //     timer1Minutes * 60 + timer1Seconds,
+    //     timer2Minutes * 60 + timer2Seconds
+    //   )
 
-      if (countDown.minutes * 60 + countDown.seconds > userTime) {
-        countDownTime = new Date(Date.now() + userTime * 1000)
-        setProgress(userTime)
-      }
-      countDown.restart(countDownTime)
-    })
+    //   if (countDown.minutes * 60 + countDown.seconds > userTime) {
+    //     countDownTime = new Date(Date.now() + userTime * 1000)
+    //     setProgress(userTime)
+    //   }
+    //   countDown.restart(countDownTime)
+    // })
 
     socket.emit('joinGame', { game_id: gameId })
 
@@ -445,18 +425,8 @@ const Game: React.FC<object> = () => {
   }, [])
 
   const isDraggablePiece = function ({ piece, sourceSquare }: any) {
-    if (
-      piece[0] != 'w' &&
-      (gameState.player1 === wallet?.account.address ||
-        gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString())
-    )
-      return false
-    if (
-      piece[0] != 'b' &&
-      (gameState.player2 === wallet?.account.address ||
-        gameState.player2 === WebApp?.initDataUnsafe?.user?.id.toString())
-    )
-      return false
+    if (piece[0] != 'w' && gameState.player1 === address) return false
+    if (piece[0] != 'b' && gameState.player2 === address) return false
     if (gameState.moveIndex !== gameState.history.length - 1) return false
 
     return true
@@ -544,25 +514,10 @@ const Game: React.FC<object> = () => {
         />
         <GameNavbar
           isBot={false}
-          user={
-            wallet?.account.address
-              ? wallet?.account.address
-              : WebApp?.initDataUnsafe?.user?.id.toString()!
-          }
-          opponent={
-            wallet
-              ? (wallet?.account.address === gameState.player1
-                ? gameState.player2
-                : gameState.player1)
-              : (WebApp?.initDataUnsafe?.user?.id.toString()! === gameState.player1
-                ? gameState.player2
-                : gameState.player1)
-          }
+          user={address!}
+          opponent={address === gameState.player1 ? gameState.player2 : gameState.player1}
           isMoved={gameState.moves.length !== 0}
-          isWhite={
-           wallet ? (gameState.player1 === wallet?.account.address) :
-            (gameState.player1 === WebApp?.initDataUnsafe?.user?.id.toString()!)
-          }
+          isWhite={gameState.player1 === address}
         />
         {/* <Notification
           opened={notificationCloseOnClick}

@@ -3,7 +3,7 @@ import LOGO_DECHESS from '../../public/images/logo-dechess.svg'
 import ButtonV2 from '../components/Button/ButtonV2'
 import { ConnectionSettings } from '../components/Connect/ConnectionSettings'
 import { RootState, store, useAppDispatch, useAppSelector } from '../redux/store'
-import { getUserInfo, submitEarlyAccessCode } from '../redux/account/account.reducer'
+import { getUserInfo, submitEarlyAccessCode, updateAddress } from '../redux/account/account.reducer'
 import { usePopups } from '../components/Chess/Popup/PopupProvider'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useTonWallet } from '@tonconnect/ui-react'
@@ -38,7 +38,8 @@ const Login: React.FC<{}> = ({}) => {
           if (data.status === 200) {
             setSubmiting(false)
             removeAll()
-            navigate('/')
+            location.pathname = '/'
+            localStorage.setItem('address', wallet?.account?.address!)
           } else {
             setSubmiting(false)
           }
@@ -67,6 +68,7 @@ const Login: React.FC<{}> = ({}) => {
               localStorage.setItem('token', res.data.data)
               localStorage.setItem('address', data.initData?.user?.id.toString()!)
               localStorage.setItem('user', JSON.stringify(data.initData?.user))
+              dispatch(updateAddress(data.initData?.user?.id.toString()))
             }, 1500)
           }
         })
@@ -87,8 +89,10 @@ const Login: React.FC<{}> = ({}) => {
           cb: (data) => {
             console.log('data', data)
             setUser(data)
+            dispatch(updateAddress(wallet?.account?.address))
+            localStorage.setItem('address', wallet?.account?.address)
             if (data && data.isEarly === true) {
-              // navigate('/')
+              location.pathname = '/'
             }
           },
         })
@@ -143,16 +147,16 @@ const Login: React.FC<{}> = ({}) => {
         />
       </div>
 
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-2 md:mb-12 lg:mb-12 w-full max-w-[354px]">
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-2 md:mb-12 lg:mb-12">
         <ButtonV2
           kind="secondary"
-          className="w-full mb-4"
+          className="w-full mb-2"
           onClick={handleTelegramLogin}
           disabled={loading}
         >
           {loading ? 'Logging in...' : 'Telegram'}
         </ButtonV2>
-        <div className="mb-4">
+        <div className="mb-4 mx-auto my-auto">
           <ConnectionSettings />
         </div>
       </div>

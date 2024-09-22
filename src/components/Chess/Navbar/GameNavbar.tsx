@@ -25,10 +25,6 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
 }) => {
   const wallet = useTonWallet()
 
-  console.log("user " + user)
-  console.log("opppent" + opponent)
-  console.log("isWhite " + isWhite)
-
   const gameDispatch = useAppDispatch()
 
   const [messages, setMessages] = useState<Message[]>([])
@@ -65,7 +61,6 @@ const GameNavbarOriginal: React.FC<GameNavbarProps> = ({
     <>
       <Tabbar icons className="left-0 bottom-0 fixed">
         <TabbarLink
-          active
           onClick={toggleSidebar}
           icon={
             <Icon

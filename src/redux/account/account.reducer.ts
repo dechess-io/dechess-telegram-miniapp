@@ -46,6 +46,16 @@ export const getUserInfo = createAsyncThunk(
   }
 )
 
+export const updateAddress = createAsyncThunk(
+  'account/updateAddress',
+  async (newAddress: string | undefined) => {
+    if (!newAddress) {
+      return 'Missing address'
+    }
+    return newAddress // Simulate returning the new address, could be an API call
+  }
+)
+
 export const submitEarlyAccessCode = createAsyncThunk(
   'account/submit-early-access-code',
   async ({ code, cb }: { code: string; cb: (user: any) => void }) => {
@@ -78,11 +88,13 @@ export const submitEarlyAccessCode = createAsyncThunk(
 export type AccountReducer = {
   loading: boolean
   user: any
+  address: string
 }
 
 export const defaultAccountReducer: AccountReducer = {
   loading: false,
   user: null,
+  address: '',
 }
 
 const accountReducer = createReducer(defaultAccountReducer, (builder) => {
@@ -95,6 +107,9 @@ const accountReducer = createReducer(defaultAccountReducer, (builder) => {
     .addCase(getUserInfo.fulfilled, (state, action) => {
       console.log('action', action.payload)
       return { ...state, user: action.payload, loading: false }
+    })
+    .addCase(updateAddress.fulfilled, (state, action) => {
+      return { ...state, address: action.payload }
     })
 })
 

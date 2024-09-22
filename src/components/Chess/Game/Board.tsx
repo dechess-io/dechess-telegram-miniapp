@@ -56,20 +56,11 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
 
   const [name1] = useState(getAvatarName())
   const [name2] = useState(getAvatarName())
+  const address = localStorage.getItem('address')
 
   const wallet = useTonWallet()
 
-  const isOrientation = useMemo(
-    () =>
-      (
-        wallet
-          ? wallet?.account.address === player1
-          : WebApp?.initDataUnsafe?.user?.id.toString() === player1
-      )
-        ? 'white'
-        : 'black',
-    [player1, wallet?.account.address, WebApp?.initDataUnsafe?.user?.id]
-  )
+  const isOrientation = useMemo(() => (address === player1 ? 'white' : 'black'), [player1, address])
 
   const getPlayerDisplayProps = (isTop: boolean) => {
     const isPlayer1 = wallet?.account.address === player1
