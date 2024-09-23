@@ -10,11 +10,42 @@ import ReactDialog from './components/Dialog/ReactDialog.tsx'
 import { Block } from 'konsta/react'
 import Button from './components/Button/Button.tsx'
 import MainMenu from './pages/Login.tsx'
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets'
+import {
+  WalletModalProvider,
+  WalletDisconnectButton,
+  WalletMultiButton,
+} from '@solana/wallet-adapter-react-ui'
+import { clusterApiUrl } from '@solana/web3.js'
 
 function App() {
   const navigate = useNavigate()
   const [showPopup, setShowPopup] = useState(false)
   const [data, setData] = useState<any>()
+  const network = WalletAdapterNetwork.Devnet
+  const endpoint = useMemo(() => clusterApiUrl(network), [network])
+
+  const wallets = useMemo(
+    () => [
+      /**
+       * Wallets that implement either of these standards will be available automatically.
+       *
+       *   - Solana Mobile Stack Mobile Wallet Adapter Protocol
+       *     (https://github.com/solana-mobile/mobile-wallet-adapter)
+       *   - Solana Wallet Standard
+       *     (https://github.com/anza-xyz/wallet-standard)
+       *
+       * If you wish to support a wallet that supports neither of those standards,
+       * instantiate its legacy wallet adapter here. Common legacy adapters can be found
+       * in the npm package `@solana/wallet-adapter-wallets`.
+       */
+      new UnsafeBurnerWalletAdapter(),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [network]
+  )
   // const handlePlayClick = () => {
   //   navigate('/mode')
   // }
@@ -80,7 +111,16 @@ function App() {
         onOk={handleRejoin}
         onCancel={handleCancel}
       /> */}
-      <MainMenu />
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <WalletMultiButton />
+            <WalletDisconnectButton />
+            {/* Your app's components go here, nested within the context providers. */}
+            <MainMenu />
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
     </>
   )
 }

@@ -30,9 +30,9 @@ const MainPage: React.FC<{}> = ({}) => {
     dispatch(
       getUserInfo({
         cb: (data) => {
-          if (data && data.isEarly === true) {
+          if (data) {
             return
-          } else if (data.isEarly === false && !localStorage.getItem('address')) {
+          } else if (!localStorage.getItem('address')) {
             navigate('/login')
           }
         },

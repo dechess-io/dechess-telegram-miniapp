@@ -3,6 +3,7 @@ import { createAsyncThunk, createReducer } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import restApi from '../../services/api'
 import { generateAuthorization } from '../../services/token'
+import bs58 from 'bs58'
 
 export const getAccount = createAsyncThunk('account/get', () => {})
 
@@ -31,9 +32,13 @@ export const getUserInfo = createAsyncThunk(
           headers: { Authorization: generateAuthorization(token) },
         })
         .then((response: any) => {
+          console.log('7s200:res', response)
           return response.data.data.userInfo
         })
         .catch((err) => {
+          if (err.response.status === 403) {
+            localStorage.removeItem('token')
+          }
           return null
         })
       if (cb) {
@@ -41,6 +46,83 @@ export const getUserInfo = createAsyncThunk(
       }
       return result
     } catch (error) {
+      return null
+    }
+  }
+)
+
+export const generatePayloadSolana = createAsyncThunk(
+  'account/solana/generate-payload',
+  async ({
+    address,
+    network,
+    cb,
+  }: {
+    address: string
+    network: string
+    cb: (message: any) => void
+  }) => {
+    try {
+      if (address.length === 0) return cb(null)
+      if (network.length === 0) return cb(null)
+      const result = await restApi
+        .post('/generate-payload-solana', {
+          address: address,
+          network: network,
+        })
+        .then((data) => data)
+        .catch((err) => {
+          console.log('err', err)
+        })
+      if (!result) return cb(null)
+      if (result.data.status === 200) {
+        return cb(result.data.data)
+      }
+    } catch (error) {
+      cb(null)
+      return null
+    }
+  }
+)
+
+export const verifySignatureSolana = createAsyncThunk(
+  'account/solana/verify-signature',
+  async ({
+    address,
+    signature,
+    message,
+    network,
+    cb,
+  }: {
+    address: string
+    signature: any
+    message: any
+    network: string
+    cb: (message: any) => void
+  }) => {
+    try {
+      if (address.length === 0) return cb(null)
+      if (network.length === 0) return cb(null)
+      const result = await restApi
+        .post('/veirfy-signature-solana', {
+          address: address,
+          signature: bs58.encode(signature),
+          message: message,
+          network: network,
+        })
+        .then((data) => data)
+        .catch((err) => {
+          console.log('err', err)
+        })
+      console.log('7s200:result', result)
+      if (!result) return cb(null)
+      if (result.data.status === 200) {
+        localStorage.setItem('token', result.data.data)
+        localStorage.setItem('blockchain', result.data.blockchain)
+        return cb(result.data.data)
+      }
+    } catch (error) {
+      cb(null)
       return null
     }
   }
