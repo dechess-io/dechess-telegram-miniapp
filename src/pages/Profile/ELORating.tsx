@@ -8,11 +8,11 @@ interface RatingItemProps {
 const RatingItem: React.FC<RatingItemProps> = ({ imageUrl, label }) => {
   return (
     <div
-      className="flex flex-row items-center justify-center bg-cover bg-center bg-no-repeat rounded-full w-full h-full max-w-[122px] max-h-[122px] space-x-1"
+      className="flex flex-row items-center justify-center bg-cover bg-center bg-no-repeat rounded-full w-full h-full max-w-[100px] max-h-[100px] space-x-1"
       style={{
         backgroundImage: 'url(/images/wood_circle.png)',
-        width: '122px',
-        height: '122px',
+        width: '100px',
+        height: '100px',
       }}
     >
       <img src={imageUrl} alt={label} />

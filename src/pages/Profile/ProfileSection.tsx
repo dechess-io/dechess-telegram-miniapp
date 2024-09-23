@@ -23,7 +23,7 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({ avatarUrl, frameUrl }) =>
         backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        width: '90vw',
+        width: '50vw',
         height: '60vh',
         maxWidth: '70px',
         maxHeight: '85px',
@@ -46,7 +46,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ username }) => {
   return (
     <div className="flex flex-row items-center justify-center space-x-2">
       <span className="text-sm text-white">{username}</span>
-      <img className="w-[20px] h-[20px]" src="/images/edit-name.png" alt="Edit Name" />
+      <img className="w-[20px] h-[15px]" src="/images/edit-name.png" alt="Edit Name" />
     </div>
   )
 }
@@ -68,7 +68,7 @@ const ProfileSection: React.FC = () => {
 
   return (
     <div
-      className="flex flex-col items-center space-y-2"
+      className="flex flex-col items-center space-y-2 relative"
       style={{
         backgroundImage: 'url(./images/profile.png)',
         backgroundSize: 'contain',
@@ -82,19 +82,22 @@ const ProfileSection: React.FC = () => {
         minHeight: '172px',
       }}
     >
-      <ProfileAvatar avatarUrl={user.photoUrl} frameUrl="./images/avatar-frame.png" />
-      <ProfileHeader username={user.username} />
-      <div
-        className="mx-auto my-auto"
-        style={{
-          backgroundImage: 'url(./images/Point.png)',
-          height: '27px',
-          width: '115px',
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-        }}
-      ></div>
+      <div className="relative my-auto flex flex-col justify-center items-center">
+        <ProfileAvatar avatarUrl={user.photoUrl} frameUrl="./images/avatar-frame.png" />
+        <ProfileHeader username={user.username} />
+
+        <div
+          className=""
+          style={{
+            backgroundImage: 'url(./images/Point.png)',
+            height: '27px',
+            width: '115px',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+          }}
+        ></div>
+      </div>
     </div>
   )
 }

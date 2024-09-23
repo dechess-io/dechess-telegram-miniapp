@@ -29,7 +29,7 @@ const Dialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
       onClick={(e) => e.stopPropagation()}
     >
       <button
-        className="absolute top-12 right-10 text-gray-400 hover:text-gray-600"
+        className="absolute top-16 right-10 text-gray-400 hover:text-gray-600 "
         onClick={onClose}
       >
         <img src="./images/Close.png" alt="Close" />

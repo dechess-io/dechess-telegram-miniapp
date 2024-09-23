@@ -8,11 +8,11 @@ interface StatisticItemProps {
 const StatisticItem: React.FC<StatisticItemProps> = ({ value, label }) => {
   return (
     <div
-      className="flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat rounded-full w-full h-full max-w-[122px] max-h-[122px]"
+      className="flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat rounded-full w-full h-full max-w-[100px] max-h-[100px]"
       style={{
         backgroundImage: 'url(/images/wood_circle.png)',
-        width: '122px',
-        height: '122px',
+        width: '90px',
+        height: '90px',
       }}
     >
       <span className="text-xl font-bold text-white">{value}</span>
@@ -23,25 +23,24 @@ const StatisticItem: React.FC<StatisticItemProps> = ({ value, label }) => {
 
 const Statistic: React.FC = () => {
   return (
-    <Block className="space-y-4 flex flex-col">
+    <div className="space-y-2 flex flex-col item-center">
       <div
         style={{
           backgroundImage: 'url(./images/profile-statistic-card.png)',
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          width: '90vw',
           height: '60vh',
-          maxWidth: '398px',
-          maxHeight: '66px',
+          maxHeight: '50px',
+          maxWidth: '300px',
         }}
       ></div>
-      <div className="flex flex-row justify-between w-full">
+      <div className="flex flex-row justify-between w-full max-w-[300px]">
         <StatisticItem value={0} label="Wins" />
         <StatisticItem value={0} label="Loses" />
         <StatisticItem value={0} label="Draws" />
       </div>
-    </Block>
+    </div>
   )
 }
 
