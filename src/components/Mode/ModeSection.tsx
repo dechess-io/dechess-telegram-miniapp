@@ -64,7 +64,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
   isActive,
 }) => {
   return (
-    <Card className="bg-transparent">
+    <div className="bg-transparent">
       <div className="flex flex-row items-center pl-2">
         <img src={imgSrc} alt={title} className="h-24 w-24" />
         <span className="text-white pl-2 text-lg font-semibold  tracking-wide">{title}</span>
@@ -83,7 +83,7 @@ const ModeSection: React.FC<ModeSectionProps> = ({
           />
         ))}
       </div>
-    </Card>
+    </div>
   )
 }
 

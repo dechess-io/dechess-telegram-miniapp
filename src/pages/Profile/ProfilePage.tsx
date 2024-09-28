@@ -26,7 +26,11 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="h-screen bg-center flex flex-col items-center" style={backgroundStyles}>
-      <div className="mx-auto text-white">Profile</div>
+      <img
+        className="max-w-[120px] max-h-[40px] mx-auto"
+        src="/images/logo-dechess.svg"
+        alt="DeChess Logo"
+      />
 
       <ProfileSection />
 

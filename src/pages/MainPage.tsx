@@ -49,7 +49,7 @@ const MainPage: React.FC<{}> = ({}) => {
       <div className="flex flex-col items-center justify-center mx-auto my-2">
         <div className="">
           <img
-            className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[300px] mx-auto"
+            className="w-full max-w-[300px] sm:max-w-[300px] md:max-w-[250px] mx-auto"
             src={CHESS_MASTER}
             alt="CHESS_MASTER"
           />
@@ -59,7 +59,7 @@ const MainPage: React.FC<{}> = ({}) => {
               <img
                 src="/main/arena.png"
                 alt="DeChess Bot"
-                className="mx-auto max-w-[120px] md:max-w-[150px]"
+                className="mx-auto max-w-[120px] md:max-w-[125px]"
                 onClick={toggleDialog}
               />
             </div>
@@ -67,21 +67,21 @@ const MainPage: React.FC<{}> = ({}) => {
               <img
                 src="/main/quest.png"
                 alt="Treasure Quest"
-                className="mx-auto max-w-[120px] md:max-w-[150px]"
+                className="mx-auto max-w-[120px] md:max-w-[125px]"
               />
             </div>
             <div className="text-center cursor-pointer">
               <img
                 src="/main/tournament.png"
                 alt="Tournament"
-                className="mx-auto max-w-[120px] md:max-w-[150px]"
+                className="mx-auto max-w-[120px] md:max-w-[125px]"
               />
             </div>
             <div className="text-center cursor-pointer">
               <img
                 src="/main/academy.png"
                 alt="DeChess Academy"
-                className="mx-auto max-w-[120px] md:max-w-[150px]"
+                className="mx-auto max-w-[120px] md:max-w-[125px]"
               />
             </div>
           </div>

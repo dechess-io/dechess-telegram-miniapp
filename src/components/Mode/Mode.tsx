@@ -138,14 +138,25 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
 
   return (
     <div
-      className="h-screen bg-center bg-contain"
+      className="bg-center bg-contain h-screen"
       style={{ backgroundImage: 'url(./images/bg-game.png)' }}
     >
-      <div className="flex flex-row">
-        <img className="mx-h-[20px]" src="/Icon.png" onClick={() => navigate('/')} />
-        <img className="max-w-[120px] max-h-[40px] mx-auto" src={LOGO_DECHESS} alt="DeChess Logo" />
+      <div>
+        <div className="flex flex-row items-center relative w-[50%] sm:w-[50%] md:w-[33%] lg:w-[25%] xl:w-[20%] mx-auto">
+          <img
+            className="max-h-[40px] mr-2 cursor-pointer"
+            src="/Icon.png"
+            alt="Icon"
+            onClick={() => navigate('/')}
+          />
+          <img
+            className="max-w-[120px] max-h-[40px] mx-auto"
+            src={LOGO_DECHESS}
+            alt="DeChess Logo"
+          />
+        </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col pt-2">
         <div className="border-none">
           <div className="mx-auto flex flex-col items-center justify-center text-center text-white">
             {loading && (
@@ -165,42 +176,39 @@ const Mode: React.FC<ModeProps> = ({ isBotMode }) => {
                 </div>
               </>
             )}
-            <Block>
-              <ModeSection
-                imgSrc="/bullet.svg"
-                title="Bullet (Soon)"
-                buttons={buttonsData.bullet}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-                isActive={false}
-              />
-              <ModeSection
-                imgSrc="/Thunder.svg"
-                title="Blitz"
-                buttons={buttonsData.blitz}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-                isActive={true}
-              />
-              <ModeSection
-                imgSrc="/QuickLock.svg"
-                title="Rapid (Soon)"
-                buttons={buttonsData.rapid}
-                handleButtonClick={handleButtonClick}
-                activeButton={activeButton}
-                isActive={false}
-              />
-
-              <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent">
-                <ButtonV2
-                  onClick={onCreateGame}
-                  className="text-black h-40 w-[370px] active:bg-transparent hover:bg-transparent"
-                  disabled={!hasJWT() || !activeButton}
-                >
-                  Play Now
-                </ButtonV2>
-              </div>
-            </Block>
+            <ModeSection
+              imgSrc="/bullet.svg"
+              title="Bullet (Soon)"
+              buttons={buttonsData.bullet}
+              handleButtonClick={handleButtonClick}
+              activeButton={activeButton}
+              isActive={false}
+            />
+            <ModeSection
+              imgSrc="/Thunder.svg"
+              title="Blitz"
+              buttons={buttonsData.blitz}
+              handleButtonClick={handleButtonClick}
+              activeButton={activeButton}
+              isActive={true}
+            />
+            <ModeSection
+              imgSrc="/QuickLock.svg"
+              title="Rapid (Soon)"
+              buttons={buttonsData.rapid}
+              handleButtonClick={handleButtonClick}
+              activeButton={activeButton}
+              isActive={false}
+            />
+          </div>
+          <div className="w-full text-center text-black active:bg-transparent hover:bg-transparent mx-auto text-black">
+            <ButtonV2
+              onClick={onCreateGame}
+              className="text-black h-40 w-[370px] active:bg-transparent hover:bg-transparent mx-auto"
+              disabled={!hasJWT() || !activeButton}
+            >
+              Play Now
+            </ButtonV2>
           </div>
         </div>
       </div>
