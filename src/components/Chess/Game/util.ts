@@ -27,7 +27,8 @@ export function emitNewMove(
   playerTimer1: any,
   playerTimer2: any,
   isCheck: boolean,
-  isCapture: boolean
+  isCapture: boolean,
+  fakeFrom: any
 ) {
   const turn = gameState.board.turn()
   const fen = gameState.board.fen()
@@ -46,6 +47,7 @@ export function emitNewMove(
     san,
     isCheck,
     isCapture,
+    fakeFrom,
   })
 }
 

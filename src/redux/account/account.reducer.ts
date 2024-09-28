@@ -119,6 +119,7 @@ export const verifySignatureSolana = createAsyncThunk(
       if (result.data.status === 200) {
         localStorage.setItem('token', result.data.data)
         localStorage.setItem('blockchain', result.data.blockchain)
+        localStorage.setItem('address', address.toString())
         return cb(result.data.data)
       }
     } catch (error) {

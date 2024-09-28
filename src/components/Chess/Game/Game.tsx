@@ -181,7 +181,9 @@ const Game: React.FC<object> = () => {
   const makeMove = useCallback(
     (foundMove: any, square: Square) => {
       const newState = gameDispatch(moveThunk({ foundMove, square }))
+
       const { moveFrom, square: newMoveSquare, isPromotionMove, san } = newState.newMove
+      // console.log('9s2', newState.newMove.from)
 
       emitNewMove(
         moveFrom,
@@ -194,7 +196,8 @@ const Game: React.FC<object> = () => {
         timer1.minutes * 60 + timer1.seconds,
         timer2.minutes * 60 + timer2.seconds,
         newState.board.isCheck() || newState.board.isCheckmate(),
-        foundMove.captured
+        foundMove.captured,
+        (newState.newMove as any).from
       )
 
       if (newState.board.isCheck() || newState.board.isCheckmate()) {
@@ -315,11 +318,11 @@ const Game: React.FC<object> = () => {
       })
   }, [gameState.turn])
 
-  useEffect(() => {
-    if (isThreefoldRepetition(gameState.history)) {
-      socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
-    }
-  }, [gameState.history])
+  // useEffect(() => {
+  //   if (isThreefoldRepetition(gameState.history)) {
+  //     socket.emit('confirmDraw', { game_id: location.pathname.split('/')[2] })
+  //   }
+  // }, [gameState.history])
 
   useEffect(() => {
     if (gameState.isGameOver || gameState.isGameDraw) {
@@ -474,13 +477,13 @@ const Game: React.FC<object> = () => {
       timer1.minutes * 60 + timer1.seconds,
       timer2.minutes * 60 + timer2.seconds,
       gameCopy.isCheck() || gameCopy.isCheckmate(),
-      foundMove.captured ? true : false
+      foundMove.captured ? true : false,
+      sourceSquare
     )
     gameDispatch(switchPlayerTurn())
 
     return true
   }
-
   if (!gameState.board) return <LoadingGame />
 
   return (

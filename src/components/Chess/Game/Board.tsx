@@ -57,7 +57,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
   const [name1] = useState(getAvatarName())
   const [name2] = useState(getAvatarName())
   const address = localStorage.getItem('address')
-
+  console.log('7s200:address', player1)
   const isOrientation = useMemo(() => (address === player1 ? 'white' : 'black'), [player1, address])
 
   const getPlayerDisplayProps = (isTop: boolean) => {
