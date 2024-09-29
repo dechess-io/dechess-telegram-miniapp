@@ -8,7 +8,7 @@ import { THEME } from '@tonconnect/ui-react'
 type MoveRecordProps = {}
 
 const MoveRecord: React.FC<MoveRecordProps> = () => {
-  const { moves, moveIndex } = useAppSelector(selectGame)
+  const { moves, moveIndex, history } = useAppSelector(selectGame)
   const [rightFloatingPanelOpened, setRightFloatingPanelOpened] = useState(false)
 
   const moveListRef = useRef<HTMLDivElement>(null)
@@ -53,9 +53,16 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
           />{' '} */}
           <Block className="space-y-4">
             <List strong>
-              {moves.map((move, index) => {
-                if (index >= moveIndex) return
-                return <ListItem title={`${move}`}></ListItem>
+              {history.map((data, index) => {
+                if (index == 0) return
+                if (index > moveIndex) return
+                return (
+                  <ListItem
+                    href={`https://explorer.solana.com/tx/${(data as any).transaction}?cluster=devnet`}
+                    title={`${moves[index - 1]} ${(data as any).transaction}`}
+                    target="_blank"
+                  ></ListItem>
+                )
               })}
             </List>
           </Block>

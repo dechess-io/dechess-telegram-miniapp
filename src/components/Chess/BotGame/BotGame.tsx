@@ -7,7 +7,7 @@ import { useTonWallet } from '@tonconnect/ui-react'
 import GameNavbar from '../Navbar/GameNavbar'
 import GameBoard from '../Game/Board'
 import { engine } from '../../../services/worker'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { socket } from '../../../services/socket'
 import { useAppDispatch, useAppSelector } from '../../../redux/store'
 import {
@@ -51,6 +51,7 @@ const BotGame: React.FC<{}> = () => {
   const gameState = useAppSelector((state) => state.game)
   const location = useLocation()
   const gameDispatch = useAppDispatch()
+  const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
 
   const [player1] = useState(localStorage.getItem('address'))
@@ -329,6 +330,7 @@ const BotGame: React.FC<{}> = () => {
             className="max-w-[120px] max-h-[40px]"
             src="/images/logo-dechess.svg"
             alt="DeChess Logo"
+            onClick={() => navigate('/')}
           />
           <GameBoard
             player1Timer={timer1.minutes * 60 + timer1.seconds}

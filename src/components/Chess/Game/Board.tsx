@@ -108,7 +108,7 @@ const GameBoardOriginal: React.FC<GameBoardProps> = ({
               )}
               <MoveRecord />
               <PlayerDisplay {...getPlayerDisplayProps(true)} />
-              <div className="relative border-8 border-[#E1C16E] rounded-lg z-50">
+              <div className="relative border-8 border-[#E1C16E] rounded-lg z-40">
                 <Board
                   boardOrientation={isOrientation}
                   position={board.fen()}

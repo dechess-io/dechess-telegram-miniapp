@@ -369,6 +369,7 @@ const Game: React.FC<object> = () => {
     })
 
     socket.on('newmove', (room: any) => {
+      console.log(room)
       if (room.fen) {
         gameDispatch(setOpponentMove(room))
         if (room.isCheck) {
