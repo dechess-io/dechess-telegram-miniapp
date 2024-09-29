@@ -4,6 +4,7 @@ import { selectGame } from '../../../redux/game/reducer'
 import cn from '../../../services/cn'
 import { Block, Navbar, Page, Panel, Link, List, ListItem, App } from 'konsta/react'
 import { THEME } from '@tonconnect/ui-react'
+import { truncateSuiTx } from '../../../services/address'
 
 type MoveRecordProps = {}
 
@@ -22,7 +23,7 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
   return (
     <>
       <div
-        className="relative rounded overflow-hidden min-h-[16px] z-50"
+        className="relative rounded overflow-hidden min-h-[16px] z-40"
         onClick={() => setRightFloatingPanelOpened((prev) => !prev)}
       >
         <div
@@ -59,9 +60,22 @@ const MoveRecord: React.FC<MoveRecordProps> = () => {
                 return (
                   <ListItem
                     href={`https://explorer.solana.com/tx/${(data as any).transaction}?cluster=devnet`}
-                    title={`${moves[index - 1]} ${(data as any).transaction}`}
                     target="_blank"
-                  ></ListItem>
+                    className="rounded-lg"
+                  >
+                    <div
+                      style={{ display: 'flex', justifyContent: 'space-between' }}
+                      className="my-auto mx-auto"
+                    >
+                      <span className="pl-5">{moves[index - 1]}</span>
+                      <span
+                        className="pr-5 text-bold"
+                        style={{ fontWeight: 'bold', color: 'green' }}
+                      >
+                        {truncateSuiTx((data as any).transaction)}
+                      </span>
+                    </div>
+                  </ListItem>
                 )
               })}
             </List>
