@@ -1,6 +1,6 @@
-const konstaConfig = require('konsta/config')
+const withMT = require('@material-tailwind/react/utils/withMT')
 
-module.exports = konstaConfig({
+module.exports = withMT({
   mode: 'jit',
   darkMode: 'class',
   content: [
@@ -151,6 +151,7 @@ module.exports = konstaConfig({
       },
     },
     fontFamily: {
+      sans: ['Planet Gamers', 'Space Grotesk'],
       planet: 'Planet Gamers',
       spaceGrotesk: 'Space Grotesk',
     },

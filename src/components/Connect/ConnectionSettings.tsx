@@ -1,11 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  THEME,
-  TonConnect,
-  TonConnectButton,
-  useTonConnectUI,
-  useTonWallet,
-} from '@tonconnect/ui-react'
+import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react'
 import { TonProofDemoApi } from '../../services/ton'
 import useInterval from '../../hooks/useInterval'
 import { useLocation, useNavigate } from 'react-router-dom'

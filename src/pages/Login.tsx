@@ -1,44 +1,50 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import LOGO_DECHESS from '../../public/images/logo-dechess.svg'
 import ButtonV2 from '../components/Button/ButtonV2'
 import { ConnectionSettings } from '../components/Connect/ConnectionSettings'
-import { RootState, store, useAppDispatch, useAppSelector } from '../redux/store'
+import { useAppDispatch } from '../redux/store'
 import {
   generatePayloadSolana,
   getUserInfo,
-  submitEarlyAccessCode,
   updateAddress,
   verifySignatureSolana,
 } from '../redux/account/account.reducer'
-// import { usePopups } from '../components/Chess/Popup/PopupProvider'
-// import { Navigate, useNavigate } from 'react-router-dom'
+import bgButtonGray from '/images/bg-btn-gray.png'
+import { Select, Option } from '@material-tailwind/react'
 import { useTonWallet } from '@tonconnect/ui-react'
-import { TonProofDemoApi } from '../services/ton'
 import { isTMA, LaunchParams, retrieveLaunchParams } from '@telegram-apps/sdk'
 import restApi from '../services/api'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { truncateSuiTx } from '../services/address'
 import { SOLANA_NETWORK } from '../components/Provider/SolanaAppWalletProvider'
+import { ArrowDown, ChevronDown } from 'lucide-react'
 
-// import Input from '../components/Input/Input'
-// import Popup from '../components/Chess/Popup/Popup'
+const SOLANA = 'Solana'
+const TELEGRAM = 'Telegram'
+const TON = 'Ton'
 
-const Login: React.FC<{}> = ({}) => {
+const LOGIN_OPTIONS = [
+  { key: SOLANA, label: SOLANA },
+  { key: TELEGRAM, label: TELEGRAM },
+  { key: TON, label: TON },
+]
+
+const Login: React.FC = () => {
   const dispatch = useAppDispatch()
-  // const { addPopup, removeAll } = usePopups()
-  // const navigate = useNavigate()
   const wallet = useTonWallet()
-  const { publicKey: pub_solana, wallet: wallet_solana, signMessage } = useWallet()
-
-  // console.log('tonProofDemo', TonProofDemoApi)
-  // const [referralCode, setReferralCode] = useState('')
-  // const [submiting, setSubmiting] = useState(false)
+  const { publicKey: pub_solana, signMessage } = useWallet()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [isSignSolana, setIsSignSolan] = useState(false)
   const token = localStorage.getItem('token')
-  console.log('7s200:wallet', wallet)
+  const [selectedOption, setSelectedOption] = useState<string>(SOLANA)
+
+  const filteredLoginOptions = useMemo(() => {
+    if ((window as any).Telegram.WebApp.platform !== 'unknown') {
+      return LOGIN_OPTIONS.filter((option) => option.key !== SOLANA)
+    }
+    return LOGIN_OPTIONS
+  }, [])
 
   // const onHandleSubmitEarlyAccessCode = async () => {
   //   setSubmiting(true)
@@ -65,6 +71,7 @@ const Login: React.FC<{}> = ({}) => {
   // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   setReferralCode(e.target.value)
   // }
+
   const handleTelegramLogin = async () => {
     setLoading(true)
     const isTma = await isTMA()
@@ -203,10 +210,6 @@ const Login: React.FC<{}> = ({}) => {
       )
     }
   }, [token])
-  //   console.log('user2', user)
-
-  // }
-  console.log('7s200:user', user)
 
   // const onShowPopupEarlyAccess = () => {
   //   if (user && user.isEarly === false) {
@@ -238,6 +241,34 @@ const Login: React.FC<{}> = ({}) => {
   //   }
   //   return <></>
   // }
+
+  const handleConnectWallet = () => {
+    switch (selectedOption) {
+      case SOLANA: {
+        const solanaConnectButton: HTMLButtonElement | null = document.querySelector(
+          '.wallet-adapter-button.wallet-adapter-button-trigger'
+        )
+        if (solanaConnectButton) {
+          solanaConnectButton.click()
+        }
+        break
+      }
+      case TELEGRAM:
+        handleTelegramLogin()
+        break
+      case TON: {
+        const tonConnectButton = document.getElementById('ton-connect-button')
+        const button = tonConnectButton?.querySelector('button')
+        if (button) {
+          button.click()
+        }
+        break
+      }
+      default:
+        console.log('No valid option selected')
+    }
+  }
+
   return (
     <div
       className="relative h-screen  w-full mx-auto bg-center bg-cover bg-no-repeat"
@@ -248,55 +279,54 @@ const Login: React.FC<{}> = ({}) => {
         <img
           src={LOGO_DECHESS}
           alt="Logo"
-          className="w-full max-w-[200px] md:max-w-[250px] lg:max-w-[300px] xl:max-w-[350px] max-w-[350px]"
+          className="w-full md:max-w-[250px] lg:max-w-[300px] xl:max-w-[350px] max-w-[350px]"
         />
       </div>
 
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-2 md:mb-12 lg:mb-12">
-        {(window as any).Telegram.WebApp.platform === 'unknown' && (
-          <div className="mb-4 mx-auto my-auto">
-            <WalletMultiButton
-              style={{
-                backgroundImage: 'url(./images/bg-btn-white.png)',
-                // backgroundPosition: 'center',
-                backgroundSize: '300px 50px',
-                backgroundColor: 'transparent',
-                padding: '24px',
-                margin: '0px',
-                color: 'black',
-                fontFamily: 'Planet Gamers',
-                width: '300px',
-                height: '40px',
-                border: 'none',
-                borderRadius: '0px',
-                textAlign: 'center',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontSize: '20px',
-                fontWeight: '700',
-                textTransform: 'lowercase',
-              }}
-            >
-              <div className="flex justify-center items-center space-x-2">
-                <p>{pub_solana ? truncateSuiTx(pub_solana.toString()) : 'Connect solana'}</p>
-                <img className="w-[24px] h-[24px] mb-1" src="./images/solana-logo.png" alt="" />
-              </div>
-            </WalletMultiButton>
-          </div>
-        )}
-
-        <ButtonV2
-          kind="secondary"
-          className="w-full mb-2"
-          onClick={handleTelegramLogin}
-          disabled={loading}
-        >
-          {loading ? 'Logging in...' : 'Telegram'}
-        </ButtonV2>
-        <div className="mb-2 mx-auto my-auto">
+      <div className="absolute bottom-4 md:bottom-10 left-1/2 transform -translate-x-1/2 grid gap-4">
+        <div className="invisible">
+          {(window as any).Telegram.WebApp.platform === 'unknown' && <WalletMultiButton />}
           <ConnectionSettings />
         </div>
+
+        <div className="relative">
+          <img
+            className="absolute inset-0"
+            src={bgButtonGray}
+            width={300}
+            height={40}
+            alt="dechess-btn-background"
+          />
+          <div className="max-w-[190px] mx-auto">
+            <Select
+              variant="standard"
+              value={selectedOption}
+              className="text-white !border-none text-lg"
+              labelProps={{ className: 'after:content-none' }}
+              menuProps={{
+                className: 'grid gap-2 rounded-none bg-[url(./images/bg-popup.png)] bg-cover bg-no-repeat bg-transparent border-none p-6 text-white',
+              }}
+              onChange={(value) => setSelectedOption(value as string)}
+              arrow={<ChevronDown className="text-white" size={24} />}
+            >
+              {filteredLoginOptions.map((option) => (
+                <Option className="capitalize" key={option.key} value={option.key}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
+          </div>
+        </div>
+
+        <ButtonV2
+          kind="primary"
+          className="w-full"
+          onClick={handleConnectWallet}
+          loading={loading}
+          disabled={loading || !selectedOption}
+        >
+          Connect wallet
+        </ButtonV2>
       </div>
     </div>
   )

@@ -25,10 +25,10 @@ const ButtonV2: React.FC<
     <button
       type={type || 'button'}
       className={cn(
-        'font-planet relative flex items-center justify-center gap-2 group',
+        'font-planet relative flex items-center justify-center gap-2 group hover:scale-105 transition-all duration-300',
         className,
         {
-          'cursor-default': disabled,
+          'cursor-default pointer-events-none opacity-80 select-none': disabled,
           'cursor-pointer': !disabled,
         }
       )}
@@ -42,12 +42,12 @@ const ButtonV2: React.FC<
         alt="dechess-btn-background"
       />
       <span
-        className={cn('absolute inset-0 z-[1] flex justify-center items-center text-[24px]', {
+        className={cn('absolute inset-0 z-[1] flex justify-center items-center text-xl font-medium', {
           'text-black-1a': kind === 'primary',
           'text-white': kind === 'secondary',
         })}
       >
-        {loading ? <Icons.spinner className="animate-spin" size={20} /> : null} {children}
+        {loading ? <Icons.spinner className="animate-spin -mt-1 mr-1" size={20} /> : null} {children}
       </span>
     </button>
   )

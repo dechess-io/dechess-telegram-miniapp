@@ -1,6 +1,7 @@
-import { SpinnerIos } from '@styled-icons/fluentui-system-regular'
+
 import React, { PropsWithChildren } from 'react'
 import cn from '../../services/cn'
+import { LoaderCircle } from 'lucide-react';
 
 const Button: React.FC<
   PropsWithChildren<{
@@ -61,7 +62,7 @@ const Button: React.FC<
       onClick={onClick}
       disabled={loading || disabled}
     >
-      {loading ? <SpinnerIos className="animate-spin" size={20} /> : null} {children}
+      {loading ? <LoaderCircle className="animate-spin" size={20} /> : null} {children}
     </button>
   )
 }
