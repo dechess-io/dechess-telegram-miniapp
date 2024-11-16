@@ -12,8 +12,8 @@ import WalletPage from '../pages/WalletPage'
 import ReferralPage from '../pages/ReferralPage'
 import ProfilePage from '../pages/Profile/ProfilePage'
 import MintNFTPage from '../pages/MintNFTPage'
-import QuestPage from '../pages/QuestPage'
 import EarnPage from '../pages/EarnPage'
+import QuestPage from '../pages/Quest'
 
 export const router = createBrowserRouter([
   {

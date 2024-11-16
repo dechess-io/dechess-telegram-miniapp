@@ -2,25 +2,32 @@ import FooterV2 from '../layouts/Footer/FooterV2'
 import iconWallet from '../../public/icon-wallet.svg'
 import iconChevronDown from '../../public/icon-chevron-down.svg'
 import { sliceAddress } from '../utils/utils'
+import { useMemo } from 'react'
 
 const EarnPage: React.FC = () => {
   const address = localStorage.getItem('address')
 
-  const backgroundStyles = {
-    backgroundImage: 'url(./images/bg-game.png)',
-    backgroundPosition: 'center',
-    backgroundSize: 'contain',
-  }
+  const backgroundStyles = useMemo(
+    () => ({
+      backgroundImage: 'url(./images/bg-game.png)',
+      backgroundPosition: 'center',
+      backgroundSize: 'contain',
+    }),
+    []
+  )
 
-  const days = [
-    { day: 1, points: 100, completed: true },
-    { day: 2, points: 100, completed: true },
-    { day: 3, points: 100, completed: false },
-    { day: 4, points: 100, completed: false },
-    { day: 5, points: 100, completed: false },
-    { day: 6, points: 100, completed: false },
-    { day: 7, points: 100, completed: false },
-  ]
+  const days = useMemo(
+    () => [
+      { day: 1, points: 100, completed: true },
+      { day: 2, points: 100, completed: true },
+      { day: 3, points: 100, completed: false },
+      { day: 4, points: 100, completed: false },
+      { day: 5, points: 100, completed: false },
+      { day: 6, points: 100, completed: false },
+      { day: 7, points: 100, completed: false },
+    ],
+    []
+  )
 
   return (
     <div className="h-screen bg-center flex flex-col items-center" style={backgroundStyles}>
