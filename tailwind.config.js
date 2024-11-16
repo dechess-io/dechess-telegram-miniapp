@@ -9,6 +9,10 @@ module.exports = withMT({
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: '1rem',
+    },
     screens: {
       xs: '376px',
       sm: '460px',
@@ -116,6 +120,10 @@ module.exports = withMT({
         },
         darkgreen: {
           100: '#1E2126',
+        },
+        yellow: {
+          100: '#B18617',
+          200: '#E3C043',
         },
         blue: {
           100: '#1F2428',

@@ -129,3 +129,18 @@ export function getRandomValueFromList(list: any) {
   const randomIndex = Math.floor(Math.random() * list.length)
   return list[randomIndex]
 }
+
+export function sliceAddress(inputAddress: string) {
+  if (inputAddress.startsWith('0:')) {
+    const addressWithoutPrefix = inputAddress.slice(2)
+
+    const firstPart = addressWithoutPrefix.slice(0, 3)
+    const lastPart = addressWithoutPrefix.slice(-4)
+
+    const slicedAddress = `${firstPart}..${lastPart}`
+
+    return slicedAddress
+  } else {
+    throw new Error('Invalid address format. Expected format: 0:<address>')
+  }
+}

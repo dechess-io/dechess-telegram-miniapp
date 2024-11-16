@@ -68,17 +68,14 @@ const ProfileSection: React.FC = () => {
 
   return (
     <div
-      className="flex flex-col items-center space-y-2 relative"
+      className="flex flex-col items-center space-y-2 relative mt-2 container"
       style={{
         backgroundImage: 'url(./images/profile.png)',
-        backgroundSize: 'contain',
+        backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        width: '90vw',
         height: '60vh',
-        maxWidth: '398px',
         maxHeight: '172px',
-        minWidth: '360px',
         minHeight: '172px',
       }}
     >

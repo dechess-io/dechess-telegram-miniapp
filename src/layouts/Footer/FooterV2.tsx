@@ -15,7 +15,7 @@ const FooterV2: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-0 w-full py-2 h-[113px] max-w-[428px] bg-center bg-contain mx-auto bg-no-repeat px-6 flex items-center"
+      className="fixed bottom-0 w-full py-2 h-[113px] container bg-center bg-contain md:bg-cover mx-auto bg-no-repeat px-6 flex items-center"
       style={{ backgroundImage: 'url(./Footer.png)' }}
     >
       <div className="w-full flex justify-around items-center text-sm text-white gap-3">
