@@ -219,3 +219,9 @@ body {
 #ton-connect-button-1 tc-root svg {
   display: none !important; /* Hide the SVG icon */
 }
+
+/* styles.css or a similar stylesheet */
+.icon-shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Example shadow */
+  transition: box-shadow 0.3s ease; /* Smooth transition */
+}

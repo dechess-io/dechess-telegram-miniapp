@@ -6,14 +6,14 @@ import WebApp from '@twa-dev/sdk'
 import { store } from './redux/store'
 
 import { TonConnectUIProvider, THEME } from '@tonconnect/ui-react'
-import eruda from 'eruda'
+// import eruda from 'eruda'
 import { router } from './routes'
 import PopupProvider from './components/Chess/Popup/PopupProvider'
 import SolanaAppWalletProvider from './components/Provider/SolanaAppWalletProvider'
 
 import '@solana/wallet-adapter-react-ui/styles.css'
 
-eruda.init()
+// eruda.init()
 WebApp.ready()
 WebApp.expand()
 WebApp.MainButton.enable()

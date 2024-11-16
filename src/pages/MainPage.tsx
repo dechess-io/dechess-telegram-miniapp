@@ -1,25 +1,17 @@
-import LOGO_DECHESS from '../../public/images/logo-dechess.svg'
-import CHESS_MASTER from '../../public/images/chessmaster.svg'
-
-import tournament_svg from '../../public/main/tournament.svg'
-import academy_svg from '../../public/main/academy.svg'
-import arena_svg from '../../public/main/arena.svg'
-import quest_svg from '../../public/main/quest.svg'
-
 import React, { useEffect, useState } from 'react'
 import '../index.css'
+import LOGO_DECHESS from '../../public/images/logo-dechess.svg'
+import CHESS_MASTER from '../../public/images/chessmaster.svg'
 import ButtonV2 from '../components/Button/ButtonV2'
 import FooterV2 from '../layouts/Footer/FooterV2'
-import { RootState, useAppDispatch, useAppSelector } from '../redux/store'
+import { useAppDispatch } from '../redux/store'
 import { getUserInfo } from '../redux/account/account.reducer'
-import LoadingGame from '../components/Loading/Loading'
 import { useNavigate } from 'react-router-dom'
 import Dialog from '../components/Chess/Popup/Dialog'
 
-const MainPage: React.FC<{}> = ({}) => {
+const MainPage: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const [modePopup, setModePopup] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const toggleDialog = () => {
@@ -31,7 +23,8 @@ const MainPage: React.FC<{}> = ({}) => {
       getUserInfo({
         cb: (data) => {
           if (data) {
-            return
+            // TODO: remove this
+            navigate('/profile')
           } else if (!localStorage.getItem('address')) {
             navigate('/login')
           }
@@ -39,6 +32,9 @@ const MainPage: React.FC<{}> = ({}) => {
       })
     )
   }, [])
+
+  // TODO: remove this
+  return <></>
 
   return (
     <div

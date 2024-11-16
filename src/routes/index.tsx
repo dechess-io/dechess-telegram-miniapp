@@ -11,6 +11,9 @@ import Login from '../pages/Login'
 import WalletPage from '../pages/WalletPage'
 import ReferralPage from '../pages/ReferralPage'
 import ProfilePage from '../pages/Profile/ProfilePage'
+import MintNFTPage from '../pages/MintNFTPage'
+import QuestPage from '../pages/QuestPage'
+import EarnPage from '../pages/EarnPage'
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +23,7 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={
-              <MainLayout isFooter={false}>
+              <MainLayout>
                 <MainPage />
               </MainLayout>
             }
@@ -40,7 +43,7 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={
-              <MainLayout isFooter={false}>
+              <MainLayout>
                 <WalletPage />
               </MainLayout>
             }
@@ -52,7 +55,7 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={
-              <MainLayout isFooter={false}>
+              <MainLayout>
                 <ReferralPage />
               </MainLayout>
             }
@@ -64,8 +67,44 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={
-              <MainLayout isFooter={false}>
+              <MainLayout>
                 <ProfilePage />
+              </MainLayout>
+            }
+          />
+        ),
+      },
+      {
+        path: '/mint-nft',
+        element: (
+          <PrivateRoute
+            element={
+              <MainLayout>
+                <MintNFTPage />
+              </MainLayout>
+            }
+          />
+        ),
+      },
+      {
+        path: '/quest',
+        element: (
+          <PrivateRoute
+            element={
+              <MainLayout>
+                <QuestPage />
+              </MainLayout>
+            }
+          />
+        ),
+      },
+      {
+        path: '/earn',
+        element: (
+          <PrivateRoute
+            element={
+              <MainLayout>
+                <EarnPage />
               </MainLayout>
             }
           />
@@ -76,7 +115,7 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={
-              <MainLayout isFooter={false}>
+              <MainLayout>
                 <Game />
               </MainLayout>
             }
@@ -112,7 +151,7 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute
             element={
-              <MainLayout isFooter={false}>
+              <MainLayout>
                 <BotGame />
               </MainLayout>
             }

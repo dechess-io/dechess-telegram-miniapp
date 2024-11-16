@@ -37,7 +37,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [isSignSolana, setIsSignSolan] = useState(false)
   const token = localStorage.getItem('token')
-  const [selectedOption, setSelectedOption] = useState<string>(SOLANA)
+  const [selectedOption, setSelectedOption] = useState<string>(TON)
 
   const filteredLoginOptions = useMemo(() => {
     if ((window as any).Telegram.WebApp.platform !== 'unknown') {
@@ -197,7 +197,6 @@ const Login: React.FC = () => {
       dispatch(
         getUserInfo({
           cb: (data) => {
-            console.log('data:sol', data)
             setUser(data)
             dispatch(updateAddress(pub_solana.toString()))
             localStorage.setItem('address', pub_solana.toString())
